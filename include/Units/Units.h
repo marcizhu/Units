@@ -134,12 +134,18 @@ namespace Units
 	constexpr Quantity L  = liter;
 	constexpr Quantity mL = milli * L;
 
-	// mass units
-	constexpr Quantity g  = gram;
-	constexpr Quantity mg = milli * g;
+	// Mass units
+	constexpr Quantity g     = gram;
+	constexpr Quantity mg    = milli * g;
+	constexpr Quantity tonne = 1000.0 * kg;
+	constexpr Quantity t     = tonne;
 
-	// Units from the cgs system
-	namespace cgs
+	// Atomic mass units
+	constexpr Quantity Da    = 1.6605388628e-27 * kg;
+	constexpr Quantity u     = Da;
+
+	// Units from the CGS system
+	namespace CGS
 	{
 		constexpr double c_const        = 29979245800.0; // speed of light in cm/s
 		constexpr Quantity erg          = 1e-7 * J;
@@ -178,10 +184,10 @@ namespace Units
 		constexpr Quantity statFarad    = 1.0 / (c_const * c_const) * abFarad;
 	}
 
-	// meter-gram-force system of units
-	namespace gm
+	// meter-gram-force system of units (aka gravitational metric system)
+	namespace GM
 	{
-		constexpr Quantity pond     = 980.665 * cgs::dyn;
+		constexpr Quantity pond     = 980.665 * CGS::dyn;
 		constexpr Quantity hyl      = 9.80665 * kg;
 		constexpr Quantity at       = 98066.5 * Pa; // technical atmosfere
 		constexpr Quantity poncelet = 980.665 * W;
@@ -197,7 +203,7 @@ namespace Units
 	}
 
 	// Units of time
-	namespace time
+	namespace Time
 	{
 		constexpr Quantity min  = 60.0 * s;
 		constexpr Quantity hour = 3600 * s;
@@ -217,8 +223,8 @@ namespace Units
 		constexpr Quantity mog  = 1.0 / 12.0 * ag; // mean gregorian month
 	}
 
-	constexpr Quantity h   = time::hour;
-	constexpr Quantity min = time::min;
+	constexpr Quantity h   = Time::hour;
+	constexpr Quantity min = Time::min;
 
 	// International units
 	namespace i
@@ -608,7 +614,7 @@ namespace Units
 		constexpr Quantity inH2O = 248.843004 * Pa; // at 60 degF
 		constexpr Quantity mmH2O = 1.0 / 25.4 * inH2O; // at 60 degF
 		constexpr Quantity atm   = 101325.0 * Pa;
-		constexpr Quantity att   = gm::at; // technical atmosphere same as gravitational metric system
+		constexpr Quantity att   = GM::at; // technical atmosphere same as gravitational metric system
 	}
 
 	// Power units
@@ -619,14 +625,10 @@ namespace Units
 		constexpr Quantity hpS = 9812.5 * W; // Boiler horsepower
 		constexpr Quantity hpM = 735.49875 * W; // Boiler horsepower
 
-		constexpr Quantity  VAR = W * iflag;
+		constexpr Unit VAR = W * iflag;
 	}
 
 	constexpr Quantity hp = Power::hpI;
-
-	// Speed units
-	constexpr Quantity mph = mile / h;
-	constexpr Quantity mps = m / s;
 
 	// Energy units
 	namespace Energy
@@ -703,28 +705,12 @@ namespace Units
 		constexpr Quantity molality = 1.0 * mol / kg;
 	}
 
-	// Weight units
-	constexpr Quantity tonne = 1000.0 * kg;
-	constexpr Quantity t     = tonne;
-	constexpr Quantity Da    = 1.6605388628e-27 * kg;
-	constexpr Quantity u     = Da;
-
 	// Units related to quantities of data
 	namespace Data
 	{
 		constexpr Quantity bit    = 1 * count;
 		constexpr Quantity nibble = 4 * bit;
 		constexpr Quantity byte   = 8 * bit;
-
-		constexpr Quantity kB = kilo * byte;
-		constexpr Quantity MB = mega * byte;
-		constexpr Quantity GB = giga * byte;
-		constexpr Quantity TB = tera * byte;
-
-		constexpr Quantity KiB = kibi * byte;
-		constexpr Quantity MiB = mebi * byte;
-		constexpr Quantity GiB = gibi * byte;
-		constexpr Quantity TiB = tebi * byte;
 	}
 
 	// Units related to computation
@@ -738,15 +724,6 @@ namespace Units
 	// concentrations
 	constexpr Quantity ppm = 1e-6 * count;
 	constexpr Quantity ppb = 1e-9 * count;
-
-	// other special units
-	namespace Special
-	{
-		// square root of Hertz
-		constexpr Quantity sqrtHz = Hz * iflag;
-		// Amplitude spectral density
-		constexpr Quantity ASD = 1.0 * V / sqrtHz;
-	}
 
 	constexpr Quantity candle  = 0.981 * Cd;
 	constexpr Quantity faraday = 9.648533289e4 * C;

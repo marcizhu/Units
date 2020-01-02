@@ -44,7 +44,10 @@ namespace Units
 
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
+			{ Unit(), "" },
 			{ m, "m" },
+			{ m^2, "m²" },
+			{ m^3, "m³" },
 			{ kg, "kg" },
 			{ s, "s" },
 			{ A, "A" },
@@ -75,7 +78,8 @@ namespace Units
 			{ kat, "kat" },
 			{ currency, "$" },
 			{ count, "item" },
-			{ rad * W, "W" }
+			{ rad * W, "W" },
+			{ Power::VAR, "VAR" } // Volt-ampere reactive
 		};
 
 		bool find_unit(Units::Unit un, std::string& ret)
@@ -174,10 +178,10 @@ namespace Units
 		else if(find_unit(std::cbrt(u^-1), str)) return str + "⁻³";
 		else if(find_unit(u^-1, str)) return str + "⁻¹";
 
-		for(auto& tu : testUnits) if(find_unit(u / tu.first, str)) return str + "⋅" + tu.second;
 		for(auto& tu : testUnits) if(find_unit(u * tu.first, str)) return str + "/" + tu.second;
-		for(auto& tu : testUnits) if(find_unit((u / tu.first)^-1, str)) return str + "⁻¹ ⋅ " + tu.second + "⁻¹";
-		for(auto& tu : testUnits) if(find_unit((u * tu.first)^-1, str)) return str + "⁻¹ / " + tu.second + "⁻¹";
+		for(auto& tu : testUnits) if(find_unit(u / tu.first, str)) return str + "⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit((u / tu.first)^-1, str)) return str + "⁻¹⋅" + tu.second + "⁻¹";
+		for(auto& tu : testUnits) if(find_unit((u * tu.first)^-1, str)) return str + "⁻¹/" + tu.second + "⁻¹";
 
 		return unit_raw(u);
 	}
@@ -186,6 +190,7 @@ namespace Units
 	{
 		using namespace details;
 		if(q.unit().eflag()) return "ERROR";
+		if(q.unit() == Unit()) return magnitude_scientific(q.magnitude());
 
 		std::string str;
 
@@ -196,8 +201,8 @@ namespace Units
 		else if(find_unit(std::cbrt(q^-1).unit(), str)) return magnitude_prefix(q.magnitude()) + str + "⁻³";
 		else if(find_unit((q^-1).unit(), str)) return magnitude_prefix(q.magnitude()) + str + "⁻¹";
 
-		for(auto& tu : testUnits) if(find_unit(q.unit() / tu.first, str)) return magnitude_prefix(q.magnitude()) + str + "⋅" + tu.second;
 		for(auto& tu : testUnits) if(find_unit(q.unit() * tu.first, str)) return magnitude_prefix(q.magnitude()) + str + "/" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(q.unit() / tu.first, str)) return magnitude_prefix(q.magnitude()) + str + "⋅" + tu.second;
 		for(auto& tu : testUnits) if(find_unit((q.unit() / tu.first)^-1, str)) return magnitude_scientific(q.magnitude()) + ' ' + str + "⁻¹⋅" + tu.second + "⁻¹";
 		for(auto& tu : testUnits) if(find_unit((q.unit() * tu.first)^-1, str)) return magnitude_scientific(q.magnitude()) + ' ' + str + "⁻¹/" + tu.second + "⁻¹";
 

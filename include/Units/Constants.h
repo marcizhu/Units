@@ -23,9 +23,11 @@ namespace Units
 			// Elementary Charge (2019 redefinition)
 			constexpr Quantity e     = 1.602176634e-19 * C;
 			// Gravitational Constant
-			constexpr Quantity G     = 6.6740831e-11 * (m^3) * (kg^-1) * (s^-2);
+			constexpr Quantity G     = 6.67430e-11 * (m^3) * (kg^-1) * (s^-2);
 			// Planck constant (2019 redefinition)
 			constexpr Quantity h     = 6.62607015e-34 * J * s;
+			// Reduced Planck constant
+			constexpr Quantity h_    = 1.054571817e-34 * J * s;
 			// Speed of light
 			constexpr Quantity c     = 299792458.0 * m / s;
 			// Vacuum electric permittivity
@@ -36,6 +38,8 @@ namespace Units
 			constexpr Quantity me    = 9.1093837015e-31 * kg;
 			// Proton rest mass
 			constexpr Quantity mp    = 1.67262192369e-27 * kg;
+			// Neutron rest mass
+			constexpr Quantity mn    = 1.67492749804e-27 * kg;
 			// Coulomb's constant
 			constexpr Quantity ke    = 8.9875517887e9 * N * (m^2) * (C^-2);
 			// Fine-structure constant
@@ -46,12 +50,20 @@ namespace Units
 			constexpr Quantity k     = 1.380649e-23 * J / K;
 			// Luminous efficiency
 			constexpr Quantity Kcd   = 683.0 * lm / W;
-			// Gas Constant
-			constexpr Quantity R     = 8.314459848 * J / (mol * K);
+			// Molar gas constant (2019 redefinition)
+			constexpr Quantity R     = 8.31446261815324 * J / (mol * K);
 			// Stephan Boltzmann constant
 			constexpr Quantity sigma = 5.67036713e-8 * W / ((m^2) * (K^4));
-			// Standard gravity
+			// Standard gravity on Earth
 			constexpr Quantity g0    = 9.80665 * m / (s^2);
+			// Fine-structure constant
+			constexpr double fsc     = 1.0 / 137.035999084;
+			// Proton-to-electron mass ratio
+			constexpr double PtoEmr  = 1836.15267343;
+			// W-to-Z boson mass ratio
+			constexpr double WtoZmr  = 0.88153;
+			// Molar mass of Carbon-12
+			constexpr Quantity mC12  = 11.9999999958e-3 * kg / mol;
 		}
 
 		namespace Maths

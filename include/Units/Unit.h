@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdexcept>
 #include <functional> // for std::hash
+#include <stdexcept>
 
 namespace Units
 {
@@ -163,11 +163,11 @@ namespace Units
 			return ret;
 		}
 
-		constexpr Unit& operator^=(int8_t exp)    { *this = *this ^ exp; return *this; }
-		constexpr Unit& operator+=(Unit rhs) { *this = *this + rhs; return *this; }
-		constexpr Unit& operator-=(Unit rhs) { *this = *this - rhs; return *this; }
-		constexpr Unit& operator*=(Unit rhs) { *this = *this * rhs; return *this; }
-		constexpr Unit& operator/=(Unit rhs) { *this = *this / rhs; return *this; }
+		constexpr Unit& operator^=(int8_t exp) { *this = *this ^ exp; return *this; }
+		constexpr Unit& operator+=(Unit rhs)   { *this = *this + rhs; return *this; }
+		constexpr Unit& operator-=(Unit rhs)   { *this = *this - rhs; return *this; }
+		constexpr Unit& operator*=(Unit rhs)   { *this = *this * rhs; return *this; }
+		constexpr Unit& operator/=(Unit rhs)   { *this = *this / rhs; return *this; }
 
 		constexpr bool operator!=(Unit other) const { return !(*this == other); }
 		constexpr bool operator==(Unit other) const
@@ -187,7 +187,8 @@ namespace Units
 				&& eq_flag   == other.eq_flag;
 		}
 
-		constexpr void root(int power)
+		constexpr void pow (int8_t power) { *this ^= power; }
+		constexpr void root(int8_t power)
 		{
 			if(!hasValidRoot(power))
 			{
@@ -227,7 +228,7 @@ namespace std
 		}
 	};
 
-	inline Units::Unit sqrt(Units::Unit x) noexcept { x.root(2); return x; }
-	inline Units::Unit cbrt(Units::Unit x) noexcept { x.root(3); return x; }
-	inline Units::Unit pow (Units::Unit x, int8_t exp) noexcept { return x^exp; }
+	inline constexpr Units::Unit sqrt(Units::Unit x) noexcept { x.root(2); return x; }
+	inline constexpr Units::Unit cbrt(Units::Unit x) noexcept { x.root(3); return x; }
+	inline constexpr Units::Unit pow (Units::Unit x, int8_t exp) noexcept { return x^exp; }
 }
