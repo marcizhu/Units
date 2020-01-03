@@ -25,7 +25,7 @@ always welcome!
 While working on another project of mine, I needed a library to be able to represent units of different kinds and be able to
 use them in numerical calculations. The main objective of this library is to convert most used units to a standardized set
 (the SI system) and to provide a single, lightweight type (instead of a bunch of different data types) that can represent
-any unit from a wide range of disciplines such as, but not limited to, physics, engineering, medicine, optics, computing,
+any unit from a wide range of disciplines such as, but not limited to, physics, chemistry, engineering, medicine, optics, computing,
 statistics, etc. This "single-type" philosophy helps using this library inside virtual functions where a type has to be
 specified at compile time.
 
@@ -45,12 +45,22 @@ The provided `CMakeLists.txt` file exports a `Units::Units` library, so if your 
 that. If not, just copy the `include/Units` folder to your `include`/`vendor` library and you're ready to go!
 
 ## Usage
-The library provides two types:
-- `Units::Unit`: A type to hold the unit of a quantity. It measures 4 bytes, and supports all basic operators (`+`,`-`,`*`,`/`)
-- `Units::Quantity`: A `Units::Unit` and a double in a single package! It's 16 bytes (8 for the double, 4 for the unit and 4 for
-alignment requirements). The last 4 bytes can be used for any purpose and to save any kind of data the user desires.
+The main type provided by this library is `Units::Unit`, which is defined inside `Units/Unit.h`. This type allows to hold
+different units (for example, `m`, `m^3`, `m/s`, `W`, `J`...) but it does not allow to hold any magnitude associated with it.
+For this reason, the type `Units::Quantity` is provided. It holds a unit plus a double, which will store the magnitude of the
+measurement, allowing to represent, for example, `11.3 m`, `0.01 J`, `25.0 m/s` and so on.
 
-This is a small example on how to use the library:
+The main objective of the library is to provide a transparent API for quantities. Therefore, a `Units::Quantity` can be
+treated as if it was a `double`. The library provides addons to the `std` namespace to allow using `std::sin`, `std::abs`,
+`std::pow`, `std::sqrt` and other functions. Quantities can also be compared (`>`, `<`, `>=`, `<=`, `==`, `!=`) and assigned
+to an arbitrary value/unit combination.
+
+The size of a `Units::Unit` is exactly 4 bytes, while the size of a `Units::Quantity` is 16 bytes (8 bytes for the double, 4
+bytes for the unit, and 4 bytes due to alignment requirements). The last 4 bytes of a quantity can be used to store any
+arbitrary 32-bit unsigned number, allowing to store some user data.
+
+The following minimalistic snippet shows the use of `constexpr` quantities and how to use some of the provided physics
+constants:
 ```cpp
 #include <iostream> // for std::cout
 
@@ -69,6 +79,63 @@ int main()
   
     std::cout << "Calculated earth gravity:  " << gravity << std::endl;
     std::cout << "Theoretical earth gravity: " << Constants::Physics::g0 << std::endl;
+}
+```
+
+The following code showcases a more detailed use of units and quantities, as well as some of the `std` addons, comparison
+operators, input and output:
+```cpp
+#include <iostream> // for std::cout
+
+#include "Units/Units.h" // provides commonly used units and conversions
+#include "Units/Unit.h" // for Units::Unit
+#include "Units/Quantity.h" // for Units::Quantity
+#include "Units/IO.h" // provides operator<< for units & quantities
+
+int main()
+{
+    using namespace Units;
+    
+    // Units
+    Unit velocity = meters / second; // Now velocity is a unit of "m/s"
+    Unit vel = m / s; // same as before, but using short unit names
+    Unit accel = m / (s^2); // accleration, in m/s^2
+    Unit power1 = W; // Watt
+    Unit power2 = J / s; // Same as W
+    
+    Unit input1, input2;
+    std::cin >> input1; // Read unit from std::cin
+    input2 = from_string("Sv"); // Read unit from string. input2 == Units::Sv (Sievert)
+    
+    std::cout << velocity << std::endl; // Will print "m/s"
+    std::cout << accel << std::endl; // Will print "m/s²"
+    std::cout << power << std::endl; // Will print "W"
+    
+    std::string formatted = to_string(accel); // formatted = "m/s²"
+    
+    // Quantities
+    Quantity speed1 = 25.0 * m / s; // Represents 25 m/s
+    Quantity speed2 = 25.0 * vel; // Same as above, but using a predefined unit
+    Quantity speed3 = 60.0 * mile / h; // This will convert the 60.0 mph to m/s internally
+    
+    std::cout << speed1 << std::endl; // Will print "25.00 m/s"
+    std::cout << speed2 << std::endl; // Will print "25.00 m/s"
+    std::cout << speed3 << std::endl; // Will print "6.706 m/s"
+    
+    std::string formatted = to_string(speed1); // formatted == "25.00 m/s"
+    
+    Quantity input3, input4;
+    std::cin >> input3; // Read quantity from std::cin
+    input4 = from_string("100.3 kHz"); Read quantity from string. Represents 100.3 kilohertz
+    
+    // Comparison operators
+    if(speed3 > speed1)
+        std::cout << "60 mph > 25 m/s" << std::endl;
+    
+    // Arithmetic functions
+    Quantity q1 = std::pow(speed1, 2); // 625 m²/s²
+    Quantity q2 = speed1^2; // Same as above
+    Quantity q3 = std::sqrt(q1); // 25 m/s again
 }
 ```
 
