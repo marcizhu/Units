@@ -14,6 +14,7 @@ always welcome!
 - [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
+- [Limitations](#limitations)
 - [Benchmarks](#benchmarks)
 - [Alternatives](#alternatives)
 - [Maintainer](#maintainer)
@@ -59,8 +60,8 @@ The size of a `Units::Unit` is exactly 4 bytes, while the size of a `Units::Quan
 bytes for the unit, and 4 bytes due to alignment requirements). The last 4 bytes of a quantity can be used to store any
 arbitrary 32-bit unsigned number, allowing to store some user data.
 
-The following minimalistic snippet shows the use of `constexpr` quantities and how to use some of the provided physics
-constants:
+The following minimalistic example shows the use of `constexpr` quantities and how to use some of the provided physics
+constants and units:
 ```cpp
 #include <iostream> // for std::cout
 
@@ -82,69 +83,35 @@ int main()
 }
 ```
 
-The following code showcases a more detailed use of units and quantities, as well as some of the `std` addons, comparison
-operators, input and output:
-```cpp
-#include <iostream> // for std::cout
+For more examples, please take a look at the [examples/](https://github.com/marcizhu/Units/tree/master/examples) folder.
 
-#include "Units/Units.h" // provides commonly used units and conversions
-#include "Units/Unit.h" // for Units::Unit
-#include "Units/Quantity.h" // for Units::Quantity
-#include "Units/IO.h" // provides operator<< for units & quantities
+## Limitations
+- Any unit is represented using the seven SI units + currency + count + radians. Any unit not representable using a combination of the units stated earlier is not representable using this library.
+- Due to the small size of the `Units::Unit` type, the powers that can be represented by units are limited:
+    - meters: [-8, +7]
+    - kilogram: [-4, +3]
+    - seconds: [-8, +7]
+    - ampere: [-4, +3]
+    - kelvin: [-8, +7]
+    - mole: [-2, +1]
+    - radians: [-4, +3]
+    - candela: [-2, +1]
+    - currency: [-2, +1]
+    - count: [-2, +1]
 
-int main()
-{
-    using namespace Units;
+    Exceeding this range for the exponents of their respective unit is undefined behavior. So, for example, `m^10` or `kg^-5`
+    is UB. Please, be careful when the exponent of a unit is near the specified limit or when executing long formulas.
     
-    // Units
-    Unit velocity = meters / second; // Now velocity is a unit of "m/s"
-    Unit vel = m / s; // same as before, but using short unit names
-    Unit accel = m / (s^2); // accleration, in m/s^2
-    Unit power1 = W; // Watt
-    Unit power2 = J / s; // Same as W
-    
-    Unit input1, input2;
-    std::cin >> input1; // Read unit from std::cin
-    input2 = from_string("Sv"); // Read unit from string. input2 == Units::Sv (Sievert)
-    
-    std::cout << velocity << std::endl; // Will print "m/s"
-    std::cout << accel << std::endl; // Will print "m/s²"
-    std::cout << power << std::endl; // Will print "W"
-    
-    std::string formatted = to_string(accel); // formatted = "m/s²"
-    
-    // Quantities
-    Quantity speed1 = 25.0 * m / s; // Represents 25 m/s
-    Quantity speed2 = 25.0 * vel; // Same as above, but using a predefined unit
-    Quantity speed3 = 60.0 * mile / h; // This will convert the 60.0 mph to m/s internally
-    
-    std::cout << speed1 << std::endl; // Will print "25.00 m/s"
-    std::cout << speed2 << std::endl; // Will print "25.00 m/s"
-    std::cout << speed3 << std::endl; // Will print "6.706 m/s"
-    
-    std::string formatted = to_string(speed1); // formatted == "25.00 m/s"
-    
-    Quantity input3, input4;
-    std::cin >> input3; // Read quantity from std::cin
-    input4 = from_string("100.3 kHz"); Read quantity from string. Represents 100.3 kilohertz
-    
-    // Comparison operators
-    if(speed3 > speed1)
-        std::cout << "60 mph > 25 m/s" << std::endl;
-    
-    // Arithmetic functions
-    Quantity q1 = std::pow(speed1, 2); // 625 m²/s²
-    Quantity q2 = speed1^2; // Same as above
-    Quantity q3 = std::sqrt(q1); // 25 m/s again
-}
-```
+- The library uses a `double` to store real values, which should suffice in most cases but may lead to loss of precission on really long calculations.
+- Currency is supported to allow basic financial calculations (like representing `$/W` or anything similar to that). This library is not recommended for economic or financial calculations.
+- Fractional units are not supported. An exception to this is √Hz, which can be represented and is used for measuring amplitude spectral density (`V/√Hz`) and other similar units. √Hz can be obtained using `std::sqrt(Hz)`.
 
 ## Benchmarks
 Comming soon
 
 ## Alternatives
 This library is intended to be usable in most scenarios requiring units and run-time type checking, but this might not be
-enough for you. If that's the case, you might want to check the following libraries:
+enough for you. If that's the case, you might want to check out the following libraries:
 - [LLNL/units](https://github.com/LLNL/units): A run-time C++ library for working with units of measurement and conversions between them.
 - [Boost.Units](https://www.boost.org/doc/libs/1_69_0/doc/html/boost_units.html): Zero-overhead dimensional analysis and unit/quantity manipulation and conversion in C++.
 - [nholthaus/units](https://github.com/nholthaus/units): A compile-time, header-only, dimensional analysis and unit conversion library built on C++14 with no dependencies.
