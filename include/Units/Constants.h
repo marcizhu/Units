@@ -33,7 +33,7 @@ namespace Units
 			// Vacuum electric permittivity
 			constexpr Quantity eps0  = 8.8541878128e-12 * F / m;
 			// Permeability of free space
-			constexpr Quantity mu0   = 1.25663706212e-6 * N / (A^-2);
+			constexpr Quantity mu0   = 1.25663706212e-6 * N / (A^2);
 			// Electron rest mass
 			constexpr Quantity me    = 9.1093837015e-31 * kg;
 			// Proton rest mass
@@ -44,7 +44,7 @@ namespace Units
 			constexpr Quantity ke    = 8.9875517887e9 * N * (m^2) * (C^-2);
 			// Fine-structure constant
 			constexpr Quantity alpha = (e^2) / (2 * eps0 * h * c);
-			//  hyperfine structure transition frequency of the caesium-133 atom
+			// Hyperfine structure transition frequency of the caesium-133 atom
 			constexpr Quantity fCs   = 9192631770.0 * Hz;
 			// Boltzman constant (2019 redefinition)
 			constexpr Quantity k     = 1.380649e-23 * J / K;
@@ -56,8 +56,6 @@ namespace Units
 			constexpr Quantity sigma = 5.67036713e-8 * W / ((m^2) * (K^4));
 			// Standard gravity on Earth
 			constexpr Quantity g0    = 9.80665 * m / (s^2);
-			// Fine-structure constant
-			constexpr double fsc     = 1.0 / 137.035999084;
 			// Proton-to-electron mass ratio
 			constexpr double PtoEmr  = 1836.15267343;
 			// W-to-Z boson mass ratio

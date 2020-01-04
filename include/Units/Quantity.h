@@ -55,9 +55,6 @@ namespace Units
 		constexpr bool operator==(const Quantity& other) const { return mag == other.mag && unit_ == other.unit_ && extra_ == other.extra_; }
 		constexpr bool operator!=(const Quantity& other) const { return !(*this == other); }
 
-		explicit constexpr operator int() const { return (int)mag; }
-		explicit constexpr operator double() const { return mag; }
-
 		void root(int8_t power) { mag = std::pow(mag, 1.0 / (double)power); unit_.root(power); }
 		constexpr void pow(int8_t power) { mag = pow(mag, power); unit_ ^= power; }
 	};

@@ -610,7 +610,7 @@ namespace Units
 		constexpr Quantity psi   = 6894.757293168 * Pa;
 		constexpr Quantity inHg  = 3376.849669 * Pa; // at 60 degF
 		constexpr Quantity mmHg  = 133.322387415 * Pa;
-		constexpr Quantity torr  = 101325.0 / 760.0 * Pa; // this is really close to mmHg
+		constexpr Quantity torr  = 101325.0 / 760.0 * Pa;
 		constexpr Quantity inH2O = 248.843004 * Pa; // at 60 degF
 		constexpr Quantity mmH2O = 1.0 / 25.4 * inH2O; // at 60 degF
 		constexpr Quantity atm   = 101325.0 * Pa;
