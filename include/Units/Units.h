@@ -141,13 +141,13 @@ namespace Units
 	constexpr Quantity t     = tonne;
 
 	// Atomic mass units
-	constexpr Quantity Da    = 1.6605388628e-27 * kg;
+	constexpr Quantity Da    = 1.66053906660e-27 * kg;
 	constexpr Quantity u     = Da;
 
 	// Units from the CGS system
 	namespace CGS
 	{
-		constexpr double c_const        = 29979245800.0; // speed of light in cm/s
+		constexpr double   c_const      = 29979245800.0; // speed of light in cm/s
 		constexpr Quantity erg          = 1e-7 * J;
 		constexpr Quantity dyn          = 1e-5 * N;
 		constexpr Quantity barye        = 0.1 * Pa;
@@ -606,7 +606,7 @@ namespace Units
 	// Units related to pressure
 	namespace Pressure
 	{
-		constexpr Quantity bar   = 1.0e+5 * Pa;
+		constexpr Quantity bar   = 1.0e5 * Pa;
 		constexpr Quantity psi   = 6894.757293168 * Pa;
 		constexpr Quantity inHg  = 3376.849669 * Pa; // at 60 degF
 		constexpr Quantity mmHg  = 133.322387415 * Pa;

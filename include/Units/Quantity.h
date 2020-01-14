@@ -16,10 +16,27 @@ namespace Units
 		Unit unit_;
 		uint32_t extra_;
 
-		constexpr static double pow(double n, int8_t exp) { return exp == 0 ? 1.0 : (exp < 0 ? (1.0 / pow(n, -exp)) : (n * pow(n, exp - 1))); }
+		template<typename T>
+		constexpr static T pow2(T const& x) { return x * x; }
+
+		template<typename T, typename IntType>
+		constexpr static T pow_n_impl(const T& x, IntType n)
+		{
+			return n == 1 ? x
+				: n % 2 ? x * pow2(pow_n_impl(x, n / 2))
+				: pow2(pow_n_impl(x, n / 2));
+		}
+
+		template<typename T, typename IntType>
+		constexpr static T pow_n(const T& x, IntType n)
+		{
+			return n == 0 ? T(1)
+				: n > 0 ? pow_n_impl(x, n)
+				: T(1) / pow_n_impl(x, -n);
+		}
 
 	public:
-		constexpr Quantity() : mag(1.0), extra_(0) {}
+		constexpr Quantity() : mag(0.0), extra_(0) {}
 		constexpr Quantity(double mag) : mag(mag), extra_(0) {}
 		constexpr Quantity(Unit u) : mag(1.0), unit_(u), extra_(0) {}
 		constexpr Quantity(double mag, Unit u) : mag(mag), unit_(u), extra_(0) {}
@@ -32,7 +49,7 @@ namespace Units
 		constexpr void extra(uint32_t val) { extra_ = val; }
 
 		// quan * quan
-		constexpr Quantity operator^(int8_t exp) const { return Quantity(pow(mag, exp), unit_ ^ exp); }
+		constexpr Quantity operator^(int8_t exp) const { return Quantity(pow_n(mag, exp), unit_ ^ exp); }
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(mag + rhs.mag, unit_ + rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(mag - rhs.mag, unit_ - rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(mag * rhs.mag, unit_ * rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
@@ -52,11 +69,20 @@ namespace Units
 		constexpr bool operator>=(const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag >= other.mag; }
 		constexpr bool operator<=(const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag <= other.mag; }
 
-		constexpr bool operator==(const Quantity& other) const { return mag == other.mag && unit_ == other.unit_ && extra_ == other.extra_; }
+		/** @brief Inequality comparison operator */
 		constexpr bool operator!=(const Quantity& other) const { return !(*this == other); }
 
+		/** @brief Equality comparison operator */
+		constexpr bool operator==(const Quantity& other) const
+		{
+			if(unit_ != other.unit_) throw std::logic_error("Invalid comparison");
+
+			return mag    == other.mag
+				&& extra_ == other.extra_;
+		}
+
 		void root(int8_t power) { mag = std::pow(mag, 1.0 / (double)power); unit_.root(power); }
-		constexpr void pow(int8_t power) { mag = pow(mag, power); unit_ ^= power; }
+		constexpr void pow(int8_t power) { mag = pow_n(mag, power); unit_ ^= power; }
 	};
 
 	// real * quan

@@ -79,7 +79,7 @@ int main()
     constexpr Quantity gravity = Constants::Physics::G * earth_mass / (earth_radius^2);
   
     std::cout << "Calculated earth gravity:  " << gravity << std::endl;
-    std::cout << "Theoretical earth gravity: " << Constants::Physics::g0 << std::endl;
+    std::cout << "Theoretical earth gravity: " << Constants::Physics::g << std::endl;
     
     // Output would be:
     // Calculated earth gravity:  9.820 m/s²
