@@ -160,7 +160,7 @@ namespace Units
 	std::string to_string_scientific(Quantity q)
 	{
 		using namespace details;
-		return magnitude_scientific(q.magnitude()) + ' ' + unit_raw(q.unit());
+		return magnitude_scientific(q.getMagnitude()) + ' ' + unit_raw(q.getUnit());
 	}
 
 	std::string to_string(Unit un)
@@ -188,9 +188,9 @@ namespace Units
 	std::string to_string(Quantity q)
 	{
 		using namespace details;
-		if(q.unit().eflag()) return "ERROR";
-		if(q.unit() == Unit()) return magnitude_scientific(q.magnitude());
+		if(q.getUnit().eflag()) return "ERROR";
+		if(q.getUnit() == Unit()) return magnitude_scientific(q.getMagnitude());
 
-		return magnitude_prefix(q.magnitude()) + to_string(q.unit());
+		return magnitude_prefix(q.getMagnitude()) + to_string(q.getUnit());
 	}
 }

@@ -5,54 +5,49 @@
 #include <stdexcept>
 
 #include "Unit.h"
+#include "Math.h"
 
 namespace Units
 {
 	class Quantity
 	{
 	private:
-		double mag;
-		Unit unit_;
-		uint32_t extra_;
+		double magnitude;
+		float uncertainty;
+		Unit unit;
 
-		template<typename T>
-		constexpr static T pow2(T const& x) { return x * x; }
-
-		template<typename T, typename IntType>
-		constexpr static T pow_n_impl(const T& x, IntType n)
+		static constexpr float uncert_add (const Quantity& lhs, const Quantity& rhs)
 		{
-			return n == 1 ? x
-				: n % 2 ? x * pow2(pow_n_impl(x, n / 2))
-				: pow2(pow_n_impl(x, n / 2));
+			float a = lhs.uncertainty;
+			float b = rhs.uncertainty;
+
+			return Math::sqrt(a * a + b * b);
 		}
 
-		template<typename T, typename IntType>
-		constexpr static T pow_n(const T& x, IntType n)
+		static constexpr float uncert_prod(const Quantity& lhs, const Quantity& rhs)
 		{
-			return n == 0 ? T(1)
-				: n > 0 ? pow_n_impl(x, n)
-				: T(1) / pow_n_impl(x, -n);
+			float a = lhs.uncertainty / static_cast<float>(lhs.magnitude);
+			float b = rhs.uncertainty / static_cast<float>(rhs.magnitude);
+
+			return (float)Math::abs(lhs.magnitude * rhs.magnitude) * Math::sqrt(a * a + b * b);
 		}
 
 	public:
-		constexpr Quantity() : mag(0.0), extra_(0) {}
-		constexpr Quantity(double mag) : mag(mag), extra_(0) {}
-		constexpr Quantity(Unit u) : mag(1.0), unit_(u), extra_(0) {}
-		constexpr Quantity(double mag, Unit u) : mag(mag), unit_(u), extra_(0) {}
-		constexpr Quantity(double mag, Unit u, uint32_t c) : mag(mag), unit_(u), extra_(c) {}
+		constexpr Quantity(Unit u = Unit())                             : magnitude(1.0), uncertainty(0.0f), unit(u) {}
+		constexpr Quantity(double mag, Unit u = Unit(), float c = 0.0f) : magnitude(mag), uncertainty(c),    unit(u) {}
 
-		constexpr double magnitude() const { return mag; }
-		constexpr Unit unit() const { return unit_; }
-		constexpr uint32_t extra() const { return extra_; }
+		constexpr double getMagnitude() const { return magnitude; }
+		constexpr float getUncertainty() const { return uncertainty; }
+		constexpr Unit getUnit() const { return unit; }
 
-		constexpr void extra(uint32_t val) { extra_ = val; }
+		constexpr void setUncertainty(float val) { uncertainty = val; }
 
 		// quan * quan
-		constexpr Quantity operator^(int8_t exp) const { return Quantity(pow_n(mag, exp), unit_ ^ exp); }
-		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(mag + rhs.mag, unit_ + rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
-		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(mag - rhs.mag, unit_ - rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
-		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(mag * rhs.mag, unit_ * rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
-		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(mag / rhs.mag, unit_ / rhs.unit_, (extra_ != 0 ? extra_ : rhs.extra_)); }
+		constexpr Quantity operator^(int8_t exp) const { return Quantity(Math::pow_n(magnitude, exp), unit ^ exp); }
+		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
+		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
+		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }
+		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit, uncert_prod(*this, rhs)); }
 
 		constexpr Quantity& operator^=(int8_t exp)          { *this = *this ^ exp; return *this; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { *this = *this + rhs; return *this; }
@@ -60,13 +55,13 @@ namespace Units
 		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
 		constexpr Quantity& operator/=(const Quantity& rhs) { *this = *this / rhs; return *this; }
 
-		constexpr Quantity operator+() const { return Quantity(+mag, unit_, extra_); }
-		constexpr Quantity operator-() const { return Quantity(-mag, unit_, extra_); }
+		constexpr Quantity operator+() const { return Quantity(+magnitude, unit, uncertainty); }
+		constexpr Quantity operator-() const { return Quantity(-magnitude, unit, uncertainty); }
 
-		constexpr bool operator> (const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag >  other.mag; }
-		constexpr bool operator< (const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag <  other.mag; }
-		constexpr bool operator>=(const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag >= other.mag; }
-		constexpr bool operator<=(const Quantity& other) const { if(unit_ != other.unit_) throw std::logic_error("Invalid comparison"); return mag <= other.mag; }
+		constexpr bool operator> (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude >  other.magnitude; }
+		constexpr bool operator< (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <  other.magnitude; }
+		constexpr bool operator>=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude >= other.magnitude; }
+		constexpr bool operator<=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <= other.magnitude; }
 
 		/** @brief Inequality comparison operator */
 		constexpr bool operator!=(const Quantity& other) const { return !(*this == other); }
@@ -74,14 +69,14 @@ namespace Units
 		/** @brief Equality comparison operator */
 		constexpr bool operator==(const Quantity& other) const
 		{
-			if(unit_ != other.unit_) throw std::logic_error("Invalid comparison");
+			if(unit != other.unit) throw std::logic_error("Invalid comparison");
 
-			return mag    == other.mag
-				&& extra_ == other.extra_;
+			return magnitude   == other.magnitude
+				&& uncertainty == other.uncertainty;
 		}
 
-		void root(int8_t power) { mag = std::pow(mag, 1.0 / (double)power); unit_.root(power); }
-		constexpr void pow(int8_t power) { mag = pow_n(mag, power); unit_ ^= power; }
+		constexpr void root(int8_t power) { magnitude = Math::pow(magnitude, 1.0 / (double)power); unit.root(power); }
+		constexpr void pow (int8_t power) { magnitude = Math::pow(magnitude,       (double)power); unit.pow (power); }
 	};
 
 	// real * quan
