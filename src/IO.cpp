@@ -6,6 +6,7 @@
 
 #include "Units/Units.h"
 #include "Units/IO.h"
+#include "Units/extras/StdAdditions.h"
 
 namespace Units
 {
@@ -23,62 +24,61 @@ namespace Units
 
 #define PAIR_TYPE std::pair<Unit, const char*>
 
-		// units to divide into tests to explore common multiplier units
+		// units to divide into tests to explore common unit products
 		static std::array<PAIR_TYPE, 11> testUnits
 		{{
-			PAIR_TYPE { s, "s" },
-			PAIR_TYPE { s^2, "s²" },
-			PAIR_TYPE { m, "m" },
-			PAIR_TYPE { m^2, "m²" },
-			PAIR_TYPE { m^3, "m³" },
-			PAIR_TYPE { kg, "kg" },
-			PAIR_TYPE { currency, "$" },
-			PAIR_TYPE { std::sqrt(Hz), "√Hz" },
-			PAIR_TYPE { volt, "V" },
-			PAIR_TYPE { watt, "W" },
-			PAIR_TYPE { count, "item" }
+			PAIR_TYPE { s            , "s"    },
+			PAIR_TYPE { s^2          , "s²"   },
+			PAIR_TYPE { m            , "m"    },
+			PAIR_TYPE { m^2          , "m²"   },
+			PAIR_TYPE { m^3          , "m³"   },
+			PAIR_TYPE { kg           , "kg"   },
+			PAIR_TYPE { currency     , "$"    },
+			PAIR_TYPE { std::sqrt(Hz), "√Hz"  },
+			PAIR_TYPE { volt         , "V"    },
+			PAIR_TYPE { watt         , "W"    },
+			PAIR_TYPE { count        , "item" }
 		}};
 
 #undef PAIR_TYPE
 
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
-			{ Unit(), "" },
-			{ m, "m" },
-			{ m^2, "m²" },
-			{ m^3, "m³" },
-			{ kg, "kg" },
-			{ s, "s" },
-			{ A, "A" },
-			{ K, "K" },
-			{ mol, "mol" },
-			{ Cd, "Cd" },
-			{ rad, "rad" },
-			{ sr, "sr" },
-			{ Hz, "Hz" },
-			{ N, "N" },
-			{ Pa, "Pa" },
-			{ J, "J" },
-			{ W, "W" },
-			{ C, "C" },
-			{ V, "V" },
-			{ F, "F" },
-			{ ohm, "Ω" },
-			{ S, "S" },
-			{ Wb, "Wb" },
-			{ T, "T" },
-			{ H, "H" },
-			{ lm, "lm" },
-			{ lx, "lx" },
-			{ Bq, "Bq" },
-			{ std::sqrt(Hz), "√Hz" },
-		//	{ Gy, "Gy" },
-			{ Sv, "Sv" },
-			{ kat, "kat" },
-			{ currency, "$" },
-			{ count, "item" },
-			{ rad * W, "W" },
-			{ Power::VAR, "VAR" } // Volt-ampere reactive
+			{ Unit()       , ""     },
+			{ m            , "m"    },
+			{ kg           , "kg"   },
+			{ s            , "s"    },
+			{ A            , "A"    },
+			{ K            , "K"    },
+			{ mol          , "mol"  },
+			{ Cd           , "Cd"   },
+			{ rad          , "rad"  },
+			{ sr           , "sr"   },
+			{ Hz           , "Hz"   },
+			{ N            , "N"    },
+			{ Pa           , "Pa"   },
+			{ J            , "J"    },
+			{ W            , "W"    },
+			{ C            , "C"    },
+			{ V            , "V"    },
+			{ F            , "F"    },
+			{ ohm          , "Ω"    },
+			{ S            , "S"    },
+			{ Wb           , "Wb"   },
+			{ T            , "T"    },
+			{ H            , "H"    },
+			{ lm           , "lm"   },
+			{ lx           , "lx"   },
+			{ Bq           , "Bq"   },
+//			{ Gy           , "Gy"   },
+			{ Sv           , "Sv"   },
+			{ kat          , "kat"  },
+			{ rad * W      , "W"    },
+			{ currency     , "$"    },
+			{ count        , "item" },
+			{ std::sqrt(Hz), "√Hz"  },
+//			{ Power::VA    , "VA"   } // Volt-ampere
+			{ Power::VAR   , "VAR"  } // Volt-ampere reactive
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)

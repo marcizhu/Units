@@ -216,19 +216,3 @@ namespace Units
 }
 
 static_assert(sizeof(Units::Unit) == 4, "Invalid size of Unit");
-
-namespace std
-{
-	template<>
-	struct hash<Units::Unit>
-	{
-		size_t operator()(Units::Unit x) const noexcept
-		{
-			return hash<uint32_t>()(*reinterpret_cast<const uint32_t*>(&x));
-		}
-	};
-
-	inline constexpr Units::Unit sqrt(Units::Unit x) noexcept { x.root(2); return x; }
-	inline constexpr Units::Unit cbrt(Units::Unit x) noexcept { x.root(3); return x; }
-	inline constexpr Units::Unit pow (Units::Unit x, int8_t exp) noexcept { return x^exp; }
-}
