@@ -62,6 +62,8 @@ namespace Units
 			constexpr double WtoZmr  = 0.88153;
 			/** @brief Molar mass of Carbon-12 */
 			constexpr Quantity mC12  = 11.9999999958e-3 * kg / mol;
+			/** @brief Faraday's constant */
+			constexpr Quantity F     = 9.64853321233100184e4 * C / mol;
 		}
 
 		namespace Maths
