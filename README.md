@@ -43,7 +43,7 @@ and all of them are `constexpr` to allow running some (or all) operations at com
 
 ## Install
 The provided `CMakeLists.txt` file exports a `Units::Units` library, so if your build system is based on CMake, you can use
-that. If not, just copy the `include/Units` folder to your `include`/`vendor` folder and you're ready to go!
+that. If not, copy the `include/Units` folder to your `include`/`vendor` folder and you're ready to go!
 
 ## Usage
 The main type provided by this library is `Units::Unit`, which is defined inside `Units/Unit.h`. This type allows to hold
@@ -51,7 +51,7 @@ different units (for example, `m`, `m^3`, `m/s`, `W`, `J`...) but it does not al
 For this reason, the type `Units::Quantity` is provided. It holds a unit plus a double, which will store the magnitude of the
 measurement, allowing to represent, for example, `11.3 m`, `0.01 J`, `25.0 m/s` and so on.
 
-The main objective of the library is to provide a transparent API for quantities. Therefore, a `Units::Quantity` can be
+The main goal of the library is to provide a transparent API for quantities. Thus, a `Units::Quantity` can be
 treated as if it was a `double`. The library provides addons to the `std` namespace to allow using `std::sin`, `std::abs`,
 `std::pow`, `std::sqrt` and other functions. Quantities can also be compared (`>`, `<`, `>=`, `<=`, `==`, `!=`), assigned
 to an arbitrary value/unit combination, read from `std::cin`/`std::string` and written to `std::cout`/`std::string`.
