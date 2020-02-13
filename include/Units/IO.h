@@ -34,7 +34,34 @@ namespace Units
 	 * way.
 	 */
 	std::string to_string(Quantity q);
+
+	/**
+	 * @brief Convert a string to a unit
+	 *
+	 * Converts the given string to a unit.
+	 *
+	 * @param unit The string to be converted
+	 * @param un   The unit where the result will be stored
+	 *
+	 * @returns `true` on success, `false` on failure.
+	 */
+	bool from_string(const std::string& unit, Unit& un);
+
+	/**
+	 * @brief Convert a string to a quantity
+	 *
+	 * Converts the given string to a quantity.
+	 *
+	 * @param unit The string to be converted
+	 * @param q    The quantity where the result will be stored
+	 *
+	 * @returns `true` on success, `false` on failure.
+	 */
+	bool from_string(const std::string& unit, Quantity& q);
 }
 
-inline std::ostream& operator<<(std::ostream& os, Units::Quantity& q) { return os << to_string(q); }
-inline std::ostream& operator<<(std::ostream& os, Units::Unit& u)     { return os << to_string(u); }
+inline std::ostream& operator<<(std::ostream& os, const Units::Quantity& q) { return os << Units::to_string(q); }
+inline std::ostream& operator<<(std::ostream& os, const Units::Unit& u)     { return os << Units::to_string(u); }
+
+inline std::istream& operator>>(std::istream& is, Units::Quantity& u) { (void)u; return is; }
+inline std::istream& operator>>(std::istream& is, Units::Unit& u)     { (void)u; return is; }
