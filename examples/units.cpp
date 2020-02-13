@@ -16,7 +16,7 @@ int main()
 
 	Unit input1, input2;
 	std::cin >> input1; // Read unit from std::cin
-	input2 = from_string("Sv"); // Read unit from string. input2 == Units::Sv (Sievert)
+	from_string("Sv", input2); // Read unit from string. input2 == Units::Sv (Sievert)
 
 	std::cout << velocity << std::endl; // Will print "m/s"
 	std::cout << accel << std::endl; // Will print "m/s²"
