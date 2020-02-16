@@ -42,7 +42,7 @@ namespace Units
 				return abs(x - y) <= std::numeric_limits<T>::epsilon();
 			}
 
-			template <typename T>
+			template<typename T>
 			constexpr T exp(const T& x, const T& sum, const T& n, int i, const T& t)
 			{
 				return feq(sum, sum + t/n) ?
@@ -53,7 +53,7 @@ namespace Units
 			template<typename T>
 			constexpr T log_iter(const T& x, const T& y)
 			{
-				return y + T{2} * (x - Math::exp(y)) / (x + Math::exp(y));
+				return y + T(2) * (x - Math::exp(y)) / (x + Math::exp(y));
 			}
 
 			template<typename T>
@@ -75,7 +75,7 @@ namespace Units
 			// doubles, YMMV.
 
 			// if x <= 1, we will multiply by e^5 repeatedly until x > 1
-			template <typename T>
+			template<typename T>
 			constexpr T logGT(const T& x)
 			{
 				return x > T(0.25) ? log(x, T(0)) :
@@ -83,7 +83,7 @@ namespace Units
 			}
 
 			// if x >= 2e10, we will divide by e^5 repeatedly until x < 2e10
-			template <typename T>
+			template<typename T>
 			constexpr T logLT(const T& x)
 			{
 				return x < T(1024) ? log(x, T(0)) :
@@ -91,7 +91,7 @@ namespace Units
 			}
 		}
 
-		/** @brief Calculate X^n */
+		/** @brief Calculate X^n, n being an integer */
 		template<typename T, typename IntType>
 		constexpr static T pow_n(
 			const T& x,
@@ -103,39 +103,89 @@ namespace Units
 				 : T(1) / details::pow_n_impl(x, -n);
 		}
 
+		/** @brief Is NaN (Not a number) */
+		template<typename FloatingPoint>
+		constexpr bool isnan(
+			const FloatingPoint& x,
+			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
+		{
+			return x != x;
+		}
+
+		/** @brief Is infinity */
+		template<typename FloatingPoint>
+		constexpr bool isinf(
+			const FloatingPoint& x,
+			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
+		{
+			return
+				x ==  std::numeric_limits<FloatingPoint>::infinity() ||
+				x == -std::numeric_limits<FloatingPoint>::infinity();
+		}
+
 		/** @brief Calculate e^X */
 		template<typename FloatingPoint>
 		constexpr FloatingPoint exp(
 			const FloatingPoint& x,
 			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type*)
 		{
-			return details::exp(x, FloatingPoint(1), FloatingPoint(1), 2, x);
+			return
+				isnan(x) ? x :
+				isinf(x) ? x :
+				details::exp(x, FloatingPoint(1), FloatingPoint(1), 2, x);
 		}
 
 		/** @brief Calculate log(X), aka natural log of X */
-		template <typename FloatingPoint>
+		template<typename FloatingPoint>
 		constexpr FloatingPoint log(
 			const FloatingPoint& x,
 			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
 		{
-			return x < 0 ? throw std::domain_error("log") :
+			return x < FloatingPoint(0) ? throw std::domain_error("log") :
+				x == FloatingPoint(0) ? -std::numeric_limits<FloatingPoint>::infinity() :
+				isnan(x) ? x :
+				isinf(x) ? x :
 				x >= FloatingPoint(1024) ?
 					details::logLT(x) :
 					details::logGT(x);
 		}
 
-		/** @brief Calculate square root of X^Y */
-		template<typename T>
-		constexpr static T pow(const T& x, const T& y)
+		/** @brief Calculate X^Y, X & Y being floating point numbers */
+		template<typename FloatingPoint>
+		constexpr static FloatingPoint pow(
+			const FloatingPoint& x,
+			const FloatingPoint& y,
+			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
 		{
-			return x == T(0) ? T(0) : exp(y * log(x));
+			return x == FloatingPoint(0) ? FloatingPoint(0) : exp(y * log(x));
+		}
+
+		/** @brief Calculate X^Y, X & Y being integers */
+		template<typename IntType>
+		constexpr static IntType pow(
+			const IntType& x,
+			const IntType& y,
+			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
+		{
+			return pow_n(x, y);
 		}
 
 		/** @brief Calculate square root of X, aka X^(1/2) */
-		template<typename T>
-		constexpr static T sqrt(const T& x)
+		template<typename FloatingPoint>
+		constexpr static FloatingPoint sqrt(
+			const FloatingPoint& x,
+			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
 		{
-			return x < T(0) ? throw std::domain_error("sqrt") : pow(x, T(0.5));
+			return x < FloatingPoint(0) ? throw std::domain_error("sqrt") : pow(x, FloatingPoint(0.5));
+		}
+
+		/** @brief Calculate square root of X, aka X^(1/2) */
+		template<typename IntType>
+		constexpr static double sqrt(
+			const IntType& x,
+			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
+		{
+			return x < IntType(0) ? throw std::domain_error("sqrt") : pow<double>((double)x, 0.5);
 		}
 	}
 }
