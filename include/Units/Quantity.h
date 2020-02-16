@@ -16,7 +16,7 @@ namespace Units
 		float uncertainty;
 		Unit unit;
 
-		static constexpr float uncert_add (const Quantity& lhs, const Quantity& rhs)
+		static constexpr float uncert_add(const Quantity& lhs, const Quantity& rhs)
 		{
 			float a = lhs.uncertainty;
 			float b = rhs.uncertainty;
@@ -26,10 +26,18 @@ namespace Units
 
 		static constexpr float uncert_prod(const Quantity& lhs, const Quantity& rhs)
 		{
-			float a = lhs.uncertainty / static_cast<float>(lhs.magnitude);
-			float b = rhs.uncertainty / static_cast<float>(rhs.magnitude);
+			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
+			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
 
 			return (float)Math::abs(lhs.magnitude * rhs.magnitude) * Math::sqrt(a * a + b * b);
+		}
+
+		static constexpr float uncert_div(const Quantity& lhs, const Quantity& rhs)
+		{
+			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
+			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
+
+			return (float)Math::abs(lhs.magnitude / rhs.magnitude) * Math::sqrt(a * a + b * b);
 		}
 
 	public:
@@ -47,7 +55,7 @@ namespace Units
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }
-		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit, uncert_prod(*this, rhs)); }
+		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit, uncert_div (*this, rhs)); }
 
 		constexpr Quantity& operator^=(int8_t exp)          { *this = *this ^ exp; return *this; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { *this = *this + rhs; return *this; }
@@ -89,10 +97,10 @@ namespace Units
 	constexpr Quantity operator*(const Unit& lhs, double rhs) { return Quantity(lhs) * Quantity(rhs); }
 	constexpr Quantity operator/(const Unit& lhs, double rhs) { return Quantity(lhs) / Quantity(rhs); }
 
-	template<typename T> constexpr bool operator> (const Quantity& lhs, const T rhs) { return lhs >  Quantity(rhs); }
-	template<typename T> constexpr bool operator< (const Quantity& lhs, const T rhs) { return lhs <  Quantity(rhs); }
-	template<typename T> constexpr bool operator>=(const Quantity& lhs, const T rhs) { return lhs >= Quantity(rhs); }
-	template<typename T> constexpr bool operator<=(const Quantity& lhs, const T rhs) { return lhs <= Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator> (const Quantity& lhs, const T rhs) { return lhs >  Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator< (const Quantity& lhs, const T rhs) { return lhs <  Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator>=(const Quantity& lhs, const T rhs) { return lhs >= Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator<=(const Quantity& lhs, const T rhs) { return lhs <= Quantity(rhs); }
 
 	template<typename T> constexpr bool operator> (const T lhs, const Quantity& rhs) { return Quantity(lhs) >  rhs; }
 	template<typename T> constexpr bool operator< (const T lhs, const Quantity& rhs) { return Quantity(lhs) <  rhs; }
