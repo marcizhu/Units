@@ -47,6 +47,7 @@ namespace Units
 	constexpr Quantity one;
 	constexpr Quantity percent = 0.01 * one;
 	constexpr Unit     error   = Unit(nullptr);
+	constexpr Unit     none    = one.getUnit();
 
 	// The base SI units
 	constexpr Unit meter   (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -818,6 +819,80 @@ namespace Units
 		constexpr Quantity FLOPS = FLOP / s;
 		/** @brief Million instructions per second */
 		constexpr Quantity MIPS  = (1.0e6 * count / s);
+	}
+
+	// Log-based units
+	namespace Log
+	{
+		/** @brief Neper */
+		constexpr Unit neper  = Unit(0, true);
+		/** @brief Neper. Power unit */
+		constexpr Unit neperP = Unit(1, true);
+
+		/** @brief Bel */
+		constexpr Unit bel  = Unit(2, true);
+		/** @brief Bel. A-weighted */
+		constexpr Unit belA = Unit(3, true);
+		/** @brief Bel. Assume power always */
+		constexpr Unit belP = Unit(4, true);
+
+		/** @brief Decibel */
+		constexpr Unit dB  = Unit(5, true);
+		/** @brief Decibel. A-weighted */
+		constexpr Unit dBA = Unit(6, true);
+		/** @brief Decibel. Ratio relative to carrier wave */
+		constexpr Unit dBc = Unit(7, true);
+		/** @brief Decibel. Assume power always */
+		constexpr Unit dBP = Unit(8, true);
+
+		/** @brief Natural logarithm */
+		constexpr Unit log         = Unit(9, true);
+		/** @brief Base 2 logarithm */
+		constexpr Unit log2        = Unit(10, true);
+		/** @brief Base 10 logarithm */
+		constexpr Unit log10       = Unit(11, true);
+		/** @brief Negative base 10 logarithm */
+		constexpr Unit neglog10    = Unit(12, true);
+		/** @brief Negative base 100 logarithm */
+		constexpr Unit neglog100   = Unit(13, true);
+		/** @brief Negative base 1000 logarithm */
+		constexpr Unit neglog1000  = Unit(14, true);
+		/** @brief Negative base 50000 logarithm */
+		constexpr Unit neglog50000 = Unit(15, true);
+
+		/** @brief Short form for Bels */
+		constexpr Unit B = bel;
+
+		/** @brief Sound pressure level for Bels */
+		constexpr Quantity B_SPL  = 2e-5 * Pa * B;
+		/** @brief Sound pressure level for decibels */
+		constexpr Quantity dBSPL  = 2e-5 * Pa * dB;
+		/** @brief Voltage relative to 1 volt RMS, regardless of impedance */
+		constexpr Quantity BV     =  B * V;
+		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
+		constexpr Quantity BmV    =  B * milli * V;
+		/** @brief Voltage relative to 1 microvolt RMS. */
+		constexpr Quantity BuV    =  B * micro * V;
+		/** @brief Voltage relative to 10 nanovolt RMS. */
+		constexpr Quantity B10nV  =  B * 10.0 * nano * V;
+		/** @brief Power relative to 1 Watt. */
+		constexpr Quantity BW     =  B * W;
+		/** @brief Power relative to 1 kiloWatt. */
+		constexpr Quantity Bk     =  B * kilo * W;
+		/** @brief Voltage relative to 1 volt RMS, regardless of impedance */
+		constexpr Quantity dBV    = dB * V;
+		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
+		constexpr Quantity dBmV   = dB * milli * V;
+		/** @brief Voltage relative to 1 microvolt RMS. */
+		constexpr Quantity dBuV   = dB * micro * V;
+		/** @brief Voltage relative to 10 nanovolt RMS. */
+		constexpr Quantity dB10nV = dB * 10.0 * nano * V;
+		/** @brief Power relative to 1 Watt. */
+		constexpr Quantity dBW    = dB * W;
+		/** @brief Power relative to 1 kiloWatt. */
+		constexpr Quantity dBk    = dB * kilo * W;
+		/** @brief Power relative to 1 milliWatt across 50-ohm impedance */
+		constexpr Quantity dBm    = dB * milli * W;
 	}
 
 	/** @brief Parts per million */

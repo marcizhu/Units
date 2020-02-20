@@ -75,6 +75,16 @@ namespace Units
 		}
 
 	public:
+		constexpr explicit Unit(uint8_t num, bool eq_flag)
+			: meter_(0), kilogram_(0), second_(0), ampere_(0), kelvin_(0), mole_(0), radians_(0),
+			  candela_(0), currency_(0), count_(0), e_flag(0), i_flag(0), eq_flag(eq_flag)
+		{
+			if(num > 0b0001'1111) *this = Unit(nullptr);
+
+			count_   = (num & 0b0000'0011) >> 0;
+			radians_ = (num & 0b0001'1100) >> 2;
+		}
+
 		constexpr explicit Unit() : meter_(0), kilogram_(0), second_(0), ampere_(0), kelvin_(0), mole_(0), radians_(0), candela_(0), currency_(0), count_(0), e_flag(0), i_flag(0), eq_flag(0) {}
 		constexpr explicit Unit(std::nullptr_t) : meter_(0), kilogram_(0), second_(0), ampere_(0), kelvin_(0), mole_(0), radians_(0), candela_(0), currency_(0), count_(0), e_flag(1), i_flag(0), eq_flag(0) {}
 
@@ -159,7 +169,7 @@ namespace Units
 			ret.candela_  -= rhs.candela_;
 			ret.i_flag    ^= rhs.i_flag;
 			ret.e_flag    |= rhs.e_flag;
-			ret.eq_flag   |= rhs.eq_flag;
+			ret.eq_flag   ^= rhs.eq_flag;
 			return ret;
 		}
 
