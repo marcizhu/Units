@@ -77,8 +77,21 @@ namespace Units
 			{ currency     , "$"    },
 			{ count        , "item" },
 			{ std::sqrt(Hz), "√Hz"  },
-//			{ Power::VA    , "VA"   } // Volt-ampere
-			{ Power::VAR   , "VAR"  } // Volt-ampere reactive
+//			{ Power::VA    , "VA"   }, // Volt-ampere
+			{ Power::VAR   , "VAR"  }, // Volt-ampere reactive
+
+			{ Log::B,      "B"  },
+			{ Log::belA,   "BA" },
+
+			{ Log::dB , "dB"  },
+			{ Log::dBA, "dBA" },
+			{ Log::dBc, "dBc" },
+
+			{ Log::neper, "Np" },
+
+			{ Pa * Log::B , "B SPL"   },
+			{ Pa * Log::dB, "dB SPL" },
+			{ Log::B * V  , "BV" }
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)
