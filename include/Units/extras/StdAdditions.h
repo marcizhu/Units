@@ -14,7 +14,7 @@ namespace std
 	{
 		size_t operator()(Units::Unit x) const noexcept
 		{
-			return hash<uint32_t>()(*reinterpret_cast<const uint32_t*>(&x));
+			return hash<uint32_t>()(x.base_units()) ^ hash<double>()(x.unit_multiplier());
 		}
 	};
 

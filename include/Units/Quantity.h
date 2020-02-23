@@ -13,8 +13,8 @@ namespace Units
 	{
 	private:
 		double magnitude;
-		float uncertainty;
 		Unit unit;
+		float uncertainty;
 
 		static constexpr float uncert_add(const Quantity& lhs, const Quantity& rhs)
 		{
@@ -41,8 +41,8 @@ namespace Units
 		}
 
 	public:
-		constexpr Quantity(Unit u = Unit())                             : magnitude(1.0), uncertainty(0.0f), unit(u) {}
-		constexpr Quantity(double mag, Unit u = Unit(), float c = 0.0f) : magnitude(mag), uncertainty(c),    unit(u) {}
+		constexpr Quantity(Unit u = Unit())                             : magnitude(1.0), unit(u), uncertainty(0.0f) {}
+		constexpr Quantity(double mag, Unit u = Unit(), float c = 0.0f) : magnitude(mag), unit(u), uncertainty(c)    {}
 
 		constexpr double getMagnitude() const { return magnitude; }
 		constexpr float getUncertainty() const { return uncertainty; }
@@ -108,4 +108,4 @@ namespace Units
 	template<typename T> constexpr bool operator<=(const T lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
 }
 
-static_assert(sizeof(Units::Quantity) == 16, "Invalid size of Quantity");
+static_assert(sizeof(Units::Quantity) == 24, "Invalid size of Quantity");

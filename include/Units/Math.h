@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <stdexcept>
 #include <limits>
+#include <cmath>
 
 namespace Units
 {
@@ -89,6 +90,32 @@ namespace Units
 				return x < T(1024) ? log(x, T(0)) :
 					logLT<T>(x / T(e() * e() * e() * e() * e())) + T(5);
 			}
+
+			//
+			// issubnormal_or_zero
+			//
+			template<typename FloatType>
+			inline constexpr bool
+			issubnormal_or_zero(
+				FloatType x,
+				typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
+			{
+				return x > 0
+					? x <  std::numeric_limits<double>::min()
+					: x > -std::numeric_limits<double>::min();
+			}
+		}
+
+		//
+		// iszero
+		//
+		template<typename FloatType>
+		inline constexpr bool
+		iszero(
+			FloatType x,
+			typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
+		{
+			return x == FloatType(0);
 		}
 
 		/** @brief Calculate X^n, n being an integer */
@@ -186,6 +213,20 @@ namespace Units
 			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
 		{
 			return x < IntType(0) ? throw std::domain_error("sqrt") : pow<double>((double)x, 0.5);
+		}
+
+		template<typename FloatType>
+		constexpr static int
+		fpclassify(
+			FloatType x,
+			typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
+		{
+			return
+				isnan(x) ? FP_NAN
+				: isinf(x) ? FP_INFINITE
+				: iszero(x) ? FP_ZERO
+				: details::issubnormal_or_zero(x) ? FP_SUBNORMAL
+				: FP_NORMAL;
 		}
 	}
 }

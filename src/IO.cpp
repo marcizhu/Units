@@ -25,7 +25,7 @@ namespace Units
 #define PAIR_TYPE std::pair<Unit, const char*>
 
 		// units to divide into tests to explore common unit products
-		static std::array<PAIR_TYPE, 11> testUnits
+		static std::array<PAIR_TYPE, 12> testUnits
 		{{
 			PAIR_TYPE { s            , "s"    },
 			PAIR_TYPE { s^2          , "s²"   },
@@ -37,7 +37,9 @@ namespace Units
 			PAIR_TYPE { std::sqrt(Hz), "√Hz"  },
 			PAIR_TYPE { volt         , "V"    },
 			PAIR_TYPE { watt         , "W"    },
-			PAIR_TYPE { count        , "item" }
+			PAIR_TYPE { count        , "item" },
+			PAIR_TYPE { h            , "h" }
+
 		}};
 
 #undef PAIR_TYPE
@@ -82,16 +84,24 @@ namespace Units
 
 			{ Log::B,      "B"  },
 			{ Log::belA,   "BA" },
+			{ Log::BmV, "BmV" },
 
 			{ Log::dB , "dB"  },
 			{ Log::dBA, "dBA" },
 			{ Log::dBc, "dBc" },
+			{ Log::dBm, "dBm" },
+			{ Log::dBmV, "dBmV" },
+			{ Log::dBuV, "dBuV" },
 
 			{ Log::neper, "Np" },
 
 			{ Pa * Log::B , "B SPL"   },
 			{ Pa * Log::dB, "dB SPL" },
-			{ Log::B * V  , "BV" }
+			{ Log::B * V  , "BV" },
+			{ km          , "km"   },
+			{ h           , "h"   },
+			{ L           , "L"    },
+			{ ft          , "ft"   }
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)
