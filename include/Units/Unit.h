@@ -51,27 +51,6 @@ namespace Units
 			}
 		} dim;
 
-		/// Round a value to the expected level of precision of a double
-		/*constexpr static double cround(double val)
-		{
-		#ifdef UNITS_NO_IEEE754
-			int exp;
-			auto f = frexp(val, &exp);
-			f = round(f * 1e12);
-			return ldexp(f * 1e-12, exp);
-		#else
-			//what this is doing is assuming IEEE 754 floating point (double precision) definition
-			// taking 40 bits out of 52(roughly 10^12), adding 2^11 to do rounding
-			// using memcpy to abide by strict aliasing rules
-			// based on godbolt.org this gets compiled to 2 instructions + the register loads
-			std::uint64_t bits = *(uint64_t*)&val;
-			bits += 0x800ULL;
-			bits &= 0xFFFFFFFFFFFFF000ULL;
-			val = *(double*)&bits;
-			return val;
-		#endif
-		}*/
-
 		constexpr static bool compare_round_equals(double val1, double val2)
 		{
 			auto v1 = val1 - val2;
@@ -83,6 +62,11 @@ namespace Units
 		}
 
 		constexpr void check_unit(const Unit& other) const { if(*this != other) throw std::logic_error("Incompatible units!"); }
+
+		constexpr bool isRootHz() const
+		{
+			return dim == Dimensions(0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+		}
 
 		constexpr bool isHz() const
 		{
@@ -98,23 +82,6 @@ namespace Units
 				&& dim.count    == 0
 				&& dim.e_flag   == 0
 				&& dim.i_flag   == 0
-				&& dim.eq_flag  == 0;
-		}
-
-		constexpr bool isRootHz() const
-		{
-			return dim.meter    == 0
-				&& dim.kilogram == 0
-				&& dim.second   == -1
-				&& dim.ampere   == 0
-				&& dim.kelvin   == 0
-				&& dim.radians  == 0
-				&& dim.mole     == 0
-				&& dim.candela  == 0
-				&& dim.currency == 0
-				&& dim.count    == 0
-				&& dim.e_flag   == 0
-				&& dim.i_flag   == 1
 				&& dim.eq_flag  == 0;
 		}
 
@@ -148,37 +115,25 @@ namespace Units
 		constexpr explicit Unit(std::nullptr_t)                 : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0) {}
 		constexpr          Unit(double mult, const Unit& other) : multiplier(mult * other.multiplier), dim(other.dim) {}
 
-		constexpr Unit(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool iflag = false, bool eqflag = false)
-			: multiplier(1.0), dim(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, 0, iflag, eqflag) {}
+		constexpr Unit(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool iflag = false)
+			: multiplier(1.0), dim(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, 0, iflag, 0) {}
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&dim; }
 
 		constexpr double unit_multiplier() const { return multiplier; }
 
-		// Get the meter power
-		constexpr int meter() const { return dim.meter; }
-		// Get the kilogram power
-		constexpr int kg() const { return dim.kilogram; }
-		// Get the second power
-		constexpr int second() const { return dim.second; }
-		// Get the ampere power
-		constexpr int ampere() const { return dim.ampere; }
-		// Get the Kelvin power
-		constexpr int kelvin() const { return dim.kelvin; }
-		// Get the radian power
-		constexpr int radian() const { return dim.radians; }
-		// Get the mole power
-		constexpr int mole() const { return dim.mole; }
-		// Get the candela power
-		constexpr int candela() const { return dim.candela; }
-		// Get the currency power
+		constexpr int meter   () const { return dim.meter;    }
+		constexpr int kg      () const { return dim.kilogram; }
+		constexpr int second  () const { return dim.second;   }
+		constexpr int ampere  () const { return dim.ampere;   }
+		constexpr int kelvin  () const { return dim.kelvin;   }
+		constexpr int radian  () const { return dim.radians;  }
+		constexpr int mole    () const { return dim.mole;     }
+		constexpr int candela () const { return dim.candela;  }
 		constexpr int currency() const { return dim.currency; }
-		// Get the count power
-		constexpr int count() const { return dim.count; }
-		// Imaginary flag
-		constexpr bool iflag() const { return dim.i_flag; }
-		// Error flag
-		constexpr bool eflag() const { return dim.e_flag; }
+		constexpr int count   () const { return dim.count;    }
+		constexpr bool iflag  () const { return dim.i_flag;   }
+		constexpr bool eflag  () const { return dim.e_flag;   }
 
 		constexpr Unit operator^(int8_t exp) const
 		{
