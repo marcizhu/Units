@@ -792,43 +792,47 @@ namespace Units
 	namespace Log
 	{
 		/** @brief Neper */
-		constexpr Unit neper  = Unit(0, true);
+		constexpr Unit neper  = Unit(static_cast<int8_t>(0));
 		/** @brief Neper. Power unit */
-		constexpr Unit neperP = Unit(1, true);
+		constexpr Unit neperP = Unit(1);
 
 		/** @brief Bel */
-		constexpr Unit bel  = Unit(2, true);
+		constexpr Unit bel  = Unit(2);
 		/** @brief Bel. A-weighted */
-		constexpr Unit belA = Unit(3, true);
+		constexpr Unit belA = Unit(3);
 		/** @brief Bel. Assume power always */
-		constexpr Unit belP = Unit(4, true);
+		constexpr Unit belP = Unit(4);
 
 		/** @brief Decibel */
-		constexpr Unit dB  = Unit(5, true);
+		constexpr Unit dB  = Unit(5);
 		/** @brief Decibel. A-weighted */
-		constexpr Unit dBA = Unit(6, true);
+		constexpr Unit dBA = Unit(6);
 		/** @brief Decibel. Ratio relative to carrier wave */
-		constexpr Unit dBc = Unit(7, true);
+		constexpr Unit dBc = Unit(7);
 		/** @brief Decibel. Assume power always */
-		constexpr Unit dBP = Unit(8, true);
+		constexpr Unit dBP = Unit(8);
 
 		/** @brief Natural logarithm */
-		constexpr Unit log         = Unit(9, true);
+		constexpr Unit log         = neper;
 		/** @brief Base 2 logarithm */
-		constexpr Unit log2        = Unit(10, true);
+		constexpr Unit log2        = Unit(10);
 		/** @brief Base 10 logarithm */
-		constexpr Unit log10       = Unit(11, true);
+		constexpr Unit log10       = Unit(11);
 		/** @brief Negative base 10 logarithm */
-		constexpr Unit neglog10    = Unit(12, true);
+		constexpr Unit neglog10    = Unit(12);
 		/** @brief Negative base 100 logarithm */
-		constexpr Unit neglog100   = Unit(13, true);
+		constexpr Unit neglog100   = Unit(13);
 		/** @brief Negative base 1000 logarithm */
-		constexpr Unit neglog1000  = Unit(14, true);
+		constexpr Unit neglog1000  = Unit(14);
 		/** @brief Negative base 50000 logarithm */
-		constexpr Unit neglog50000 = Unit(15, true);
+		constexpr Unit neglog50000 = Unit(15);
 
 		/** @brief Short form for Bels */
 		constexpr Unit B = bel;
+		/** @brief Short form for Bels, A-weighted */
+		constexpr Unit BA = belA;
+		/** @brief Short form for Bels. Assume always power */
+		constexpr Unit BP = belP;
 
 		/** @brief Sound pressure level for Bels */
 		constexpr Unit B_SPL  = Unit(2e-5, Pa * B);
@@ -837,9 +841,9 @@ namespace Units
 		/** @brief Voltage relative to 1 volt RMS, regardless of impedance */
 		constexpr Unit BV     = B * V;
 		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
-		constexpr Unit BmV    = Unit(milli, B * V);
+		constexpr Unit BmV    = Unit(1e-3, B * V);
 		/** @brief Voltage relative to 1 microvolt RMS. */
-		constexpr Unit BuV    = Unit(micro, B * V);
+		constexpr Unit BuV    = Unit(1e-6, B * V);
 		/** @brief Voltage relative to 10 nanovolt RMS. */
 		constexpr Unit B10nV  = Unit(10.0 * nano, B * V);
 		/** @brief Power relative to 1 Watt. */
@@ -849,9 +853,9 @@ namespace Units
 		/** @brief Voltage relative to 1 volt RMS, regardless of impedance */
 		constexpr Unit dBV    = dB * V;
 		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
-		constexpr Unit dBmV   = Unit(milli, dB * V);
+		constexpr Unit dBmV   = Unit(1e-3, dB * V);
 		/** @brief Voltage relative to 1 microvolt RMS. */
-		constexpr Unit dBuV   = Unit(micro, dB * V);
+		constexpr Unit dBuV   = Unit(1e-6, dB * V);
 		/** @brief Voltage relative to 10 nanovolt RMS. */
 		constexpr Unit dB10nV = Unit(10.0 * nano, dB * V);
 		/** @brief Power relative to 1 Watt. */
@@ -872,6 +876,8 @@ namespace Units
 		constexpr Unit pH       = Unit(1.0, mol / L); // negative log10;
 		constexpr Unit molarity = Unit(1.0, mol / L);
 		constexpr Unit molality = Unit(1.0, mol / kg);
+		/** @brief pH, unit for acidity */
+		constexpr Unit pH       = mol / L * Log::neglog10;
 	}
 
 	/** @brief Units related to quantities of data */

@@ -72,14 +72,18 @@ namespace Units
 		constexpr bool operator<=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <= other.magnitude; }
 
 		/** @brief Inequality comparison operator */
-		constexpr bool operator!=(const Quantity& other) const { return !(*this == other); }
+		constexpr bool operator!=(const Quantity& other) const
+		{
+			return unit        != other.unit
+				|| magnitude   != other.magnitude
+				|| uncertainty != other.uncertainty;
+		}
 
 		/** @brief Equality comparison operator */
 		constexpr bool operator==(const Quantity& other) const
 		{
-			if(unit != other.unit) throw std::logic_error("Invalid comparison");
-
-			return magnitude   == other.magnitude
+			return unit        == other.unit
+				&& magnitude   == other.magnitude
 				&& uncertainty == other.uncertainty;
 		}
 
@@ -97,15 +101,15 @@ namespace Units
 	constexpr Quantity operator*(const Unit& lhs, double rhs) { return Quantity(lhs) * Quantity(rhs); }
 	constexpr Quantity operator/(const Unit& lhs, double rhs) { return Quantity(lhs) / Quantity(rhs); }
 
-	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator> (const Quantity& lhs, const T rhs) { return lhs >  Quantity(rhs); }
-	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator< (const Quantity& lhs, const T rhs) { return lhs <  Quantity(rhs); }
-	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator>=(const Quantity& lhs, const T rhs) { return lhs >= Quantity(rhs); }
-	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator<=(const Quantity& lhs, const T rhs) { return lhs <= Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator> (const Quantity& lhs, const T& rhs) { return lhs >  Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator< (const Quantity& lhs, const T& rhs) { return lhs <  Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator>=(const Quantity& lhs, const T& rhs) { return lhs >= Quantity(rhs); }
+	template<typename T, typename std::enable_if< std::is_convertible<T, double>::value >::type > constexpr bool operator<=(const Quantity& lhs, const T& rhs) { return lhs <= Quantity(rhs); }
 
-	template<typename T> constexpr bool operator> (const T lhs, const Quantity& rhs) { return Quantity(lhs) >  rhs; }
-	template<typename T> constexpr bool operator< (const T lhs, const Quantity& rhs) { return Quantity(lhs) <  rhs; }
-	template<typename T> constexpr bool operator>=(const T lhs, const Quantity& rhs) { return Quantity(lhs) >= rhs; }
-	template<typename T> constexpr bool operator<=(const T lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
+	template<typename T> constexpr bool operator> (const T& lhs, const Quantity& rhs) { return Quantity(lhs) >  rhs; }
+	template<typename T> constexpr bool operator< (const T& lhs, const Quantity& rhs) { return Quantity(lhs) <  rhs; }
+	template<typename T> constexpr bool operator>=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) >= rhs; }
+	template<typename T> constexpr bool operator<=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
 }
 
 static_assert(sizeof(Units::Quantity) == 24, "Invalid size of Quantity");

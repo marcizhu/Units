@@ -75,7 +75,7 @@ namespace Units
 		constexpr static bool compare_round_equals(double val1, double val2)
 		{
 			auto v1 = val1 - val2;
-			if (v1 == 0.0 || Math::fpclassify(v1) == FP_SUBNORMAL) {
+			if (v1 == 0.0 || Math::fpclassify(v1) == FP_SUBNORMAL || Math::abs(v1) < 1e-15) {
 				return true;
 			}
 
@@ -135,8 +135,8 @@ namespace Units
 		}
 
 	public:
-		constexpr explicit Unit(uint8_t num, bool eq_flag)
-			: multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, eq_flag)
+		constexpr explicit Unit(uint8_t num)
+			: multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 		{
 			if(num > 0b0001'1111) *this = Unit(nullptr);
 
@@ -144,9 +144,9 @@ namespace Units
 			dim.radians = (num & 0b0001'1100) >> 2;
 		}
 
-		constexpr explicit Unit()                               : multiplier(1.0),  dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
-		constexpr explicit Unit(std::nullptr_t)                 : multiplier(1.0),  dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0) {}
-		constexpr          Unit(double mult, const Unit& other) : multiplier(mult), dim(other.dim) {}
+		constexpr explicit Unit()                               : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+		constexpr explicit Unit(std::nullptr_t)                 : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0) {}
+		constexpr          Unit(double mult, const Unit& other) : multiplier(mult * other.multiplier), dim(other.dim) {}
 
 		constexpr Unit(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool iflag = false, bool eqflag = false)
 			: multiplier(1.0), dim(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, 0, iflag, eqflag) {}
@@ -234,6 +234,8 @@ namespace Units
 			ret.dim.mole     -= rhs.dim.mole;
 			ret.dim.radians  -= rhs.dim.radians;
 			ret.dim.candela  -= rhs.dim.candela;
+			ret.dim.currency -= rhs.dim.currency;
+			ret.dim.count    -= rhs.dim.count;
 			ret.dim.i_flag   ^= rhs.dim.i_flag;
 			ret.dim.e_flag   |= rhs.dim.e_flag;
 			ret.dim.eq_flag  ^= rhs.dim.eq_flag;
@@ -265,7 +267,7 @@ namespace Units
 				return;
 			}
 
-			multiplier = Math::pow(multiplier, 1.0 / (double)power);
+			multiplier    = Math::pow(multiplier, 1.0 / (double)power);
 			dim.meter    /= power;
 			dim.kilogram /= power;
 			dim.second   /= power;
