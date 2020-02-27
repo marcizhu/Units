@@ -117,8 +117,8 @@ namespace Units
 	constexpr Unit kat = katal;
 
 	// Not approved for use alone (needed for use with prefixes)
-	constexpr Unit liter = Unit(0.001, m^3);
-	constexpr Unit gram  = Unit(0.001, kg);
+	constexpr Unit     liter = Unit(0.001, m^3);
+	constexpr Quantity gram  = 0.001 * kg;
 
 	// Alternate (non-US) spellings:
 	constexpr Unit metre = meter;
@@ -127,24 +127,24 @@ namespace Units
 
 	// Short unit names
 	// Distance units
-	constexpr Unit cm = Unit(centi, m);
-	constexpr Unit km = Unit(kilo,  m);
-	constexpr Unit mm = Unit(milli, m);
-	constexpr Unit nm = Unit(nano,  m);
+	constexpr Quantity cm = centi * m;
+	constexpr Quantity km = kilo  * m;
+	constexpr Quantity mm = milli * m;
+	constexpr Quantity nm = nano  * m;
 
 	// Volume units
-	constexpr Unit L  = liter;
-	constexpr Unit mL = Unit(milli, L);
+	constexpr Unit L      = liter;
+	constexpr Quantity mL = milli * L;
 
 	// Mass units
-	constexpr Unit g     = gram;
-	constexpr Unit mg    = Unit(milli,   g);
-	constexpr Unit tonne = Unit(1000.0, kg);
-	constexpr Unit t     = tonne;
+	constexpr Quantity g     = gram;
+	constexpr Quantity mg    = milli  *  g;
+	constexpr Quantity tonne = 1000.0 * kg;
+	constexpr Quantity t     = tonne;
 
 	// Atomic mass units
-	constexpr Unit Da    = Unit(1.66053906660e-27, kg);
-	constexpr Unit u     = Da;
+	constexpr Unit Da = Unit(1.66053906660e-27, kg);
+	constexpr Unit u  = Da;
 
 	/** @brief Units from the CGS system */
 	namespace CGS
@@ -153,23 +153,23 @@ namespace Units
 		constexpr Unit erg          = Unit(1e-7, J);
 		constexpr Unit dyn          = Unit(1e-5, N);
 		constexpr Unit barye        = Unit(0.1, Pa);
-		constexpr Unit gal          = cm / (s^2);
+		constexpr Unit gal          = Unit(0.01, m / (s^2));
 		constexpr Unit poise        = Unit(0.1, Pa * s);
 		constexpr Unit stokes       = Unit(1e-4, (m^2) / s);
-		constexpr Unit kayser       = Unit(1.0, one / cm);
+		constexpr Unit kayser       = Unit(100.0, one / m);
 		constexpr Unit oersted      = Unit(1000.0 / 4.0 / Constants::pi, A / m);
 		constexpr Unit gauss        = Unit(1e-4, T);
 		constexpr Unit debye        = Unit(1.0 / (c_const * 1e20), C * m);
 		constexpr Unit maxwell      = Unit(1e-8, Wb);
 		constexpr Unit biot         = Unit(10.0, A);
-		constexpr Unit gilbert      = oersted * cm;
-		constexpr Unit stilb        = Unit(1.0, Cd / (cm^2));
-		constexpr Unit lambert      = Unit(1.0 / Constants::pi, Cd / (cm^2));
+		constexpr Unit gilbert      = Unit(0.01, oersted * m);
+		constexpr Unit stilb        = Unit(10000.0, Cd / (m^2));
+		constexpr Unit lambert      = Unit(10000.0 / Constants::pi, Cd / (m^2));
 		constexpr Unit phot         = Unit(10000, lx);
 		constexpr Unit curie        = Unit(3.7e10, Bq);
 		constexpr Unit roentgen     = Unit(2.58e-4, C / kg);
 		constexpr Unit REM          = Unit(0.01, Sv);
-		constexpr Unit RAD          = Unit(100, erg / g);
+		constexpr Unit RAD          = Unit(100000, erg / kg);
 		constexpr Unit emu          = Unit(0.001, A * m * m);
 		constexpr Unit langley      = Unit(41840.0, J / (m^2));
 		constexpr Unit unitpole     = Unit(1.256637061436e-7, Wb);
@@ -217,8 +217,6 @@ namespace Units
 		constexpr Unit week = Unit(7, day);
 		/** @brief Median calendar year */
 		constexpr Unit yr   = Unit(8760.0, hour);
-		/** @brief Fortnight (two weeks) */
-		constexpr Unit fortnight = Unit(14, day);
 
 		/** @brief Sidereal day */
 		constexpr Unit sday = Unit(365.24 / 366.24, day);
@@ -238,6 +236,9 @@ namespace Units
 		constexpr Unit moj  = Unit(1.0 / 12.0, aj);
 		/** @brief mean Gregorian month */
 		constexpr Unit mog  = Unit(1.0 / 12.0, ag);
+
+		/** @brief Fortnight (two weeks) */
+		constexpr Quantity fortnight = 14 * day;
 	}
 
 	constexpr Unit h   = Time::hour;
@@ -246,10 +247,10 @@ namespace Units
 	/** @brief International units */
 	namespace i
 	{
-		constexpr Unit grain = Unit(64.79891, mg);
+		constexpr Unit grain = Unit(64.79891 * micro, kg);
 
-		constexpr Unit point = Unit(127.0 / 360.0, mm);
-		constexpr Unit pica  = Unit(127.0 / 30.0, mm);
+		constexpr Unit point = Unit(0.127 / 360.0, m);
+		constexpr Unit pica  = Unit(0.127 / 30.0, m);
 		constexpr Unit inch  = Unit(0.0254, m);
 		constexpr Unit foot  = Unit(0.3048, m);
 
@@ -272,9 +273,9 @@ namespace Units
 	/** @brief Avoirdupois units, common international standard */
 	namespace av
 	{
-		constexpr Unit dram              = Unit(1.7718451953125, g);
+		constexpr Unit dram              = Unit(0.0017718451953125, kg);
 		constexpr Unit ounce             = Unit(16.0, dram);
-		constexpr Unit pound             = Unit(453.59237, g);
+		constexpr Unit pound             = Unit(0.45359237, kg);
 		constexpr Unit hundredweight     = Unit(100.0, pound);
 		constexpr Unit longhundredweight = Unit(112.0, pound);
 		constexpr Unit ton               = Unit(2000.0, pound);
@@ -295,7 +296,7 @@ namespace Units
 	namespace Troy
 	{
 		constexpr Unit pennyweight = Unit(24.0, i::grain);
-		constexpr Unit oz          = Unit(31.1034768, g);
+		constexpr Unit oz          = Unit(0.0311034768, kg);
 		constexpr Unit pound       = Unit(12.0, oz);
 	}
 
@@ -373,21 +374,21 @@ namespace Units
 	/** @brief FDA-specific volume units in metric */
 	namespace Metric
 	{
-		constexpr Unit tbsp        = Unit(15.0, mL);
-		constexpr Unit tsp         = Unit(5.0, mL);
-		constexpr Unit floz        = Unit(30.0, mL);
-		constexpr Unit cup         = Unit(250.0, mL);
-		constexpr Unit cup_uslegal = Unit(240.0, mL);
-		constexpr Unit carat       = Unit(0.2, g);
+		constexpr Unit tbsp        = Unit(0.015, L);
+		constexpr Unit tsp         = Unit(0.005, L);
+		constexpr Unit floz        = Unit(0.030, L);
+		constexpr Unit cup         = Unit(0.250, L);
+		constexpr Unit cup_uslegal = Unit(0.240, L);
+		constexpr Unit carat       = Unit(0.0002, kg);
 	}
 
 	/** @brief Some Canada specific variants on the us units */
 	namespace Canada
 	{
-		constexpr Unit tbsp     = Unit(15.0, mL);
-		constexpr Unit tsp      = Unit(5.0, mL);
-		constexpr Unit cup      = Unit(250.0, mL);
-		constexpr Unit cup_trad = Unit(227.3045, mL);
+		constexpr Unit tbsp     = Unit(0.015, L);
+		constexpr Unit tsp      = Unit(0.005, L);
+		constexpr Unit cup      = Unit(0.250, L);
+		constexpr Unit cup_trad = Unit(0.2273045, L);
 
 		namespace Grain
 		{
@@ -398,18 +399,18 @@ namespace Units
 	/** @brief Some Australia specific variants on the us units */
 	namespace Australia
 	{
-		constexpr Unit tbsp = Unit(20.0, mL);
-		constexpr Unit tsp  = Unit(5.0, mL);
-		constexpr Unit cup  = Unit(250.0, mL);
+		constexpr Unit tbsp = Unit(0.020, L);
+		constexpr Unit tsp  = Unit(0.005, L);
+		constexpr Unit cup  = Unit(0.250, L);
 	}
 
 	/** @brief Imperial system units (British) */
 	namespace Imp
 	{
-		constexpr Unit inch = Unit(2.539998, cm);
+		constexpr Unit inch = Unit(0.02539998, m);
 		constexpr Unit foot = Unit(12.0, inch);
 
-		constexpr Unit thou          = Unit(0.0254, mm);
+		constexpr Unit thou          = Unit(0.0000254, m);
 		constexpr Unit barleycorn    = Unit(1.0 / 3.0, inch);
 		constexpr Unit rod           = Unit(16.5, foot);
 		constexpr Unit chain         = Unit(4.0, rod);
@@ -428,7 +429,7 @@ namespace Units
 		constexpr Unit rood  = Unit(1011.7141056, m^2);
 
 		// Volume
-		constexpr Unit gallon = Unit(4546.09, mL);
+		constexpr Unit gallon = Unit(4.54609, L);
 		constexpr Unit quart  = Unit(0.25, gallon);
 		constexpr Unit pint   = Unit(0.5, quart);
 		constexpr Unit gill   = Unit(0.25, pint);
@@ -444,8 +445,8 @@ namespace Units
 		constexpr Unit minim  = Unit(1.0 / 60.0, dram);
 
 		// Weight
-		constexpr Unit drachm        = Unit(1.7718451953125, g);
-		constexpr Unit stone         = Unit(6350.29318, g);
+		constexpr Unit drachm        = Unit(0.0017718451953125, kg);
+		constexpr Unit stone         = Unit(6.35029318, kg);
 		constexpr Unit hundredweight = Unit(112.0,  av::pound);
 		constexpr Unit ton           = Unit(2240.0, av::pound);
 		constexpr Unit slug          = Unit(14.59390294, kg);
@@ -461,7 +462,7 @@ namespace Units
 		constexpr Unit pound        = Unit(12.0, ounce);
 		constexpr Unit pint         = Imp::pint;
 		constexpr Unit gallon       = Imp::gallon;
-		constexpr Unit metric_ounce = Unit(28.0, g);
+		constexpr Unit metric_ounce = Unit(0.028, kg);
 	}
 
 	/** @brief Nautical units */
@@ -469,7 +470,7 @@ namespace Units
 	{
 		constexpr Unit fathom = Unit(2.0, yd);
 		constexpr Unit cable  = Unit(120, fathom);
-		constexpr Unit mile   = Unit(1.852, km);
+		constexpr Unit mile   = Unit(1852.0, m);
 		constexpr Unit knot   = mile / h;
 		constexpr Unit league = Unit(3.0, mile);
 	}
@@ -484,15 +485,15 @@ namespace Units
 		constexpr Unit sho   = Unit(2401.0 / 1331.0, L);
 		constexpr Unit kan   = Unit(15.0 / 4.0, kg);
 		constexpr Unit go    = Unit(2401.0 / 13310, L);
-		constexpr Unit cup   = Unit(200.0, mL);
+		constexpr Unit cup   = Unit(0.2, L);
 	}
 
 	/** @brief Some historical chinese units */
 	namespace Chinese
 	{
 		constexpr Unit jin   = Unit(0.5, kg);
-		constexpr Unit liang = Unit(0.1, g);
-		constexpr Unit qian  = Unit(0.01, g);
+		constexpr Unit liang = Unit(0.0001, kg);
+		constexpr Unit qian  = Unit(0.00001, kg);
 
 		constexpr Unit li    = Unit(500.0, m);
 		constexpr Unit cun   = Unit(10.0 / 300.0, m);
@@ -519,7 +520,7 @@ namespace Units
 
 		namespace French
 		{
-			constexpr Unit point  = Unit(15625.0 / 41559.0, mm);
+			constexpr Unit point  = Unit(15.625 / 41559.0, m);
 			constexpr Unit ligne  = Unit(6.0, point);
 			constexpr Unit pouce  = Unit(12.0, ligne);
 			constexpr Unit didot  = point;
@@ -531,13 +532,20 @@ namespace Units
 		namespace Metric
 		{
 			constexpr Unit point = Unit(375.0 * micro, m);
-			constexpr Unit quart = Unit(0.25, mm);
+			constexpr Unit quart = Unit(0.25 * milli, m);
 		}
 	}
 
 	/** @brief Units related to distance */
 	namespace Distance
 	{
+		/** @brief Smoot, or Oliver Smoot's height as of October 1958 (see https://en.wikipedia.org/wiki/Smoot) */
+		constexpr Quantity smoot     = 67.0 * in;
+		/** @brief Cubit */
+		constexpr Quantity cubit     = 18.0 * in;
+		/** @brief Long cubit */
+		constexpr Quantity longcubit = 21.0 * in;
+
 		/** @brief Light-year */
 		constexpr Unit ly        = Unit(9.4607304725808e15, m);
 		/** @brief Astronomical unit */
@@ -548,12 +556,7 @@ namespace Units
 		constexpr Unit angstrom  = Unit(1e-10, m);
 		/** @brief Parsec, as defined by the International Astronomical Union */
 		constexpr Unit parsec    = Unit(3.08567758149136727891e16, m);
-		/** @brief Smoot, or Oliver Smoot's height as of October 1958 (see https://en.wikipedia.org/wiki/Smoot) */
-		constexpr Unit smoot     = Unit(67.0, in);
-		/** @brief Cubit */
-		constexpr Unit cubit     = Unit(18.0, in);
-		/** @brief Long cubit */
-		constexpr Unit longcubit = Unit(21.0, in);
+
 		/** @brief Arpent (US) */
 		constexpr Unit arpent_us = Unit(58.47131, m);
 		/** @brief Arpent (FR) */
@@ -596,9 +599,9 @@ namespace Units
 	/** @brief Additional mass units */
 	namespace Mass
 	{
-		constexpr Unit quintal       = Unit(100.0, kg);
-		constexpr Unit ton_assay     = Unit(29.0 + 1.0 / 6.0, g);
-		constexpr Unit longton_assay = Unit(32.0 + 2.0 / 3.0, g);
+		constexpr Quantity quintal   = 100.0 * kg;
+		constexpr Unit ton_assay     = Unit((29.0 + 1.0 / 6.0) * milli, kg);
+		constexpr Unit longton_assay = Unit((32.0 + 2.0 / 3.0) * milli, kg);
 	}
 
 	/** @brief Some extra volume units */
@@ -714,7 +717,7 @@ namespace Units
 		/** @brief Thermochemical calorie */
 		constexpr Unit cal_th   = Unit(4.18400, J);
 		/** @brief Thermochemical kilocalorie */
-		constexpr Unit kcal     = Unit(4184.0, J);
+		constexpr Quantity kcal = kilo * cal_th;
 
 		/** @brief Thermochemical BTU (British Thermal Unit) */
 		constexpr Unit btu_th   = Unit(1054.350, J);
@@ -733,7 +736,7 @@ namespace Units
 		/** @brief Quad, one quadrillion (10^15) BTUs */
 		constexpr Unit quad     = Unit(1055.05585262e15, J);
 		/** @brief Ton of cooling, aka 12.000 BTU/h (3.52 kW) */
-		constexpr Unit tonc     = Unit(12000.0, btu_th / h);
+		constexpr Quantity tonc = 12000.0 * btu_th / h;
 
 		/** @brief Therm, 100,000 BTUs (US definition) */
 		constexpr Unit therm_us = Unit(100000.0, btu_59);
@@ -742,7 +745,7 @@ namespace Units
 		/** @brief Therm, 100,000 ISO BTUs */
 		constexpr Unit therm_ec = Unit(100000, btu_iso);
 		/** @brief Energy efficiency ratio */
-		constexpr Unit EER      = btu_th / W / h;
+		constexpr Unit EER      = btu_th / (W * h);
 		/** @brief Specific gravity */
 		constexpr Unit SG       = lb / (ft^3);
 
@@ -751,7 +754,7 @@ namespace Units
 		constexpr Unit boe     = Unit(5.8e6, btu_59);
 		constexpr Unit foeb    = Unit(6.05e6, btu_59);
 		constexpr Unit hartree = Unit(4.35974465054e-18, J);
-		constexpr Unit tonhour = Unit(3.5168528421 * kilo, Wh);
+		constexpr Unit tonhour = Unit(3516.8528421, Wh);
 	}
 
 	constexpr Unit btu = Energy::btu_it;
@@ -760,7 +763,7 @@ namespace Units
 	/** @brief Units used in the textile industry */
 	namespace Textile
 	{
-		constexpr Unit tex    = g / km;
+		constexpr Unit tex    = Unit(1e-6, kg / m);
 		constexpr Unit denier = Unit(1.0 / 9.0, tex);
 		constexpr Unit span   = Unit(0.2286, m);
 		constexpr Unit finger = Unit(0.1143, m);
@@ -771,21 +774,21 @@ namespace Units
 	namespace Clinical
 	{
 		/** @brief Peripheral vascular resistance unit */
-		constexpr Unit pru           = Pressure::mmHg * s / mL;
+		constexpr Unit pru           = Unit(milli, Pressure::mmHg * s / L);
 		/** @brief Hybrid resistance units, or Wood units */
 		constexpr Unit woodu         = Pressure::mmHg * min / L;
 		/** @brief Diopter */
 		constexpr Unit diopter       = m^-1;
 		/** @brief Prism diopter */
-		constexpr Unit prism_diopter = Unit(20, true);
+		constexpr Unit prism_diopter = Unit(20);
 		/** @brief Mesh size, aka number of holes per inch */
 		constexpr Unit mesh          = in^-1;
 		/** @brief Charrière, French catheter scale */
-		constexpr Unit charriere     = Unit(1.0 / 3.0, mm);
+		constexpr Unit charriere     = Unit(1.0 * milli / 3.0, m);
 		/** @brief Drop */
-		constexpr Unit drop          = Unit(0.05, mL);
+		constexpr Unit drop          = Unit(0.05 * milli, L);
 		/** @brief Metabolic equivalent of task */
-		constexpr Unit met           = Unit(3.5, mL / min / kg);
+		constexpr Unit met           = Unit(3.5 * milli, L / min / kg);
 	}
 
 	// Log-based units
@@ -869,15 +872,16 @@ namespace Units
 	/** @brief Units used in chemical and biological laboratories */
 	namespace Laboratory
 	{
-		constexpr Unit svedberg    = Unit(1e-13, s);
-		constexpr Unit enzyme_unit = Unit(micro, mol / min);
+		constexpr Quantity enzyme_unit = 1.0 * micro * mol / min;
 
+		/** @brief Svedberg, 10^-13 s */
+		constexpr Unit svedberg = Unit(1e-13, s);
+		/** @brief Plaque-forming unit */
 		constexpr Unit PFU      = Unit(1.0, count);
-		constexpr Unit pH       = Unit(1.0, mol / L); // negative log10;
-		constexpr Unit molarity = Unit(1.0, mol / L);
-		constexpr Unit molality = Unit(1.0, mol / kg);
 		/** @brief pH, unit for acidity */
 		constexpr Unit pH       = mol / L * Log::neglog10;
+		constexpr Unit molarity = mol / L;
+		constexpr Unit molality = mol / kg;
 	}
 
 	/** @brief Units related to quantities of data */
@@ -902,9 +906,9 @@ namespace Units
 		constexpr Unit MIPS  = Unit(1.0e6, count / s);
 	}
 
-	/** @brief Parts per million */
+	/** @brief ppm, parts per million */
 	constexpr Unit ppm = Unit(1e-6, count);
-	/** @brief Parts per billion */
+	/** @brief ppb, parts per billion */
 	constexpr Unit ppb = Unit(1e-9, count);
 
 	/** @brief RPM, revolutions per minute */
