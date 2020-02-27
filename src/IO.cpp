@@ -25,36 +25,43 @@ namespace Units
 #define PAIR_TYPE std::pair<Unit, const char*>
 
 		// units to divide into tests to explore common unit products
-		static std::array<PAIR_TYPE, 12> testUnits
+		static std::array<PAIR_TYPE, 17> testUnits
 		{{
 			PAIR_TYPE { s            , "s"    },
 			PAIR_TYPE { s^2          , "s²"   },
+			PAIR_TYPE { h            , "h"    },
+			PAIR_TYPE { min          , "min"  },
+			PAIR_TYPE { Time::day    , "d"    },
 			PAIR_TYPE { m            , "m"    },
+			PAIR_TYPE { ft           , "ft"   },
 			PAIR_TYPE { m^2          , "m²"   },
 			PAIR_TYPE { m^3          , "m³"   },
+			PAIR_TYPE { L            , "L"    },
 			PAIR_TYPE { kg           , "kg"   },
+			PAIR_TYPE { lb           , "lb"   },
 			PAIR_TYPE { currency     , "$"    },
 			PAIR_TYPE { std::sqrt(Hz), "√Hz"  },
 			PAIR_TYPE { volt         , "V"    },
 			PAIR_TYPE { watt         , "W"    },
-			PAIR_TYPE { count        , "item" },
-			PAIR_TYPE { h            , "h" }
-
+			PAIR_TYPE { count        , "item" }
 		}};
 
 #undef PAIR_TYPE
 
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
-			{ Unit()       , ""     },
-			{ m            , "m"    },
-			{ kg           , "kg"   },
-			{ s            , "s"    },
-			{ A            , "A"    },
-			{ K            , "K"    },
-			{ mol          , "mol"  },
-			{ Cd           , "Cd"   },
-			{ rad          , "rad"  },
+			// Base SI units
+			{ none, ""    },
+			{ m,    "m"   },
+			{ kg,   "kg"  },
+			{ s,    "s"   },
+			{ A,    "A"   },
+			{ K,    "K"   },
+			{ mol,  "mol" },
+			{ rad,  "rad" },
+			{ Cd,   "Cd"  },
+
+			// Derived SI units
 			{ sr           , "sr"   },
 			{ Hz           , "Hz"   },
 			{ N            , "N"    },
@@ -72,36 +79,139 @@ namespace Units
 			{ lm           , "lm"   },
 			{ lx           , "lx"   },
 			{ Bq           , "Bq"   },
-//			{ Gy           , "Gy"   },
+			{ Gy           , "Gy"   },
 			{ Sv           , "Sv"   },
 			{ kat          , "kat"  },
 			{ rad * W      , "W"    },
 			{ currency     , "$"    },
 			{ count        , "item" },
 			{ std::sqrt(Hz), "√Hz"  },
-//			{ Power::VA    , "VA"   }, // Volt-ampere
-			{ Power::VAR   , "VAR"  }, // Volt-ampere reactive
 
-			{ Log::B,      "B"  },
-			{ Log::belA,   "BA" },
-			{ Log::BmV, "BmV" },
+			{ ft          , "ft"   },
+			// Volume units
+			{ L           , "L"    },
 
+			// Atomic mass units
+			{ Da, "u" },
+			// Time
+			{ Time::min, "min" },
+			{ Time::hour, "h" },
+			{ Time::day, "d" },
+			{ Time::week, "w" },
+			{ Time::year, "year" },
+			{ Time::sday, "day" },
+
+			// Distance
+			{ Distance::ly, "ly" },
+			{ Distance::au, "AU" },
+			{ Distance::au_old, "AU" },
+			{ Distance::angstrom, u8"\u212B" },
+			{ Distance::parsec, "pc" },
+			{ Distance::xu, "xu" },
+
+			// Angle
+			{ Angle::deg, u8"\u00B0" },
+			{ Angle::grad, "grad" },
+			{ Angle::brad, "brad" },
+			{ Angle::gon, "gon" },
+			{ Angle::arcmin, "'" },
+			{ Angle::arcsec, "\"" },
+
+			// Temperature
+			{ Temperature::degC, u8"\u00B0C" },
+			{ Temperature::degF, u8"\u00B0F" },
+			{ Temperature::degR, u8"\u00B0R" },
+			{ Temperature::degRe, u8"\u00B0Re" },
+
+			// Pressure
+			{ Pressure::bar, "bar" },
+			{ Pressure::psi, u8"lb/in\u00B2" },
+			{ Pressure::inHg, "inHg" },
+			{ Pressure::mmHg, "mmHg" },
+			{ Pressure::torr, "torr" },
+			{ Pressure::inH2O, "inH20" },
+			{ Pressure::mmH2O, "mmH20" },
+			{ Pressure::atm, "atm" },
+
+			// Power
+			{ Power::hpE, "hp"  }, // Review
+			{ Power::hpI, "hp"  }, // Review
+			{ Power::hpS, "hp"  }, // Review
+			{ Power::hpM, "hp"  }, // Review
+//			{ Power::VA , "VA"  }, // Volt-ampere
+			{ Power::VAR, "VAR" }, // Volt-ampere reactive
+
+			// Energy
+			{ Energy::Wh , "Wh" },
+			{ Energy::eV , "eV" },
+			{ Energy::cal_4 , u8"cal [4\u00B0C]" },
+			{ Energy::cal_15, u8"cal [15\u00B0C]" },
+			{ Energy::cal_20, u8"cal [20\u00B0C]" },
+			{ Energy::cal_mean, "cal" },
+			{ Energy::cal_it, "cal" },
+			{ Energy::cal_th, "cal" },
+			{ Energy::btu_th, "BTU" },
+			{ Energy::btu_39, u8"BTU [39\u00B0F]" },
+			{ Energy::btu_59, u8"BTU [59\u00B0F]" },
+			{ Energy::btu_60, u8"BTU [60\u00B0F]" },
+			{ Energy::btu_mean, "BTU" },
+			{ Energy::btu_it, "BTU" },
+			{ Energy::btu_iso, "ISO BTU" },
+			{ Energy::quad, "Quad" },
+			{ Energy::ton_tnt, "t" },
+
+			// Log
+			{ Log::neper , "Np" },
+			{ Log::neperP, "Np" }, // Review
+			{ Log::B , "B" },
+			{ Log::BP, "B" },
+			{ Log::BA, "BA" },
 			{ Log::dB , "dB"  },
+			{ Log::dBP, "dB" },
 			{ Log::dBA, "dBA" },
 			{ Log::dBc, "dBc" },
-			{ Log::dBm, "dBm" },
+//			{ Log::log, "Np" }, // Review
+			{ Log::log2, "log2" },
+			{ Log::log10, "log10" },
+			{ Log::neglog10, "-log10" },
+			{ Log::neglog100, "-log100" },
+			{ Log::neglog1000, "-log1000" },
+			{ Log::neglog50000, "-log50000" },
+			{ Log::B_SPL, "B SPL"   },
+			{ Log::dBSPL, "dB SPL" },
+			{ Log::B * V, "BV" },
+			{ Log::BmV, "BmV" },
+			{ Log::BuV, u8"B\u00B5V" },
+			{ Log::B10nV, u8"B\u00B5V" },
+			{ Log::BW, "BW" },
+			{ Log::Bk, "Bk" },
+			{ Log::dBV, "dBV" },
 			{ Log::dBmV, "dBmV" },
 			{ Log::dBuV, "dBuV" },
+			{ Log::dB10nV, u8"dB\u00B5V" },
+			{ Log::dBW, "dBW" },
+			{ Log::dBk, "dBk" },
+			{ Log::dBm, "dBm" },
 
-			{ Log::neper, "Np" },
+			// Laboratory
+			{ Laboratory::svedberg, "S" },
+			{ Laboratory::PFU, "PFU" },
+			{ Laboratory::pH, "pH" },
 
-			{ Pa * Log::B , "B SPL"   },
-			{ Pa * Log::dB, "dB SPL" },
-			{ Log::B * V  , "BV" },
-			{ km          , "km"   },
-			{ h           , "h"   },
-			{ L           , "L"    },
-			{ ft          , "ft"   }
+			// Data
+			{ Data::bit   , "b" },
+			{ Data::nibble, "nibble" },
+			{ Data::byte  , "B" }, // Add "i"? this is so that it shows KiB, MiB, GiB, etc...
+
+			// Computation
+			{ Computation::FLOP , "FLOP" },
+			{ Computation::FLOPS, "FLOPS" },
+			{ Computation::MIPS , "MIPS" },
+
+			// Misc
+			{ ppm, "ppm" },
+			{ ppb, "ppb" },
+			{ rpm, "rpm" },
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)
