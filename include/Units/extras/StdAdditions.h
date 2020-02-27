@@ -12,7 +12,7 @@ namespace std
 	template<>
 	struct hash<Units::Unit>
 	{
-		size_t operator()(Units::Unit x) const noexcept
+		size_t operator()(const Units::Unit& x) const noexcept
 		{
 			return hash<uint32_t>()(x.base_units()) ^ hash<double>()(x.unit_multiplier());
 		}
@@ -31,7 +31,7 @@ namespace std
 	template<>
 	struct hash<Units::Quantity>
 	{
-		size_t operator()(Units::Quantity x) const noexcept
+		size_t operator()(const Units::Quantity& x) const noexcept
 		{
 			return hash<Units::Unit>()(x.getUnit()) ^ hash<double>()(x.getMagnitude());
 		}
@@ -40,7 +40,7 @@ namespace std
 	template<>
 	struct not_equal_to<Units::Quantity>
 	{
-		size_t operator()(Units::Quantity a, Units::Quantity b) const noexcept
+		size_t operator()(const Units::Quantity& a, const Units::Quantity& b) const noexcept
 		{
 			return !(a == b);
 		}
@@ -50,11 +50,11 @@ namespace std
 
 	inline Units::Quantity sqrt(Units::Quantity x) noexcept { x.root(2); return x; }
 	inline Units::Quantity cbrt(Units::Quantity x) noexcept { x.root(3); return x; }
-	inline Units::Quantity pow (Units::Quantity x, int8_t exp) noexcept { return x^exp; }
+	inline Units::Quantity pow (const Units::Quantity& x, int8_t exp) noexcept { return x^exp; }
 
-	inline Units::Quantity pow  (Units::Quantity x, Units::Quantity y) noexcept { return pow  (x,        (int8_t)y.getMagnitude()); }
-	inline Units::Quantity fmod (Units::Quantity x, Units::Quantity y) noexcept { return fmod (x.getMagnitude(), y.getMagnitude()); }
-	inline Units::Quantity atan2(Units::Quantity x, Units::Quantity y) noexcept { return atan2(x.getMagnitude(), y.getMagnitude()); }
+	inline Units::Quantity pow  (const Units::Quantity& x, const Units::Quantity& y) noexcept { return pow  (x,        (int8_t)y.getMagnitude()); }
+	inline Units::Quantity fmod (const Units::Quantity& x, const Units::Quantity& y) noexcept { return fmod (x.getMagnitude(), y.getMagnitude()); }
+	inline Units::Quantity atan2(const Units::Quantity& x, const Units::Quantity& y) noexcept { return atan2(x.getMagnitude(), y.getMagnitude()); }
 
 	inline bool isinf   (const Units::Quantity& x) noexcept { return std::isinf   (x.getMagnitude()); }
 	inline bool isnan   (const Units::Quantity& x) noexcept { return std::isnan   (x.getMagnitude()); }
