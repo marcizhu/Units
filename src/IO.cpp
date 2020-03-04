@@ -93,13 +93,50 @@ namespace Units
 
 			// Atomic mass units
 			{ Da, "u" },
+
+			// GM
+			{ GM::pond, "gf" },
+			{ GM::hyl, "hyl" },
+			{ GM::at, "at" },
+			{ GM::poncelet, "p" },
+			{ GM::PS, "PS" },
+
+			// MTS
+			{ MTS::sthene, "sn" },
+			{ MTS::pieze, "pz" },
+			{ MTS::thermie, "th" },
+
 			// Time
 			{ Time::min, "min" },
 			{ Time::hour, "h" },
 			{ Time::day, "d" },
 			{ Time::week, "w" },
 			{ Time::year, "year" },
-			{ Time::sday, "day" },
+
+			// International
+			{ i::grain, "gr" },
+			{ i::point, "???" },
+			{ i::pica, "???" },
+			{ i::inch, "in" },
+			{ i::foot, "ft" },
+			{ i::yard, "yd" },
+			{ i::mile, "mi" },
+			{ i::league, "lea" },
+			{ i::hand, "???" },
+			{ i::cord, "cd-ft" },
+			{ i::board_foot, "BDFT" },
+			{ i::mil, "mil" },
+			{ i::circ_mil, "cmil" },
+
+
+			// Chinese
+			{ Chinese::jin,   u8"\u65A4" },
+			{ Chinese::liang, u8"\u4E24" },
+			{ Chinese::qian,  u8"\u9322" },
+			{ Chinese::li,    u8"\u91CC" },
+			{ Chinese::cun,   u8"\u5BF8" },
+			{ Chinese::chi,   u8"\u5C3A" },
+			{ Chinese::zhang, u8"\u4E08" },
 
 			// Distance
 			{ Distance::ly, "ly" },
@@ -177,7 +214,7 @@ namespace Units
 			{ Log::neglog100, "-log100" },
 			{ Log::neglog1000, "-log1000" },
 			{ Log::neglog50000, "-log50000" },
-			{ Log::B_SPL, "B SPL"   },
+			{ Log::B_SPL, "B SPL" },
 			{ Log::dBSPL, "dB SPL" },
 			{ Log::B * V, "BV" },
 			{ Log::BmV, "BmV" },

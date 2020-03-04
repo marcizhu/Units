@@ -201,7 +201,7 @@ namespace Units
 	{
 		constexpr Unit sthene  = Unit(1000.0, N);
 		constexpr Unit pieze   = Unit(1000.0, Pa);
-		constexpr Unit thermie = Unit(4.186 * mega, J);
+		constexpr Unit thermie = Unit(4.1868 * mega, J);
 	}
 
 	/** @brief Units of time */
@@ -218,27 +218,27 @@ namespace Units
 		/** @brief Median calendar year */
 		constexpr Unit yr   = Unit(8760.0, hour);
 
-		/** @brief Sidereal day */
-		constexpr Unit sday = Unit(365.24 / 366.24, day);
-		/** @brief Sidereal year */
-		constexpr Unit syr  = Unit(365.256363004, day);
-		/** @brief Mean tropical year */
-		constexpr Unit at   = Unit(365.24219, day);
 		/** @brief Julian year */
 		constexpr Unit aj   = Unit(365.25, day);
-		/** @brief Gregorian year */
-		constexpr Unit ag   = Unit(365.2425, day);
 		/** @brief Standard year */
 		constexpr Unit year = aj;
-		/** @brief Synodal month */
-		constexpr Unit mos  = Unit(29.53059, day);
-		/** @brief Mean Julian month */
-		constexpr Unit moj  = Unit(1.0 / 12.0, aj);
-		/** @brief mean Gregorian month */
-		constexpr Unit mog  = Unit(1.0 / 12.0, ag);
 
 		/** @brief Fortnight (two weeks) */
 		constexpr Quantity fortnight = 14 * day;
+		/** @brief Sidereal day */
+		constexpr Quantity sday = 365.24 / 366.24 * day;
+		/** @brief Sidereal year */
+		constexpr Quantity syr  = 365.256363004 * day;
+		/** @brief Mean tropical year */
+		constexpr Quantity at   = 365.24219 * day;
+		/** @brief Gregorian year */
+		constexpr Quantity ag   = 365.2425 * day;
+		/** @brief Synodal month */
+		constexpr Quantity mos  = 29.53059 * day;
+		/** @brief Mean Julian month */
+		constexpr Quantity moj  = 1.0 / 12.0 * aj;
+		/** @brief mean Gregorian month */
+		constexpr Quantity mog  = 1.0 / 12.0 * ag;
 	}
 
 	constexpr Unit h   = Time::hour;
