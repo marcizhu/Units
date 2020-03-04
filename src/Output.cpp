@@ -48,6 +48,9 @@ namespace Units
 
 #undef PAIR_TYPE
 
+		// TODO: Change pair with tuple, so that every tuple holds a unit, its name and a bool that tells if this unit is "SI-friendly"
+		// or not. If so, the apropriate SI prefix will be added (if nedded). If not, the number will be represented in scientific notation.
+
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
 			// Base SI units
@@ -88,11 +91,15 @@ namespace Units
 			{ std::sqrt(Hz), "√Hz"  },
 
 			{ ft          , "ft"   },
+
 			// Volume units
 			{ L           , "L"    },
 
 			// Atomic mass units
 			{ Da, "u" },
+
+			// CGS
+			// dyn
 
 			// GM
 			{ GM::pond, "gf" },
@@ -128,6 +135,16 @@ namespace Units
 			{ i::mil, "mil" },
 			{ i::circ_mil, "cmil" },
 
+			// Avoirdupois
+			// Troy
+			// US
+			// Metric
+			// Canada
+			// Australia
+			// Imperial
+			// Apothecaries
+			// Nautical
+			// Japan
 
 			// Chinese
 			{ Chinese::jin,   u8"\u65A4" },
@@ -138,13 +155,21 @@ namespace Units
 			{ Chinese::chi,   u8"\u5C3A" },
 			{ Chinese::zhang, u8"\u4E08" },
 
+			// Typografic
+
 			// Distance
 			{ Distance::ly, "ly" },
 			{ Distance::au, "AU" },
 			{ Distance::au_old, "AU" },
 			{ Distance::angstrom, u8"\u212B" },
 			{ Distance::parsec, "pc" },
+//			{ Distance::arpent_us, "" },
+//			{ Distance::arpent_fr, "" },
 			{ Distance::xu, "xu" },
+
+			// Area
+			// Mass
+			// Volume
 
 			// Angle
 			{ Angle::deg, u8"\u00B0" },
@@ -195,7 +220,17 @@ namespace Units
 			{ Energy::btu_it, "BTU" },
 			{ Energy::btu_iso, "ISO BTU" },
 			{ Energy::quad, "Quad" },
+			{ Energy::therm_us, "Therm" }, // Review
+			{ Energy::therm_br, "Therm" }, // Review
+			{ Energy::therm_ec, "Therm" }, // Review
 			{ Energy::ton_tnt, "t" },
+//			{ Energy::boe, "" }, // Review
+//			{ Energy::foeb, "" }, // Review
+//			{ Energy::hartree, "" }, // Review
+//			{ Energy::tonhour, "" }, // Review
+
+			// Textile
+			// Clinical
 
 			// Log
 			{ Log::neper , "Np" },
@@ -238,7 +273,7 @@ namespace Units
 			// Data
 			{ Data::bit   , "b" },
 			{ Data::nibble, "nibble" },
-			{ Data::byte  , "B" }, // Add "i"? this is so that it shows KiB, MiB, GiB, etc...
+			{ Data::byte  , "B" }, // Add "i"? this is so that it shows kiB, MiB, GiB, etc...
 
 			// Computation
 			{ Computation::FLOP , "FLOP" },
@@ -352,7 +387,15 @@ namespace Units
 		for(auto& tu : testUnits) if(find_unit((un / tu.first)^-1, str)) return str + "⁻¹⋅" + tu.second + "⁻¹";
 		for(auto& tu : testUnits) if(find_unit((un * tu.first)^-1, str)) return str + "⁻¹/" + tu.second + "⁻¹";
 
-		return unit_raw(un);
+		for(auto& tu : testUnits) if(find_unit(std::sqrt(un * tu.first), str)) return str + "²/" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(std::sqrt(un / tu.first), str)) return str + "²⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(std::cbrt(un * tu.first), str)) return str + "³/" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(std::cbrt(un / tu.first), str)) return str + "³⋅" + tu.second;
+
+		// TODO: If unit was not found, perform conversion to SI units. For example, if km/min was not found, perform
+		// a conversion using thw raw unit (m/s) and a multiplier of 1, such that a valid unit is always displayed.
+
+		return "???"; //unit_raw(un);
 	}
 
 	std::string to_string(Quantity q)
