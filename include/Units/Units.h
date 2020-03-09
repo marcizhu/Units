@@ -175,15 +175,17 @@ namespace Units
 		constexpr Unit unitpole     = Unit(1.256637061436e-7, Wb);
 		constexpr Unit statC_charge = Unit(10.0 / c_const, C);
 		constexpr Unit statC_flux   = Unit(10.0 / (4.0 * Constants::pi * c_const), V * m);
-		constexpr Unit abOhm        = Unit(1e-9, ohm);
-		constexpr Unit abFarad      = Unit(1e9, F);
-		constexpr Unit abHenry      = Unit(1e-9, H);
-		constexpr Unit abVolt       = Unit(1e-8, V);
-		constexpr Unit statV        = Unit(c_const, abVolt);
-		constexpr Unit statT        = Unit(c_const * 1e-4, T);
-		constexpr Unit statHenry    = Unit(c_const * c_const, abHenry);
-		constexpr Unit statOhm      = Unit(c_const * c_const, abOhm);
-		constexpr Unit statFarad    = Unit(1.0 / (c_const * c_const), abFarad);
+
+		constexpr Quantity abOhm    = 1e-9 * ohm;
+		constexpr Quantity abFarad  = 1e09 * F;
+		constexpr Quantity abHenry  = 1e-9 * H;
+		constexpr Quantity abVolt   = 1e-8 * V;
+
+		constexpr Quantity statV     = c_const * abVolt;
+		constexpr Quantity statT     = c_const * 1e-4 * T;
+		constexpr Quantity statHenry = c_const * c_const * abHenry;
+		constexpr Quantity statOhm   = c_const * c_const * abOhm;
+		constexpr Quantity statFarad = (1.0 / (c_const * c_const)) * abFarad;
 	}
 
 	/** @brief meter-gram-force system of units (aka gravitational metric system) */

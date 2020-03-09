@@ -30,7 +30,7 @@ if(BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
 
-add_library(units STATIC src/IO.cpp)
+add_library(units STATIC src/Input.cpp src/Output.cpp)
 target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #---------------------------------------------------------------------------------------

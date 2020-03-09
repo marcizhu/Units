@@ -25,7 +25,7 @@ namespace Units
 #define PAIR_TYPE std::pair<Unit, const char*>
 
 		// units to divide into tests to explore common unit products
-		static std::array<PAIR_TYPE, 17> testUnits
+		static std::array<PAIR_TYPE, 20> testUnits
 		{{
 			PAIR_TYPE { s            , "s"    },
 			PAIR_TYPE { s^2          , "s²"   },
@@ -34,6 +34,8 @@ namespace Units
 			PAIR_TYPE { Time::day    , "d"    },
 			PAIR_TYPE { m            , "m"    },
 			PAIR_TYPE { ft           , "ft"   },
+			PAIR_TYPE { ft^2         , "ft²"  },
+			PAIR_TYPE { ft^3         , "ft³"  },
 			PAIR_TYPE { m^2          , "m²"   },
 			PAIR_TYPE { m^3          , "m³"   },
 			PAIR_TYPE { L            , "L"    },
@@ -43,7 +45,8 @@ namespace Units
 			PAIR_TYPE { std::sqrt(Hz), "√Hz"  },
 			PAIR_TYPE { volt         , "V"    },
 			PAIR_TYPE { watt         , "W"    },
-			PAIR_TYPE { count        , "item" }
+			PAIR_TYPE { count        , "item" },
+			PAIR_TYPE { Energy::Wh   , "Wh" },
 		}};
 
 #undef PAIR_TYPE
@@ -99,7 +102,31 @@ namespace Units
 			{ Da, "u" },
 
 			// CGS
-			// dyn
+			{ CGS::erg         , "erg" },
+			{ CGS::dyn         , "dyn" },
+			{ CGS::barye       , "Ba" },
+			{ CGS::gal         , "Gal" },
+			{ CGS::poise       , "P" },
+			{ CGS::stokes      , "St" },
+			{ CGS::kayser      , "K" },
+			{ CGS::oersted     , "Oe" },
+			{ CGS::gauss       , "G" },
+			{ CGS::debye       , "D" },
+			{ CGS::maxwell     , "Mx" },
+			{ CGS::biot        , "Bi" },
+			{ CGS::gilbert     , "Gb" },
+			{ CGS::stilb       , "sb" },
+			{ CGS::lambert     , "Lb" },
+			{ CGS::phot        , "ph" },
+			{ CGS::curie       , "Ci" },
+			{ CGS::roentgen    , "R" },
+			{ CGS::REM         , "rem" },
+			{ CGS::RAD         , "rad" },
+			{ CGS::emu         , "" },
+			{ CGS::langley     , "" },
+			{ CGS::unitpole    , "" },
+			{ CGS::statC_charge, "" },
+			{ CGS::statC_flux  , "" },
 
 			// GM
 			{ GM::pond, "gf" },
@@ -187,12 +214,12 @@ namespace Units
 
 			// Pressure
 			{ Pressure::bar, "bar" },
-			{ Pressure::psi, u8"lb/in\u00B2" },
+			{ Pressure::psi, u8"lbf/in\u00B2" },
 			{ Pressure::inHg, "inHg" },
 			{ Pressure::mmHg, "mmHg" },
 			{ Pressure::torr, "torr" },
-			{ Pressure::inH2O, "inH20" },
-			{ Pressure::mmH2O, "mmH20" },
+			{ Pressure::inH2O, u8"inH\u20820" },
+			{ Pressure::mmH2O, u8"mmH\u20820" },
 			{ Pressure::atm, "atm" },
 
 			// Power
@@ -204,8 +231,8 @@ namespace Units
 			{ Power::VAR, "VAR" }, // Volt-ampere reactive
 
 			// Energy
-			{ Energy::Wh , "Wh" },
-			{ Energy::eV , "eV" },
+			{ Energy::Wh, "Wh" },
+			{ Energy::eV, "eV" },
 			{ Energy::cal_4 , u8"cal [4\u00B0C]" },
 			{ Energy::cal_15, u8"cal [15\u00B0C]" },
 			{ Energy::cal_20, u8"cal [20\u00B0C]" },
@@ -251,16 +278,16 @@ namespace Units
 			{ Log::neglog50000, "-log50000" },
 			{ Log::B_SPL, "B SPL" },
 			{ Log::dBSPL, "dB SPL" },
-			{ Log::B * V, "BV" },
+			{ Log::BV, "BV" },
 			{ Log::BmV, "BmV" },
 			{ Log::BuV, u8"B\u00B5V" },
-			{ Log::B10nV, u8"B\u00B5V" },
+			{ Log::B10nV, u8"B10nV" },
 			{ Log::BW, "BW" },
 			{ Log::Bk, "Bk" },
 			{ Log::dBV, "dBV" },
 			{ Log::dBmV, "dBmV" },
 			{ Log::dBuV, "dBuV" },
-			{ Log::dB10nV, u8"dB\u00B5V" },
+			{ Log::dB10nV, u8"dB10nV" },
 			{ Log::dBW, "dBW" },
 			{ Log::dBk, "dBk" },
 			{ Log::dBm, "dBm" },
@@ -362,13 +389,13 @@ namespace Units
 		}
 	}
 
-	std::string to_string_scientific(Quantity q)
+	std::string to_string_scientific(const Quantity& q)
 	{
 		using namespace details;
 		return magnitude_scientific(q.getMagnitude()) + ' ' + unit_raw(q.getUnit());
 	}
 
-	std::string to_string(Unit un)
+	std::string to_string(const Unit& un)
 	{
 		using namespace details;
 		if(un.eflag()) return "ERROR";
@@ -398,7 +425,7 @@ namespace Units
 		return "???"; //unit_raw(un);
 	}
 
-	std::string to_string(Quantity q)
+	std::string to_string(const Quantity& q)
 	{
 		using namespace details;
 		if(q.getUnit().eflag()) return "ERROR";
