@@ -51,7 +51,7 @@ namespace Units
 		constexpr void setUncertainty(float val) { uncertainty = val; }
 
 		// quan * quan
-		constexpr Quantity operator^(int8_t exp) const { return Quantity(Math::pow_n(magnitude, exp), unit ^ exp); }
+		constexpr Quantity operator^(int8_t exp) const { return Quantity(Math::pow(magnitude, (double)exp), unit ^ exp); }
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }

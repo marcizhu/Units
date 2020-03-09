@@ -138,7 +138,7 @@ namespace Units
 		constexpr Unit operator^(int8_t exp) const
 		{
 			Unit ret(*this);
-			Math::pow_n(ret.multiplier, exp);
+			ret.multiplier    = Math::pow(ret.multiplier, (double)exp);
 			ret.dim.meter    *= exp;
 			ret.dim.kilogram *= exp;
 			ret.dim.second   *= (ret.isRootHz() ? (exp / 2) : exp);

@@ -14,7 +14,7 @@ namespace std
 	{
 		size_t operator()(const Units::Unit& x) const noexcept
 		{
-			return hash<uint32_t>()(x.base_units()) ^ hash<double>()(x.unit_multiplier());
+			return hash<uint32_t>()(x.base_units()) ^ hash<double>()(Units::Math::cround(x.unit_multiplier())); // TODO: Round this!!!
 		}
 	};
 
@@ -33,7 +33,9 @@ namespace std
 	{
 		size_t operator()(const Units::Quantity& x) const noexcept
 		{
-			return hash<Units::Unit>()(x.getUnit()) ^ hash<double>()(x.getMagnitude());
+			return hash<Units::Unit>()(x.getUnit())
+				^ hash<double>()(Units::Math::cround(x.getMagnitude()))
+				^ hash<float >()(Units::Math::cround(x.getUncertainty()));
 		}
 	};
 

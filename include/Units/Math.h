@@ -1,232 +1,30 @@
 #pragma once
 
-#include <type_traits>
-#include <stdexcept>
-#include <limits>
-#include <cmath>
+#include "sprout/cmath.hpp"
 
 namespace Units
 {
 	namespace Math
 	{
 		/** @brief Calculate absolute value of X */
-		template<typename T>
-		constexpr static T abs(const T& x) { return x < T(0) ? -x : x; }
-
-		template<typename FloatingPoint>
-		constexpr FloatingPoint exp(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr);
-
-		namespace details
-		{
-			/** @brief Calculate X^2 */
-			template<typename T>
-			constexpr static T pow2(const T& x) { return x * x; }
-
-			template<typename T, typename IntType>
-			constexpr static T pow_n_impl(const T& x, IntType n)
-			{
-				return n == 1 ? x
-					: n % 2 ? x * pow2(pow_n_impl(x, n / 2))
-					: pow2(pow_n_impl(x, n / 2));
-			}
-
-			/**
-			 * @brief Test whether values are within machine epsilon
-			 *
-			 * Used for algorithm termination
-			 */
-			template<typename T>
-			constexpr bool feq(const T& x, const T& y)
-			{
-				return abs(x - y) <= std::numeric_limits<T>::epsilon();
-			}
-
-			template<typename T>
-			constexpr T exp(const T& x, const T& sum, const T& n, int i, const T& t)
-			{
-				return feq(sum, sum + t/n) ?
-					sum :
-					exp(x, sum + t/n, n * i, i+1, t * x);
-			}
-
-			template<typename T>
-			constexpr T log_iter(const T& x, const T& y)
-			{
-				return y + T(2) * (x - Math::exp(y)) / (x + Math::exp(y));
-			}
-
-			template<typename T>
-			constexpr T log(const T& x, const T& y)
-			{
-				return feq(y, log_iter(x, y)) ? y : log(x, log_iter(x, y));
-			}
-
-			/** @brief Number e */
-			constexpr long double e()
-			{
-				return 2.71828182845904523536l;
-			}
-
-			// For numerical stability, constrain the domain to be x > 0.25 && x < 1024
-			// - multiply/divide as necessary. To achieve the desired recursion depth
-			// constraint, we need to account for the max double. So we'll divide by
-			// e^5. If you want to compute a compile-time log of huge or tiny long
-			// doubles, YMMV.
-
-			// if x <= 1, we will multiply by e^5 repeatedly until x > 1
-			template<typename T>
-			constexpr T logGT(const T& x)
-			{
-				return x > T(0.25) ? log(x, T(0)) :
-					logGT<T>(x * T(e() * e() * e() * e() * e())) - T(5);
-			}
-
-			// if x >= 2e10, we will divide by e^5 repeatedly until x < 2e10
-			template<typename T>
-			constexpr T logLT(const T& x)
-			{
-				return x < T(1024) ? log(x, T(0)) :
-					logLT<T>(x / T(e() * e() * e() * e() * e())) + T(5);
-			}
-
-			//
-			// issubnormal_or_zero
-			//
-			template<typename FloatType>
-			inline constexpr bool
-			issubnormal_or_zero(
-				FloatType x,
-				typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
-			{
-				return x > 0
-					? x <  std::numeric_limits<double>::min()
-					: x > -std::numeric_limits<double>::min();
-			}
-		}
-
-		//
-		// iszero
-		//
-		template<typename FloatType>
-		inline constexpr bool
-		iszero(
-			FloatType x,
-			typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
-		{
-			return x == FloatType(0);
-		}
-
-		/** @brief Calculate X^n, n being an integer */
-		template<typename T, typename IntType>
-		constexpr static T pow_n(
-			const T& x,
-			IntType n,
-			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
-		{
-			return n == 0 ? T(1)
-				 : n >  0 ? details::pow_n_impl(x, n)
-				 : T(1) / details::pow_n_impl(x, -n);
-		}
-
-		/** @brief Is NaN (Not a number) */
-		template<typename FloatingPoint>
-		constexpr bool isnan(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
-		{
-			return x != x;
-		}
-
-		/** @brief Is infinity */
-		template<typename FloatingPoint>
-		constexpr bool isinf(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
-		{
-			return
-				x ==  std::numeric_limits<FloatingPoint>::infinity() ||
-				x == -std::numeric_limits<FloatingPoint>::infinity();
-		}
+		template<typename T> constexpr static T abs(const T& x) { return sprout::abs(x); }
 
 		/** @brief Calculate e^X */
-		template<typename FloatingPoint>
-		constexpr FloatingPoint exp(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type*)
-		{
-			return
-				isnan(x) ? x :
-				isinf(x) ? x :
-				details::exp(x, FloatingPoint(1), FloatingPoint(1), 2, x);
-		}
+		template<typename T> constexpr T exp(const T& x) { return sprout::exp(x); }
 
 		/** @brief Calculate log(X), aka natural log of X */
-		template<typename FloatingPoint>
-		constexpr FloatingPoint log(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
-		{
-			return x < FloatingPoint(0) ? throw std::domain_error("log") :
-				x == FloatingPoint(0) ? -std::numeric_limits<FloatingPoint>::infinity() :
-				isnan(x) ? x :
-				isinf(x) ? x :
-				x >= FloatingPoint(1024) ?
-					details::logLT(x) :
-					details::logGT(x);
-		}
+		template<typename T> constexpr T log(const T& x) { return sprout::log(x); }
 
-		/** @brief Calculate X^Y, X & Y being floating point numbers */
-		template<typename FloatingPoint>
-		constexpr static FloatingPoint pow(
-			const FloatingPoint& x,
-			const FloatingPoint& y,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
-		{
-			return x == FloatingPoint(0) ? FloatingPoint(0) : exp(y * log(x));
-		}
-
-		/** @brief Calculate X^Y, X & Y being integers */
-		template<typename IntType>
-		constexpr static IntType pow(
-			const IntType& x,
-			const IntType& y,
-			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
-		{
-			return pow_n(x, y);
-		}
+		/** @brief Calculate X^Y */
+		template<typename T> constexpr T pow(const T& x, const T& y) { return sprout::pow(x, y); }
 
 		/** @brief Calculate square root of X, aka X^(1/2) */
-		template<typename FloatingPoint>
-		constexpr static FloatingPoint sqrt(
-			const FloatingPoint& x,
-			typename std::enable_if<std::is_floating_point<FloatingPoint>::value>::type* = nullptr)
-		{
-			return x < FloatingPoint(0) ? throw std::domain_error("sqrt") : pow(x, FloatingPoint(0.5));
-		}
+		template<typename T> constexpr T sqrt(const T& x) { return sprout::sqrt(x); }
 
-		/** @brief Calculate square root of X, aka X^(1/2) */
-		template<typename IntType>
-		constexpr static double sqrt(
-			const IntType& x,
-			typename std::enable_if<std::is_integral<IntType>::value>::type* = nullptr)
-		{
-			return x < IntType(0) ? throw std::domain_error("sqrt") : pow<double>((double)x, 0.5);
-		}
+		/** @brief Classify the value x */
+		template<typename T> constexpr int fpclassify(const T& x) { return sprout::fpclassify(x); }
 
-		template<typename FloatType>
-		constexpr static int
-		fpclassify(
-			FloatType x,
-			typename std::enable_if<std::is_floating_point<FloatType>::value>::type* = nullptr)
-		{
-			return
-				isnan(x) ? FP_NAN
-				: isinf(x) ? FP_INFINITE
-				: iszero(x) ? FP_ZERO
-				: details::issubnormal_or_zero(x) ? FP_SUBNORMAL
-				: FP_NORMAL;
-		}
+		inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e15) / 1.0e15; }
+		inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e15f) / 1.0e15f; }
 	}
 }
