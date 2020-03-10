@@ -26,6 +26,9 @@ namespace Units
 
 		/** @brief Expects a character. Returns `false` if expected character was not found. */
 		virtual bool expect(char chr) = 0;
+
+		virtual void push() = 0;
+		virtual void pop() = 0;
 	};
 
 	class StringBuffer : public Buffer
@@ -33,9 +36,10 @@ namespace Units
 	private:
 		const std::string& str;
 		size_t ptr;
+		size_t ptr_old;
 
 	public:
-		StringBuffer(const std::string& s) : str(s), ptr(0) {}
+		StringBuffer(const std::string& s) : str(s), ptr(0), ptr_old(0) {}
 		~StringBuffer() = default;
 
 		bool accept(char chr) override
@@ -76,31 +80,26 @@ namespace Units
 			advance();
 			return true;
 		}
+
+		void push() override { ptr_old = ptr; }
+		void pop () override { ptr = ptr_old; }
 	};
 
-	/* Syntax (EBNF)
+	/*
+	Syntax (EBNF)
 
 			 expression = [value] term ;
+                   term = factor { ( " " | "." | "*" | "/" ) , factor } ;
+                 factor = prefixed-unit , [power]
+                        | "(" , expression , ")" ;
+          prefixed-unit = [prefix] , unit ;
+                  value = floating_point_number ;
+                  power = "^" , signed_number ;
+                 prefix = "y".."Y" ;
+                   unit = ( "m" | "kg" | "s" | "A" | "K" | "mol" | "cd"... )
 
-				   term = factor { ( " " | "." | "*" | "/" ) , factor } ;
-
-				 factor = prefixed-unit , [power]
-						| "(" , expression , ")" ;
-
-		  prefixed-unit = [prefix] , unit ;
-
-				  value = floating_point_number ;
-
-				  power = "^" , signed_number;
-
-				 prefix = "y".."Y" ;
-
-				   unit = ( "m" | "kg" | "s" | "A" | "K" | "mol" | "cd"... )
-						|  "1" ;                                                 See note 1
-
-		Note 1: "1" as factor is used for reciprocal units; it must be followed by "/"
 		Examples
-			1 m, 1 m2, 1 m/s, 1 m/s2, 1 (4 cm)2, 33 Hz, 33 1/s,
+			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm)^2, 33 Hz, 33 s^-1, 45 m / (10 s)
 	*/
 
 	std::unordered_map<std::string, Unit> units
@@ -156,17 +155,16 @@ namespace Units
 		return std::isspace(buff->current());
 	}
 
-	Quantity parseExpression(Buffer* buff); // done
-	Quantity parseTerm(Buffer* buff); // done
-	Quantity parseFactor(Buffer* buff); // done
+	Quantity parseExpression(Buffer* buff);
+	Quantity parseTerm(Buffer* buff);
+	Quantity parseFactor(Buffer* buff);
 
 	Unit parseUnit(Buffer* buff);
 
 	double parsePrefix(Buffer* buff);
-
-	double parseValue(Buffer* buff); // done
-	int parsePower(Buffer* buff); // done
-	int parseInt(Buffer* buff); // done
+	double parseValue(Buffer* buff);
+	int parsePower(Buffer* buff);
+	int parseInt(Buffer* buff);
 
 	Quantity parseExpression(Buffer* buff)
 	{
@@ -184,17 +182,21 @@ namespace Units
 			|| buff->current() == '.'
 			|| buff->current() == '/')
 		{
-			if(buff->current() == ' '
-				|| buff->current() == '*'
-				|| buff->current() == '.')
+			switch(buff->current())
 			{
-				buff->advance(true);
-				factor *= parseFactor(buff);
-			}
-			else if(buff->current() == '/')
-			{
-				buff->advance(true);
-				factor /= parseFactor(buff);
+				case ' ':
+				case '*':
+				case '.':
+					buff->advance(true);
+					if(!isLetter(buff) && buff->current() != '(') continue;
+					factor *= parseFactor(buff);
+					break;
+
+				case '/':
+					buff->advance(true);
+					if(!isLetter(buff) && buff->current() != '(') continue;
+					factor /= parseFactor(buff);
+					break;
 			}
 		}
 
@@ -211,29 +213,33 @@ namespace Units
 			return expr;
 		}
 
+		buff->push();
 		Unit unit = parseUnit(buff);
 
 		if(unit.eflag())
+		{
+			buff->pop();
 			return parsePrefix(buff) * parseUnit(buff);
+		}
 
 		return 1.0 * unit;
 	}
 
 	Unit parseUnit(Buffer* buff)
 	{
-		Unit ret;
+		Unit ret = error;
 		std::string unitName;
 
-		while(isLetter(buff))
+		while(isLetter(buff) || buff->current() == '$')
 		{
 			unitName += buff->current();
 			buff->advance();
 		}
 
 		auto it = units.find(unitName);
-		if(it != units.end()) ret = it->second;
+		if(it != units.end() && !unitName.empty()) ret = it->second;
 
-		if(buff->accept('^'))
+		if(ret != error && buff->accept('^'))
 		{
 			ret ^= (int8_t)parseInt(buff);
 		}
@@ -243,7 +249,33 @@ namespace Units
 
 	double parsePrefix(Buffer* buff)
 	{
-		return 1.0; // for now
+		switch(buff->current())
+		{
+			case 'Y': buff->advance(); return yotta;
+			case 'Z': buff->advance(); return zetta;
+			case 'E': buff->advance(); return exa;
+			case 'P': buff->advance(); return peta;
+			case 'T': buff->advance(); return tera;
+			case 'G': buff->advance(); return giga;
+			case 'M': buff->advance(); return mega;
+			case 'k': buff->advance(); return kilo;
+			case 'h': buff->advance(); return hecto;
+			case 'c': buff->advance(); return centi;
+			case 'm': buff->advance(); return milli;
+			case 'u': buff->advance(); return micro;
+			case 'n': buff->advance(); return nano;
+			case 'p': buff->advance(); return pico;
+			case 'f': buff->advance(); return femto;
+			case 'a': buff->advance(); return atto;
+			case 'z': buff->advance(); return zepto;
+			case 'y': buff->advance(); return yocto;
+
+			case 'd':
+				buff->advance();
+				return buff->accept('a') ? deca : deci;
+		}
+
+		return 1.0;
 	}
 
 	double parseValue(Buffer* buff)
@@ -266,17 +298,19 @@ namespace Units
 
 	int parseInt(Buffer* buff)
 	{
-		std::string s;
+		int total = 0;
+		bool neg  = false;
 
-		while(isNumber(buff)
-			|| buff->current() == '-'
-			|| buff->current() == '+')
+		/**/ if(buff->accept('+')) neg = false;
+		else if(buff->accept('-')) neg = true;
+
+		while(isNumber(buff))
 		{
-			s += buff->current();
+			total = 10 * total + buff->current();
 			buff->advance();
 		}
 
-		return std::atoi(s.c_str());
+		return neg ? -total : total;
 	}
 
 	bool from_string(const std::string& str, Unit& unit)
@@ -293,5 +327,3 @@ namespace Units
 		return true;
 	}
 }
-
-//			 whitespace = ? all_whitespace characters ?
