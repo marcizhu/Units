@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(units VERSION 0.0.1 LANGUAGES CXX)
+project(Units VERSION 0.0.1 LANGUAGES CXX)
 
 #---------------------------------------------------------------------------------------
 # set default build to debug
