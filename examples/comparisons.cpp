@@ -8,7 +8,7 @@ using namespace Units;
 Quantity work(const Quantity& F, const Quantity& dx)
 {
 	// If the unit of the parameter F is not Newton (N), throw
-	if(F.unit() != N) throw "Invalid quantity!";
+	if(F.getUnit() != N) throw "Invalid quantity!";
 
 	return F * dx;
 }

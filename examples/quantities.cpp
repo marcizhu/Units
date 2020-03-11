@@ -3,6 +3,7 @@
 #include "Units/Units.h" // provides commonly used units and conversions
 #include "Units/Quantity.h" // for Units::Unit
 #include "Units/IO.h" // provides operator<< for units & quantities
+#include "Units/extras/StdAdditions.h" // provides common std:: math functions
 
 int main()
 {
@@ -22,7 +23,7 @@ int main()
 
 	Quantity input3, input4;
 	std::cin >> input3; // Read quantity from std::cin
-	input4 = from_string("100.3 kHz"); // Read quantity from string. Represents 100.3 kilohertz
+	from_string("100.3 kHz", input4); // Read quantity from string. Represents 100.3 kilohertz
 
 	// Comparison operators
 	if(speed3 > speed1)
