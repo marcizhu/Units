@@ -917,4 +917,7 @@ namespace Units
 	constexpr Unit rpm = Unit(2.0 * Constants::pi / 60.0, rad / s);
 	/** @brief CFM, cubic feet per minute */
 	constexpr Unit CFM = (ft^3) / min;
+
+	inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e15) / 1.0e15; }
+	inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e15f) / 1.0e15f; }
 }

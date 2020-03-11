@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "Unit.h"
-#include "Math.h"
+#include "sprout/cmath.hpp"
 
 namespace Units
 {
@@ -21,7 +21,7 @@ namespace Units
 			float a = lhs.uncertainty;
 			float b = rhs.uncertainty;
 
-			return Math::sqrt(a * a + b * b);
+			return sprout::sqrt(a * a + b * b);
 		}
 
 		static constexpr float uncert_prod(const Quantity& lhs, const Quantity& rhs)
@@ -29,7 +29,7 @@ namespace Units
 			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
 			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
 
-			return (float)Math::abs(lhs.magnitude * rhs.magnitude) * Math::sqrt(a * a + b * b);
+			return (float)sprout::abs(lhs.magnitude * rhs.magnitude) * sprout::sqrt(a * a + b * b);
 		}
 
 		static constexpr float uncert_div(const Quantity& lhs, const Quantity& rhs)
@@ -37,7 +37,7 @@ namespace Units
 			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
 			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
 
-			return (float)Math::abs(lhs.magnitude / rhs.magnitude) * Math::sqrt(a * a + b * b);
+			return (float)sprout::abs(lhs.magnitude / rhs.magnitude) * sprout::sqrt(a * a + b * b);
 		}
 
 	public:
@@ -51,7 +51,7 @@ namespace Units
 		constexpr void setUncertainty(float val) { uncertainty = val; }
 
 		// quan * quan
-		constexpr Quantity operator^(int exp) const { return Quantity(Math::pow(magnitude, (double)exp), unit ^ exp); }
+		constexpr Quantity operator^(int exp) const { return Quantity(sprout::pow(magnitude, (double)exp), unit ^ exp); }
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }
@@ -87,8 +87,8 @@ namespace Units
 				&& uncertainty == other.uncertainty;
 		}
 
-		constexpr void root(int power) { magnitude = Math::pow(magnitude, 1.0 / (double)power); unit.root(power); }
-		constexpr void pow (int power) { magnitude = Math::pow(magnitude,       (double)power); unit.pow (power); }
+		constexpr void root(int power) { magnitude = sprout::pow(magnitude, 1.0 / (double)power); unit.root(power); }
+		constexpr void pow (int power) { magnitude = sprout::pow(magnitude,       (double)power); unit.pow (power); }
 	};
 
 	// real * quan

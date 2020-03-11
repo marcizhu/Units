@@ -3,7 +3,7 @@
 #include <functional> // for std::hash
 #include <stdexcept>
 
-#include "Math.h"
+#include "sprout/cmath.hpp"
 
 namespace Units
 {
@@ -54,7 +54,7 @@ namespace Units
 		constexpr static bool compare_round_equals(double val1, double val2)
 		{
 			auto v1 = val1 - val2;
-			if (v1 == 0.0 || Math::fpclassify(v1) == FP_SUBNORMAL || Math::abs(v1) < 1e-15) {
+			if (v1 == 0.0 || sprout::fpclassify(v1) == FP_SUBNORMAL || sprout::abs(v1) < 1e-15) {
 				return true;
 			}
 
@@ -138,7 +138,7 @@ namespace Units
 		constexpr Unit operator^(int exp) const
 		{
 			Unit ret(*this);
-			ret.multiplier    = Math::pow(ret.multiplier, (double)exp);
+			ret.multiplier    = sprout::pow(ret.multiplier, (double)exp);
 			ret.dim.meter    *= exp;
 			ret.dim.kilogram *= exp;
 			ret.dim.second   *= (ret.isRootHz() ? (exp / 2) : exp);
@@ -222,7 +222,7 @@ namespace Units
 				return;
 			}
 
-			multiplier    = Math::pow(multiplier, 1.0 / (double)power);
+			multiplier    = sprout::pow(multiplier, 1.0 / (double)power);
 			dim.meter    /= power;
 			dim.kilogram /= power;
 			dim.second   /= power;
