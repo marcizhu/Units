@@ -51,13 +51,13 @@ namespace Units
 		constexpr void setUncertainty(float val) { uncertainty = val; }
 
 		// quan * quan
-		constexpr Quantity operator^(int8_t exp) const { return Quantity(Math::pow(magnitude, (double)exp), unit ^ exp); }
+		constexpr Quantity operator^(int exp) const { return Quantity(Math::pow(magnitude, (double)exp), unit ^ exp); }
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }
 		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit, uncert_div (*this, rhs)); }
 
-		constexpr Quantity& operator^=(int8_t exp)          { *this = *this ^ exp; return *this; }
+		constexpr Quantity& operator^=(int exp)             { *this = *this ^ exp; return *this; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { *this = *this + rhs; return *this; }
 		constexpr Quantity& operator-=(const Quantity& rhs) { *this = *this - rhs; return *this; }
 		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
@@ -87,8 +87,8 @@ namespace Units
 				&& uncertainty == other.uncertainty;
 		}
 
-		constexpr void root(int8_t power) { magnitude = Math::pow(magnitude, 1.0 / (double)power); unit.root(power); }
-		constexpr void pow (int8_t power) { magnitude = Math::pow(magnitude,       (double)power); unit.pow (power); }
+		constexpr void root(int power) { magnitude = Math::pow(magnitude, 1.0 / (double)power); unit.root(power); }
+		constexpr void pow (int power) { magnitude = Math::pow(magnitude,       (double)power); unit.pow (power); }
 	};
 
 	// real * quan

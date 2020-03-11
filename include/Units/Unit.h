@@ -135,7 +135,7 @@ namespace Units
 		constexpr bool iflag  () const { return dim.i_flag;   }
 		constexpr bool eflag  () const { return dim.e_flag;   }
 
-		constexpr Unit operator^(int8_t exp) const
+		constexpr Unit operator^(int exp) const
 		{
 			Unit ret(*this);
 			ret.multiplier    = Math::pow(ret.multiplier, (double)exp);
@@ -197,17 +197,17 @@ namespace Units
 			return ret;
 		}
 
-		constexpr Unit& operator^=(int8_t exp) { *this = *this ^ exp; return *this; }
-		constexpr Unit& operator+=(Unit rhs)   { *this = *this + rhs; return *this; }
-		constexpr Unit& operator-=(Unit rhs)   { *this = *this - rhs; return *this; }
-		constexpr Unit& operator*=(Unit rhs)   { *this = *this * rhs; return *this; }
-		constexpr Unit& operator/=(Unit rhs)   { *this = *this / rhs; return *this; }
+		constexpr Unit& operator^=(int  exp) { *this = *this ^ exp; return *this; }
+		constexpr Unit& operator+=(Unit rhs) { *this = *this + rhs; return *this; }
+		constexpr Unit& operator-=(Unit rhs) { *this = *this - rhs; return *this; }
+		constexpr Unit& operator*=(Unit rhs) { *this = *this * rhs; return *this; }
+		constexpr Unit& operator/=(Unit rhs) { *this = *this / rhs; return *this; }
 
 		constexpr bool operator!=(Unit other) const { return dim != other.dim || !compare_round_equals(multiplier, other.multiplier); }
 		constexpr bool operator==(Unit other) const { return dim == other.dim &&  compare_round_equals(multiplier, other.multiplier); }
 
-		constexpr void pow (int8_t power) { *this ^= power; }
-		constexpr void root(int8_t power)
+		constexpr void pow (int power) { *this ^= power; }
+		constexpr void root(int power)
 		{
 			if(!hasValidRoot(power))
 			{
