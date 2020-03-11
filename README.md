@@ -2,6 +2,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/marcizhu/units/badge)](https://www.codefactor.io/repository/github/marcizhu/units)
 [![License](https://img.shields.io/github/license/marcizhu/units)](https://github.com/marcizhu/Units/blob/master/LICENSE)
 [![Stability: Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
+![Repo size](https://img.shields.io/github/repo-size/marcizhu/Units)
 
 A small, lightweight, fully `constexpr` C++14 library that allows to work with units and measurements at runtime, possibly
 from user input or generated from real devices.
