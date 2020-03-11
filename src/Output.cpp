@@ -281,13 +281,13 @@ namespace Units
 			{ Log::BV, "BV" },
 			{ Log::BmV, "BmV" },
 			{ Log::BuV, u8"B\u00B5V" },
-			{ Log::B10nV, u8"B10nV" },
+			{ Log::B10nV, "B10nV" },
 			{ Log::BW, "BW" },
 			{ Log::Bk, "Bk" },
 			{ Log::dBV, "dBV" },
 			{ Log::dBmV, "dBmV" },
 			{ Log::dBuV, "dBuV" },
-			{ Log::dB10nV, u8"dB10nV" },
+			{ Log::dB10nV, "dB10nV" },
 			{ Log::dBW, "dBW" },
 			{ Log::dBk, "dBk" },
 			{ Log::dBm, "dBm" },
@@ -351,7 +351,7 @@ namespace Units
 		{
 			if(!std::isfinite(qty)) return format_inf(qty);
 
-			constexpr const char* prefix[] = { "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
+			constexpr const char* prefix[] = { "y", "z", "a", "f", "p", "n", u8"\u00B5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
 
 			const int i = magnitude(qty);
 			const int index = (i >= 0 ? i : (i - 2)) / 3;

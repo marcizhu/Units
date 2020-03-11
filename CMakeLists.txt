@@ -31,6 +31,7 @@ if(BUILD_EXAMPLES)
 endif()
 
 add_library(units STATIC src/Input.cpp src/Output.cpp)
+target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/sprout)
 

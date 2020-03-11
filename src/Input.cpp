@@ -2,93 +2,16 @@
 #include "Units/IO.h"
 #include "Units/extras/StdAdditions.h"
 
+#include "Buffer.h"
+#include "StringBuffer.h"
+#include "StreamBuffer.h"
+
 namespace Units
 {
-	// 15 km^2/s^2
-
-	class Buffer
-	{
-	protected:
-		constexpr static const char EOF_MARK = (char)0xFF;
-
-	public:
-		/** @brief Accepts an optional character. Returns `true` if char was found. */
-		virtual bool accept(char chr) = 0;
-
-		/** @brief Returns current character. */
-		virtual char current() = 0;
-
-		/** @brief Returns next character. */
-		virtual char ahead() = 0;
-
-		/** @brief Advances to the next character. Returns current char. */
-		virtual char advance(bool skipws = false) = 0;
-
-		/** @brief Expects a character. Returns `false` if expected character was not found. */
-		virtual bool expect(char chr) = 0;
-
-		virtual void push() = 0;
-		virtual void pop() = 0;
-	};
-
-	class StringBuffer : public Buffer
-	{
-	private:
-		const std::string& str;
-		size_t ptr;
-		size_t ptr_old;
-
-	public:
-		StringBuffer(const std::string& s) : str(s), ptr(0), ptr_old(0) {}
-		~StringBuffer() = default;
-
-		bool accept(char chr) override
-		{
-			if(chr != current()) return false;
-
-			advance();
-			return true;
-		}
-
-		char current() override { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
-		char ahead  () override { return (ptr + 1) < str.size() ? str[ptr + 1] : EOF_MARK; }
-
-		char advance(bool skipws = false) override
-		{
-			if(current() == EOF_MARK) return EOF_MARK;
-
-			++ptr;
-
-			if(skipws)
-			{
-				while(current() == ' ')
-					++ptr;
-			}
-
-			return current();
-		}
-
-		bool expect(char chr) override
-		{
-			if(chr != current())
-			{
-				throw std::runtime_error(
-					"quantity: expecting '" + std::string(1, static_cast<char>(chr)) + "'");
-				return false;
-			}
-
-			advance();
-			return true;
-		}
-
-		void push() override { ptr_old = ptr; }
-		void pop () override { ptr = ptr_old; }
-	};
-
 	/*
 	Syntax (EBNF)
 
-			 expression = [value] term ;
+             expression = [value] term ;
                    term = factor { ( " " | "." | "*" | "/" ) , factor } ;
                  factor = prefixed-unit , [power]
                         | "(" , expression , ")" ;
@@ -101,6 +24,17 @@ namespace Units
 		Examples
 			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm)^2, 33 Hz, 33 s^-1, 45 m / (10 s)
 	*/
+
+	Quantity parseExpression(Buffer* buff);
+	Quantity parseTerm(Buffer* buff);
+	Quantity parseFactor(Buffer* buff);
+
+	Unit parseUnit(Buffer* buff);
+
+	double parsePrefix(Buffer* buff);
+	double parseValue(Buffer* buff);
+	int parsePower(Buffer* buff);
+	int parseInt(Buffer* buff);
 
 	std::unordered_map<std::string, Unit> units
 	{
@@ -136,7 +70,28 @@ namespace Units
 		{ "kat" , kat           },
 		{ "$"   , currency      },
 		{ "item", count         },
-		{ "√Hz" , std::sqrt(Hz) }
+		{ "√Hz" , std::sqrt(Hz) },
+
+		{ "Np" , Log::neper },
+		{ "B"  , Log::B     },
+		{ "BA" , Log::BA    },
+		{ "dB" , Log::dB    },
+		{ "dBA", Log::dBA   },
+		{ "dBc", Log::dBc   },
+
+		{ "BV"        , Log::BV     },
+		{ "BmV"       , Log::BmV    },
+		{ u8"B\u00B5V", Log::BuV    },
+		{ "B10nV"     , Log::B10nV  },
+		{ "BW"        , Log::BW     },
+		{ "Bk"        , Log::Bk     },
+		{ "dBV"       , Log::dBV    },
+		{ "dBmV"      , Log::dBmV   },
+		{ "dBuV"      , Log::dBuV   },
+		{ "dB10nV"    , Log::dB10nV },
+		{ "dBW"       , Log::dBW    },
+		{ "dBk"       , Log::dBk    },
+		{ "dBm"       , Log::dBm    }
 	};
 
 	bool isLetter(Buffer* buff)
@@ -155,19 +110,10 @@ namespace Units
 		return std::isspace(buff->current());
 	}
 
-	Quantity parseExpression(Buffer* buff);
-	Quantity parseTerm(Buffer* buff);
-	Quantity parseFactor(Buffer* buff);
-
-	Unit parseUnit(Buffer* buff);
-
-	double parsePrefix(Buffer* buff);
-	double parseValue(Buffer* buff);
-	int parsePower(Buffer* buff);
-	int parseInt(Buffer* buff);
-
 	Quantity parseExpression(Buffer* buff)
 	{
+		if(isWhitespace(buff)) buff->advance(true);
+
 		double quantity = parseValue(buff);
 		return quantity * parseTerm (buff);
 	}
@@ -177,7 +123,7 @@ namespace Units
 		if(isWhitespace(buff)) buff->advance(true);
 		Quantity factor = parseFactor(buff);
 
-		while(buff->current() == ' '
+		while( buff->current() == ' '
 			|| buff->current() == '*'
 			|| buff->current() == '.'
 			|| buff->current() == '/')
@@ -187,14 +133,12 @@ namespace Units
 				case ' ':
 				case '*':
 				case '.':
-					buff->advance(true);
-					if(!isLetter(buff) && buff->current() != '(') continue;
+					if(buff->advance(true) != '(' && !isLetter(buff)) continue;
 					factor *= parseFactor(buff);
 					break;
 
 				case '/':
-					buff->advance(true);
-					if(!isLetter(buff) && buff->current() != '(') continue;
+					if(buff->advance(true) != '(' && !isLetter(buff)) continue;
 					factor /= parseFactor(buff);
 					break;
 			}
@@ -230,6 +174,7 @@ namespace Units
 		Unit ret = error;
 		std::string unitName;
 
+		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
 		while(isLetter(buff) || buff->current() == '$')
 		{
 			unitName += buff->current();
@@ -240,9 +185,7 @@ namespace Units
 		if(it != units.end() && !unitName.empty()) ret = it->second;
 
 		if(ret != error && buff->accept('^'))
-		{
-			ret ^= (int8_t)parseInt(buff);
-		}
+			ret ^= parseInt(buff);
 
 		return ret;
 	}
@@ -269,6 +212,10 @@ namespace Units
 			case 'a': buff->advance(); return atto;
 			case 'z': buff->advance(); return zepto;
 			case 'y': buff->advance(); return yocto;
+
+			case '\xC2':
+				buff->advance();
+				return buff->accept('\xB5') ? micro : 1.0;
 
 			case 'd':
 				buff->advance();
@@ -316,14 +263,76 @@ namespace Units
 	bool from_string(const std::string& str, Unit& unit)
 	{
 		Buffer* buff = new StringBuffer(str);
-		unit = parseExpression(buff).getUnit();
+
+		try
+		{
+			unit = parseExpression(buff).getUnit();
+		}
+		catch(std::runtime_error& e)
+		{
+			unit = error;
+			delete buff;
+			return false;
+		}
+
+		delete buff;
 		return true;
 	}
 
 	bool from_string(const std::string& str, Quantity& quant)
 	{
 		Buffer* buff = new StringBuffer(str);
-		quant = parseExpression(buff);
+
+		try
+		{
+			quant = parseExpression(buff);
+		}
+		catch(std::runtime_error& e)
+		{
+			quant = error;
+			delete buff;
+			return false;
+		}
+
+		delete buff;
+		return true;
+	}
+
+	bool from_buffer(std::istream& is, Unit& unit)
+	{
+		Buffer* buff = new StreamBuffer(is);
+
+		try
+		{
+			unit = parseExpression(buff).getUnit();
+		}
+		catch(std::runtime_error& e)
+		{
+			unit = error;
+			delete buff;
+			return false;
+		}
+
+		delete buff;
+		return true;
+	}
+
+	bool from_buffer(std::istream& is, Quantity& quant)
+	{
+		Buffer* buff = new StreamBuffer(is);
+
+		try
+		{
+			quant = parseExpression(buff);
+		}
+		catch(std::runtime_error& e)
+		{
+			quant = error;
+			delete buff;
+			return false;
+		}
+
+		delete buff;
 		return true;
 	}
 }
