@@ -126,11 +126,10 @@ int main()
 //	std::cout << parseExpression(new StringBuffer("001e2 Hz^-1")) << std::endl;
 
 	std::string tempstr;
-	Quantity unit;
-
-	while(std::cin >> unit /*std::getline(std::cin, tempstr)*/)
+	while(std::getline(std::cin, tempstr))
 	{
-		//from_string(tempstr, unit);
+		Quantity unit;
+		from_string(tempstr, unit);
 		std::cout << unit << std::endl;
 	}
 #endif

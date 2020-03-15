@@ -22,7 +22,7 @@ namespace Units
                    unit = ( "m" | "kg" | "s" | "A" | "K" | "mol" | "cd"... )
 
 		Examples
-			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm)^2, 33 Hz, 33 s^-1, 45 m / (10 s)
+			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm^2), 33 Hz, 33 s^-1, 45 m / (10 s), 2 N*s
 	*/
 
 	Quantity parseExpression(Buffer* buff);
@@ -253,7 +253,7 @@ namespace Units
 
 		while(isNumber(buff))
 		{
-			total = 10 * total + buff->current();
+			total = 10 * total + (buff->current() - '0');
 			buff->advance();
 		}
 
@@ -262,77 +262,61 @@ namespace Units
 
 	bool from_string(const std::string& str, Unit& unit)
 	{
-		Buffer* buff = new StringBuffer(str);
-
 		try
 		{
-			unit = parseExpression(buff).getUnit();
+			StringBuffer buff(str);
+			unit = parseExpression(&buff).getUnit();
+			return true;
 		}
 		catch(std::runtime_error& e)
 		{
 			unit = error;
-			delete buff;
 			return false;
 		}
-
-		delete buff;
-		return true;
 	}
 
 	bool from_string(const std::string& str, Quantity& quant)
 	{
-		Buffer* buff = new StringBuffer(str);
-
 		try
 		{
-			quant = parseExpression(buff);
+			StringBuffer buff(str);
+			quant = parseExpression(&buff);
+			return true;
 		}
 		catch(std::runtime_error& e)
 		{
 			quant = error;
-			delete buff;
 			return false;
 		}
-
-		delete buff;
-		return true;
 	}
 
 	bool from_buffer(std::istream& is, Unit& unit)
 	{
-		Buffer* buff = new StreamBuffer(is);
-
 		try
 		{
-			unit = parseExpression(buff).getUnit();
+			StreamBuffer buff(is);
+			unit = parseExpression(&buff).getUnit();
+			return true;
 		}
 		catch(std::runtime_error& e)
 		{
 			unit = error;
-			delete buff;
 			return false;
 		}
-
-		delete buff;
-		return true;
 	}
 
 	bool from_buffer(std::istream& is, Quantity& quant)
 	{
-		Buffer* buff = new StreamBuffer(is);
-
 		try
 		{
-			quant = parseExpression(buff);
+			StreamBuffer buff(is);
+			quant = parseExpression(&buff);
+			return true;
 		}
 		catch(std::runtime_error& e)
 		{
 			quant = error;
-			delete buff;
 			return false;
 		}
-
-		delete buff;
-		return true;
 	}
 }
