@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace Units
 {
 	class Buffer
@@ -8,9 +10,6 @@ namespace Units
 		virtual ~Buffer() = default;
 
 		constexpr static const char EOF_MARK = (char)0xFF;
-
-		/** @brief Accepts an optional character. Returns `true` if char was found. */
-		virtual bool accept(char chr) = 0;
 
 		/** @brief Returns current character. */
 		virtual char current() = 0;
@@ -22,6 +21,26 @@ namespace Units
 		virtual char advance(bool skipws = false) = 0;
 
 		/** @brief Expects a character. Returns `false` if expected character was not found. */
-		virtual bool expect(char chr) = 0;
+		bool expect(char chr)
+		{
+			if(chr != current())
+			{
+				throw std::runtime_error(
+					"quantity: expecting '" + std::string(1, static_cast<char>(chr)) + "'");
+				return false;
+			}
+
+			advance();
+			return true;
+		}
+
+		/** @brief Accepts an optional character. Returns `true` if char was found. */
+		bool accept(char chr)
+		{
+			if(chr != current()) return false;
+
+			advance();
+			return true;
+		}
 	};
 }

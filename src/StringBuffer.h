@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <cstdint>
 
 #include "Buffer.h"
@@ -16,14 +15,6 @@ namespace Units
 	public:
 		StringBuffer(const std::string& s) : str(s), ptr(0) {}
 		~StringBuffer() = default;
-
-		bool accept(char chr) override
-		{
-			if(chr != current()) return false;
-
-			advance();
-			return true;
-		}
 
 		char current() override { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
 		char ahead  () override { return (ptr + 1) < str.size() ? str[ptr + 1] : EOF_MARK; }
@@ -41,19 +32,6 @@ namespace Units
 			}
 
 			return current();
-		}
-
-		bool expect(char chr) override
-		{
-			if(chr != current())
-			{
-				throw std::runtime_error(
-					"quantity: expecting '" + std::string(1, static_cast<char>(chr)) + "'");
-				return false;
-			}
-
-			advance();
-			return true;
 		}
 	};
 }

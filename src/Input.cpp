@@ -13,9 +13,9 @@ namespace Units
 
              expression = [value] term ;
                    term = factor { ( " " | "." | "*" | "/" ) , factor } ;
-                 factor = prefixed-unit , [power]
+                 factor = prefixed_unit , [power]
                         | "(" , expression , ")" ;
-          prefixed-unit = [prefix] , unit ;
+          prefixed_unit = [prefix] , unit ;
                   value = floating_point_number ;
                   power = "^" , signed_number ;
                  prefix = "y".."Y" ;
@@ -160,7 +160,10 @@ namespace Units
 		std::string unitName;
 
 		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
-		while(isLetter(buff) || buff->current() == '$')
+		while(isLetter(buff)
+			|| isNumber(buff)
+			|| buff->current() == '$'
+			|| buff->current() == '^')
 		{
 			unitName += buff->current();
 			buff->advance();
