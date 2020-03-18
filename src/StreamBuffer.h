@@ -11,11 +11,10 @@ namespace Units
 	{
 	private:
 		std::istream& is;
-		std::streampos ptr_old;
 		char curr_char;
 
 	public:
-		StreamBuffer(std::istream& s) : is(s), ptr_old(0), curr_char(0) { curr_char = (char)is.get(); }
+		StreamBuffer(std::istream& s) : is(s), curr_char(0) { curr_char = (char)is.get(); }
 		~StreamBuffer() = default;
 
 		bool accept(char chr) override
@@ -56,8 +55,5 @@ namespace Units
 			advance();
 			return true;
 		}
-
-		void push() override { ptr_old = is.tellg(); }
-		void pop () override { is.seekg(ptr_old, is.beg); }
 	};
 }

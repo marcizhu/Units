@@ -157,13 +157,22 @@ namespace Units
 			return expr;
 		}
 
-		buff->push();
-		Unit unit = parseUnit(buff);
+		std::string unitName;
+
+		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
+		while(isLetter(buff) || buff->current() == '$')
+		{
+			unitName += buff->current();
+			buff->advance();
+		}
+
+		StringBuffer temp1(unitName);
+		Unit unit = parseUnit(&temp1);
 
 		if(unit.eflag())
 		{
-			buff->pop();
-			return parsePrefix(buff) * parseUnit(buff);
+			StringBuffer temp2(unitName);
+			return parsePrefix(&temp2) * parseUnit(&temp2);
 		}
 
 		return 1.0 * unit;
@@ -227,7 +236,7 @@ namespace Units
 
 	double parseValue(Buffer* buff)
 	{
-		std::string s;
+		std::string str;
 
 		while(isNumber(buff)
 			|| buff->current() == '-'
@@ -236,11 +245,11 @@ namespace Units
 			|| buff->current() == 'E'
 			|| buff->current() == '.')
 		{
-			s += buff->current();
+			str += buff->current();
 			buff->advance();
 		}
 
-		return std::atof(s.c_str());
+		return std::atof(str.c_str());
 	}
 
 	int parseInt(Buffer* buff)

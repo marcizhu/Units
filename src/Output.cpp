@@ -311,6 +311,10 @@ namespace Units
 			{ ppm, "ppm" },
 			{ ppb, "ppb" },
 			{ rpm, "rpm" },
+
+			{ J / (kg * K), "J/(kg·K)" },
+			{ W / (m * K), "W/(m·K)" },
+
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)

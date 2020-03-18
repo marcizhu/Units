@@ -8,7 +8,7 @@
 namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.getMagnitude()); } }}
 
 #include "exprtk/exprtk.hpp"
-#include "Units/extras/ExprTKCompat.h"
+#include "Units/extras/ExprTkCompat.h"
 
 //inline constexpr Quantity operator""_km(long double d) { return (double)d * km; }
 //inline constexpr Quantity operator""_kg(long double d) { return (double)d * kg; }
@@ -117,6 +117,7 @@ int main()
 	std::cout << 5 * Log::dBc << std::endl;
 
 	std::cout << 15 * Chinese::li << std::endl;
+	std::cout << 72.8 * kilo * J / mol << std::endl;
 
 //	std::cout << parseExpression(new StringBuffer("123 kg")) << std::endl;
 //	std::cout << parseExpression(new StringBuffer("12.45 Cd")) << std::endl;
@@ -125,11 +126,11 @@ int main()
 //	std::cout << parseExpression(new StringBuffer("-123 kg^-1")) << std::endl;
 //	std::cout << parseExpression(new StringBuffer("001e2 Hz^-1")) << std::endl;
 
-	std::string tempstr;
-	while(std::getline(std::cin, tempstr))
+	//std::string tempstr;
+	Quantity unit;
+	while(std::cin >> unit)
 	{
-		Quantity unit;
-		from_string(tempstr, unit);
+		//from_string(tempstr, unit);
 		std::cout << unit << std::endl;
 	}
 #endif

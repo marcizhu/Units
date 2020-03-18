@@ -12,10 +12,9 @@ namespace Units
 	private:
 		const std::string& str;
 		size_t ptr;
-		size_t ptr_old;
 
 	public:
-		StringBuffer(const std::string& s) : str(s), ptr(0), ptr_old(0) {}
+		StringBuffer(const std::string& s) : str(s), ptr(0) {}
 		~StringBuffer() = default;
 
 		bool accept(char chr) override
@@ -56,8 +55,5 @@ namespace Units
 			advance();
 			return true;
 		}
-
-		void push() override { ptr_old = ptr; }
-		void pop () override { ptr = ptr_old; }
 	};
 }

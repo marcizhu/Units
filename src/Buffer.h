@@ -23,8 +23,5 @@ namespace Units
 
 		/** @brief Expects a character. Returns `false` if expected character was not found. */
 		virtual bool expect(char chr) = 0;
-
-		virtual void push() = 0;
-		virtual void pop() = 0;
 	};
 }
