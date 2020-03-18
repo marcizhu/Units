@@ -54,6 +54,8 @@ namespace Units
 		// TODO: Change pair with tuple, so that every tuple holds a unit, its name and a bool that tells if this unit is "SI-friendly"
 		// or not. If so, the apropriate SI prefix will be added (if nedded). If not, the number will be represented in scientific notation.
 
+		constexpr Unit gram__ = Unit(0.001, kg);
+
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
 			// Base SI units
@@ -66,6 +68,8 @@ namespace Units
 			{ mol,  "mol" },
 			{ rad,  "rad" },
 			{ Cd,   "Cd"  },
+
+			{ gram__,   "g"  },
 
 			// Derived SI units
 			{ sr           , "sr"   },
@@ -434,6 +438,8 @@ namespace Units
 		using namespace details;
 		if(q.getUnit().eflag()) return "ERROR";
 		if(q.getUnit() == Unit()) return magnitude_scientific(q.getMagnitude());
+
+		if(q.getUnit() == kg) return to_string(convert(q, gram__));
 
 		return magnitude_prefix(q.getMagnitude()) + to_string(q.getUnit());
 	}

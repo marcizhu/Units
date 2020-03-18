@@ -118,6 +118,9 @@ int main()
 
 	std::cout << 15 * Chinese::li << std::endl;
 	std::cout << 72.8 * kilo * J / mol << std::endl;
+	std::cout << 10.0 * kg << std::endl;
+	std::cout << 10.0 * kilo * g << std::endl;
+	std::cout << 10.0 * milli * g << std::endl;
 
 //	std::cout << parseExpression(new StringBuffer("123 kg")) << std::endl;
 //	std::cout << parseExpression(new StringBuffer("12.45 Cd")) << std::endl;
