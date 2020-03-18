@@ -920,4 +920,11 @@ namespace Units
 
 	inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e15) / 1.0e15; }
 	inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e15f) / 1.0e15f; }
+
+	constexpr Quantity convert(const Quantity& start, const Unit& result)
+	{
+		if(start.getUnit().base_units() != result.base_units()) throw std::logic_error("Units are not convertible!");
+
+		return start.getMagnitude() * (start.getUnit().unit_multiplier() / result.unit_multiplier()) * result;
+	}
 }
