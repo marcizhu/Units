@@ -28,8 +28,7 @@ namespace Units
 	Quantity parseExpression(Buffer* buff);
 	Quantity parseTerm(Buffer* buff);
 	Quantity parseFactor(Buffer* buff);
-
-	Unit parseUnit(Buffer* buff);
+	Quantity parseUnit(Buffer* buff);
 
 	double parsePrefix(Buffer* buff);
 	double parseValue(Buffer* buff);
@@ -114,8 +113,9 @@ namespace Units
 	{
 		if(isWhitespace(buff)) buff->advance(true);
 
-		double quantity = parseValue(buff);
-		return quantity * parseTerm (buff);
+		double quant  = parseValue(buff);
+		Quantity term = parseTerm (buff);
+		return quant == 0.0 ? term : quant * term;
 	}
 
 	Quantity parseTerm(Buffer* buff)
@@ -154,7 +154,7 @@ namespace Units
 			Quantity expr = parseExpression(buff);
 			buff->expect(')');
 
-			return expr;
+			return expr.getMagnitude() == 0.0 ? 1.0 * expr.getUnit() : expr;
 		}
 
 		std::string unitName;
@@ -170,20 +170,20 @@ namespace Units
 		}
 
 		StringBuffer temp1(unitName);
-		Unit unit = parseUnit(&temp1);
+		Quantity unit = parseUnit(&temp1);
 
-		if(unit.eflag())
+		if(unit.getUnit().eflag())
 		{
 			StringBuffer temp2(unitName);
 			return parsePrefix(&temp2) * parseUnit(&temp2);
 		}
 
-		return 1.0 * unit;
+		return unit;
 	}
 
-	Unit parseUnit(Buffer* buff)
+	Quantity parseUnit(Buffer* buff)
 	{
-		Unit ret = error;
+		Quantity ret = error;
 		std::string unitName;
 
 		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
@@ -193,8 +193,11 @@ namespace Units
 			buff->advance();
 		}
 
+		// Exception: kg is the only SI unit with prefix
+		if(unitName == "g") return g;
+
 		auto it = units.find(unitName);
-		if(it != units.end() && !unitName.empty()) ret = it->second;
+		if(it != units.end() && !unitName.empty()) ret = 1.0 * it->second;
 
 		if(ret != error && buff->accept('^'))
 			ret ^= parseInt(buff);
@@ -224,15 +227,10 @@ namespace Units
 			case 'a': buff->advance(); return atto;
 			case 'z': buff->advance(); return zepto;
 			case 'y': buff->advance(); return yocto;
-
-			case '\xC2':
-				buff->advance();
-				return buff->accept('\xB5') ? micro : 1.0;
-
-			case 'd':
-				buff->advance();
-				return buff->accept('a') ? deca : deci;
 		}
+
+		/**/ if(buff->accept('\xC2') && buff->accept('\xB5')) return micro;
+		else if(buff->accept('d')) return buff->accept('a') ? deca : deci;
 
 		return 1.0;
 	}
