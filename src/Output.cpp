@@ -361,19 +361,19 @@ namespace Units
 			return data;
 		}
 
-		static std::string magnitude_prefix(double qty)
+		static std::string magnitude_prefix(double qty, int deg)
 		{
 			if(!std::isfinite(qty)) return format_inf(qty);
 
 			constexpr const char* prefix[] = { "y", "z", "a", "f", "p", "n", u8"\u00B5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
 
 			const int i = magnitude(qty);
-			const int index = (i >= 0 ? i : (i - 2)) / 3;
+			const int index = (i >= 0 ? i : (i - 2)) / (3 * deg);
 			const int precision = (i >= 0 ? (3 - i % 3) : ((std::abs(i + 1) % 3) + 1));
 
 			if(index + 8 > (int)(sizeof(prefix) / sizeof(prefix[0])) || index < -8) return std::to_string(qty);
 
-			return to_string_precision(qty / pow10(3 * index), precision) + ' ' + prefix[index + 8];
+			return to_string_precision(qty / pow10(3 * index * deg), precision) + ' ' + prefix[index + 8];
 		}
 
 		static std::string unit_raw(Units::Unit un)
@@ -425,8 +425,8 @@ namespace Units
 
 		for(auto& tu : testUnits) if(find_unit(un * tu.first, str)) return str + "/" + tu.second;
 		for(auto& tu : testUnits) if(find_unit(un / tu.first, str)) return str + "⋅" + tu.second;
-		for(auto& tu : testUnits) if(find_unit((un / tu.first)^-1, str)) return str + "⁻¹⋅" + tu.second + "⁻¹";
-		for(auto& tu : testUnits) if(find_unit((un * tu.first)^-1, str)) return str + "⁻¹/" + tu.second + "⁻¹";
+		for(auto& tu : testUnits) if(find_unit((un / tu.first)^-1, str)) return str + "⁻¹⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit((un * tu.first)^-1, str)) return str + "⁻¹/" + tu.second;
 
 		for(auto& tu : testUnits) if(find_unit(std::sqrt(un * tu.first), str)) return str + "²/" + tu.second;
 		for(auto& tu : testUnits) if(find_unit(std::sqrt(un / tu.first), str)) return str + "²⋅" + tu.second;
@@ -447,6 +447,6 @@ namespace Units
 
 		if(q.getUnit() == kg) return to_string(convert(q, gram__));
 
-		return magnitude_prefix(q.getMagnitude()) + to_string(q.getUnit());
+		return magnitude_prefix(q.getMagnitude(), q.getUnit().unit_count() == 1 ? q.getUnit().degree() : 1) + to_string(q.getUnit());
 	}
 }
