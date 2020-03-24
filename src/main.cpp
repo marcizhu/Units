@@ -118,16 +118,8 @@ int main()
 
 	std::cout << 15 * Chinese::li << std::endl;
 	std::cout << 72.8 * kilo * J / mol << std::endl;
-	std::cout << 10.0 * kg << std::endl;
 	std::cout << 10.0 * kilo * g << std::endl;
 	std::cout << 10.0 * milli * g << std::endl;
-
-//	std::cout << parseExpression(new StringBuffer("123 kg")) << std::endl;
-//	std::cout << parseExpression(new StringBuffer("12.45 Cd")) << std::endl;
-//	std::cout << parseExpression(new StringBuffer("032123 kg")) << std::endl;
-//	std::cout << parseExpression(new StringBuffer("+456 m^2")) << std::endl;
-//	std::cout << parseExpression(new StringBuffer("-123 kg^-1")) << std::endl;
-//	std::cout << parseExpression(new StringBuffer("001e2 Hz^-1")) << std::endl;
 
 	//std::string tempstr;
 	Quantity unit;

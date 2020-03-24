@@ -49,6 +49,23 @@ namespace Units
 					&& i_flag   == other.i_flag
 					&& eq_flag  == other.eq_flag;
 			}
+
+			constexpr int unit_count() const
+			{
+				 return
+				 	((meter    != 0) ? 1 : 0) + ((second  != 0) ? 1 : 0) +
+					((kilogram != 0) ? 1 : 0) + ((ampere  != 0) ? 1 : 0) +
+					((candela  != 0) ? 1 : 0) + ((kelvin  != 0) ? 1 : 0) +
+					((mole     != 0) ? 1 : 0) + ((radians != 0) ? 1 : 0) +
+					((currency != 0) ? 1 : 0) + ((count   != 0) ? 1 : 0);
+			}
+
+			constexpr int degree() const
+			{
+				return
+					meter + kilogram + second + ampere + kelvin +
+					mole + radians + candela + currency + count;
+			}
 		} dim;
 
 		constexpr static bool compare_round_equals(double val1, double val2)
@@ -232,6 +249,9 @@ namespace Units
 			dim.i_flag    = 0;
 			dim.eq_flag   = 0;
 		}
+
+		constexpr int degree() const { return dim.degree(); }
+		constexpr int unit_count() const { return dim.unit_count(); }
 	};
 	#pragma pack(pop)
 }

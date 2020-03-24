@@ -61,6 +61,8 @@ namespace Units
 			// Base SI units
 			{ none, ""    },
 			{ m,    "m"   },
+			{ m^2, u8"m\u00B2" },
+			{ m^3, u8"m\u00B3" },
 			{ kg,   "kg"  },
 			{ s,    "s"   },
 			{ A,    "A"   },
@@ -199,6 +201,8 @@ namespace Units
 			{ Distance::xu, "xu" },
 
 			// Area
+			{ Area::barn, "b" },
+
 			// Mass
 			// Volume
 
@@ -337,12 +341,14 @@ namespace Units
 		{
 			static constexpr double pow10[] =
 				{
-					1.0e-14, 1.0e-13, 1.0e-12, 1.0e-11,  1.0e-10,  1.0e-9,  1.0e-8,  1.0e-7,  1.0e-6,  1.0e-5,
-					1.0e-4 , 1.0e-3 , 1.0e-2 , 1.0e-1 ,  1.0e0  ,  1.0e1 ,  1.0e2 ,  1.0e3 ,  1.0e4 ,  1.0e5 ,
-					1.0e6  , 1.0e7  , 1.0e8  , 1.0e9  ,  1.0e10 ,  1.0e11,  1.0e12,  1.0e13,  1.0e14,  1.0e15
+					1.0e-24, 1.0e-23, 1.0e-22, 1.0e-21,  1.0e-20,  1.0e-19,  1.0e-18,  1.0e-17,  1.0e-16,  1.0e-15,
+					1.0e-14, 1.0e-13, 1.0e-12, 1.0e-11,  1.0e-10,  1.0e-9 ,  1.0e-8 ,  1.0e-7 ,  1.0e-6 ,  1.0e-5 ,
+					1.0e-4 , 1.0e-3 , 1.0e-2 , 1.0e-1 ,  1.0e0  ,  1.0e1  ,  1.0e2  ,  1.0e3  ,  1.0e4  ,  1.0e5  ,
+					1.0e6  , 1.0e7  , 1.0e8  , 1.0e9  ,  1.0e10 ,  1.0e11 ,  1.0e12 ,  1.0e13 ,  1.0e14 ,  1.0e15 ,
+					1.0e16 , 1.0e17 , 1.0e18 , 1.0e19 ,  1.0e20 ,  1.0e21 ,  1.0e22 ,  1.0e23 ,  1.0e24 ,  1.0e25
 				};
 
-			return pow10[n + 14];
+			return pow10[n + 24];
 		}
 
 		static int magnitude(double n) { return (std::fabs(n) == 0.0 ? 0 : (int)std::floor(std::log10(std::fabs(n)))); }

@@ -594,6 +594,7 @@ namespace Units
 	{
 		constexpr Unit are     = Unit(100.0, m^2);
 		constexpr Unit hectare = Unit(100.0, are);
+		/** @brief Barn. 10^−28 m^2 (or 100 fm^2) */
 		constexpr Unit barn    = Unit(1e-28, m^2);
 		constexpr Unit arpent  = Unit(0.84628, acre);
 	}
