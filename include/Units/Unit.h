@@ -7,12 +7,10 @@
 
 namespace Units
 {
-	#pragma pack(push)
-	#pragma pack(4)
 	class Unit
 	{
 	private:
-		double multiplier;
+		float multiplier;
 		struct Dimensions
 		{
 			signed int meter : 4;
@@ -68,15 +66,7 @@ namespace Units
 			}
 		} dim;
 
-		constexpr static bool compare_round_equals(double val1, double val2)
-		{
-			auto v1 = val1 - val2;
-			if (v1 == 0.0 || sprout::fpclassify(v1) == FP_SUBNORMAL || sprout::abs(v1) < 1e-15) {
-				return true;
-			}
-
-			return false;
-		}
+		static constexpr float cround(const float& val) { return sprout::round(val * 1.0e7f) / 1.0e7f; }
 
 		constexpr void check_unit(const Unit& other) const { if(*this != other) throw std::logic_error("Incompatible units!"); }
 
@@ -130,14 +120,14 @@ namespace Units
 
 		constexpr explicit Unit()                               : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 		constexpr explicit Unit(std::nullptr_t)                 : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0) {}
-		constexpr          Unit(double mult, const Unit& other) : multiplier(mult * other.multiplier), dim(other.dim) {}
+		constexpr          Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), dim(other.dim) {}
 
 		constexpr Unit(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool iflag = false)
 			: multiplier(1.0), dim(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, 0, iflag, 0) {}
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&dim; }
 
-		constexpr double unit_multiplier() const { return multiplier; }
+		constexpr float unit_multiplier() const { return multiplier; }
 
 		constexpr int meter   () const { return dim.meter;    }
 		constexpr int kg      () const { return dim.kilogram; }
@@ -155,7 +145,7 @@ namespace Units
 		constexpr Unit operator^(int exp) const
 		{
 			Unit ret(*this);
-			ret.multiplier    = sprout::pow(ret.multiplier, (double)exp);
+			ret.multiplier    = sprout::pow(ret.multiplier, (float)exp);
 			ret.dim.meter    *= exp;
 			ret.dim.kilogram *= exp;
 			ret.dim.second   *= (ret.isRootHz() ? (exp / 2) : exp);
@@ -239,7 +229,7 @@ namespace Units
 				return;
 			}
 
-			multiplier    = sprout::pow(multiplier, 1.0 / (double)power);
+			multiplier    = sprout::pow(multiplier, 1.0f / (float)power);
 			dim.meter    /= power;
 			dim.kilogram /= power;
 			dim.second   /= power;
@@ -253,7 +243,6 @@ namespace Units
 		constexpr int degree() const { return dim.degree(); }
 		constexpr int unit_count() const { return dim.unit_count(); }
 	};
-	#pragma pack(pop)
 }
 
-static_assert(sizeof(Units::Unit) == 12, "Invalid size of Unit");
+static_assert(sizeof(Units::Unit) == 8, "Invalid size of Unit");
