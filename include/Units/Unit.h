@@ -108,22 +108,25 @@ namespace Units
 				&& dim.eq_flag          == 0;
 		}
 
+		constexpr Unit(float mult, const Dimensions& dim) : multiplier(mult), dim(dim) {}
+
 	public:
 		constexpr explicit Unit(uint8_t num)
 			: multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 		{
-			if(num > 0b0001'1111) *this = Unit(nullptr);
+			if(num > 0b0001'1111) *this = Unit::error();
 
 			dim.count   = (num & 0b0000'0011) >> 0;
 			dim.radians = (num & 0b0001'1100) >> 2;
 		}
 
 		constexpr explicit Unit()                               : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
-		constexpr explicit Unit(std::nullptr_t)                 : multiplier(1.0), dim(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0) {}
 		constexpr          Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), dim(other.dim) {}
 
 		constexpr Unit(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool iflag = false)
 			: multiplier(1.0), dim(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, 0, iflag, 0) {}
+
+		static constexpr Unit error() { return Unit(1.0f, Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0)); }
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&dim; }
 
@@ -210,8 +213,8 @@ namespace Units
 		constexpr Unit& operator*=(Unit rhs) { *this = *this * rhs; return *this; }
 		constexpr Unit& operator/=(Unit rhs) { *this = *this / rhs; return *this; }
 
-		constexpr bool operator!=(Unit other) const { return dim != other.dim || !compare_round_equals(multiplier, other.multiplier); }
-		constexpr bool operator==(Unit other) const { return dim == other.dim &&  compare_round_equals(multiplier, other.multiplier); }
+		constexpr bool operator!=(Unit other) const { return dim != other.dim || cround(multiplier) != cround(other.multiplier); }
+		constexpr bool operator==(Unit other) const { return dim == other.dim && cround(multiplier) == cround(other.multiplier); }
 
 		constexpr void pow (int power) { *this ^= power; }
 		constexpr void root(int power)
@@ -225,7 +228,7 @@ namespace Units
 					return;
 				}
 
-				*this = Unit(nullptr);
+				*this = Unit::error();
 				return;
 			}
 
