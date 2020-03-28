@@ -46,7 +46,7 @@ namespace Units
 
 	constexpr Unit one;
 	constexpr Quantity percent = 0.01 * one;
-	constexpr Unit     error   = Unit(nullptr);
+	constexpr Unit     error   = Unit::error();
 	constexpr Unit     none    = one;
 
 	// The base SI units
@@ -798,7 +798,7 @@ namespace Units
 	namespace Log
 	{
 		/** @brief Neper */
-		constexpr Unit neper  = Unit(static_cast<int8_t>(0));
+		constexpr Unit neper  = Unit(0);
 		/** @brief Neper. Power unit */
 		constexpr Unit neperP = Unit(1);
 
@@ -919,13 +919,13 @@ namespace Units
 	/** @brief CFM, cubic feet per minute */
 	constexpr Unit CFM = (ft^3) / min;
 
-	inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e15) / 1.0e15; }
-	inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e15f) / 1.0e15f; }
+	inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e16) / 1.0e16; }
+	inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e7f) / 1.0e7f; }
 
 	constexpr Quantity convert(const Quantity& start, const Unit& result)
 	{
 		if(start.getUnit().base_units() != result.base_units()) throw std::logic_error("Units are not convertible!");
 
-		return start.getMagnitude() * (start.getUnit().unit_multiplier() / result.unit_multiplier()) * result;
+		return start.getMagnitude() * ((double)start.getUnit().unit_multiplier() / (double)result.unit_multiplier()) * result;
 	}
 }
