@@ -13,7 +13,7 @@ namespace Units
 		size_t ptr;
 
 	public:
-		StringBuffer(const std::string& s) : str(s), ptr(0) {}
+		StringBuffer(const std::string& str) : str(str), ptr(0) {}
 		~StringBuffer() = default;
 
 		char current() override { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }

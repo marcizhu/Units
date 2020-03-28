@@ -14,48 +14,20 @@ namespace Units
 	private:
 		double magnitude;
 		Unit unit;
-		float uncertainty;
-
-		static constexpr float uncert_add(const Quantity& lhs, const Quantity& rhs)
-		{
-			float a = lhs.uncertainty;
-			float b = rhs.uncertainty;
-
-			return sprout::sqrt(a * a + b * b);
-		}
-
-		static constexpr float uncert_prod(const Quantity& lhs, const Quantity& rhs)
-		{
-			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
-			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
-
-			return (float)sprout::abs(lhs.magnitude * rhs.magnitude) * sprout::sqrt(a * a + b * b);
-		}
-
-		static constexpr float uncert_div(const Quantity& lhs, const Quantity& rhs)
-		{
-			float a = lhs.magnitude != 0.0 ? lhs.uncertainty / static_cast<float>(lhs.magnitude) : 0.0;
-			float b = rhs.magnitude != 0.0 ? rhs.uncertainty / static_cast<float>(rhs.magnitude) : 0.0;
-
-			return (float)sprout::abs(lhs.magnitude / rhs.magnitude) * sprout::sqrt(a * a + b * b);
-		}
 
 	public:
-		constexpr Quantity(Unit u = Unit())                             : magnitude(1.0), unit(u), uncertainty(0.0f) {}
-		constexpr Quantity(double mag, Unit u = Unit(), float c = 0.0f) : magnitude(mag), unit(u), uncertainty(c)    {}
+		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
+		constexpr Quantity(double mag, Unit u = Unit()) : magnitude(mag), unit(u) {}
 
 		constexpr double getMagnitude() const { return magnitude; }
-		constexpr float getUncertainty() const { return uncertainty; }
 		constexpr Unit getUnit() const { return unit; }
-
-		constexpr void setUncertainty(float val) { uncertainty = val; }
 
 		// quan * quan
 		constexpr Quantity operator^(int exp) const { return Quantity(sprout::pow(magnitude, (double)exp), unit ^ exp); }
-		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit, uncert_add (*this, rhs)); }
-		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit, uncert_add (*this, rhs)); }
-		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit, uncert_prod(*this, rhs)); }
-		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit, uncert_div (*this, rhs)); }
+		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit); }
+		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit); }
+		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit); }
+		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit); }
 
 		constexpr Quantity& operator^=(int exp)             { *this = *this ^ exp; return *this; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { *this = *this + rhs; return *this; }
@@ -63,8 +35,8 @@ namespace Units
 		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
 		constexpr Quantity& operator/=(const Quantity& rhs) { *this = *this / rhs; return *this; }
 
-		constexpr Quantity operator+() const { return Quantity(+magnitude, unit, uncertainty); }
-		constexpr Quantity operator-() const { return Quantity(-magnitude, unit, uncertainty); }
+		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
+		constexpr Quantity operator-() const { return Quantity(-magnitude, unit); }
 
 		constexpr bool operator> (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude >  other.magnitude; }
 		constexpr bool operator< (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <  other.magnitude; }
@@ -75,16 +47,14 @@ namespace Units
 		constexpr bool operator!=(const Quantity& other) const
 		{
 			return unit        != other.unit
-				|| magnitude   != other.magnitude
-				|| uncertainty != other.uncertainty;
+				|| magnitude   != other.magnitude;
 		}
 
 		/** @brief Equality comparison operator */
 		constexpr bool operator==(const Quantity& other) const
 		{
 			return unit        == other.unit
-				&& magnitude   == other.magnitude
-				&& uncertainty == other.uncertainty;
+				&& magnitude   == other.magnitude;
 		}
 
 		constexpr void root(int power) { magnitude = sprout::pow(magnitude, 1.0 / (double)power); unit.root(power); }
@@ -112,4 +82,4 @@ namespace Units
 	template<typename T> constexpr bool operator<=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
 }
 
-static_assert(sizeof(Units::Quantity) == 24, "Invalid size of Quantity");
+static_assert(sizeof(Units::Quantity) == 16, "Invalid size of Quantity");

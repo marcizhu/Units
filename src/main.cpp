@@ -5,14 +5,6 @@
 #include "Units/Constants.h"
 #include "Units/extras/StdAdditions.h"
 
-namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.getMagnitude()); } }}
-
-#include "exprtk/exprtk.hpp"
-#include "Units/extras/ExprTkCompat.h"
-
-//inline constexpr Quantity operator""_km(long double d) { return (double)d * km; }
-//inline constexpr Quantity operator""_kg(long double d) { return (double)d * kg; }
-
 // NOTE: Make example using imaginary units (VA, VAR, W). Maybe a small example with directions could also be helpful
 
 int main()
@@ -22,39 +14,6 @@ int main()
 //	Quantity test = 23.5;
 //	std::cout << test << std::endl;
 
-#if 0
-	typedef exprtk::symbol_table<Quantity> symbol_table_t;
-	typedef exprtk::expression<Quantity>     expression_t;
-	typedef exprtk::parser<Quantity>             parser_t;
-	typedef exprtk::parser_error::type            error_t;
-
-	Quantity x = 15.0 * W;
-	Quantity y(3, s, 0.2);
-
-	symbol_table_t symbol_table;
-	symbol_table.add_variable("x", x);
-	symbol_table.add_variable("y", y);
-	symbol_table.add_constants();
-
-	expression_t expression;
-	expression.register_symbol_table(symbol_table);
-
-	parser_t parser;
-	if(!parser.compile("x * y", expression))
-	{
-		std::cout << parser.error() << ". Expression: " << "x / y" << std::endl;
-
-		for (std::size_t i = 0; i < parser.error_count(); ++i)
-		{
-			error_t error = parser.get_error(i);
-			std::cout << exprtk::parser_error::to_str(error.mode) << ": " << error.diagnostic << ". Expression: " << "x / y" << std::endl;
-		}
-	}
-
-	Quantity ans = expression.value();
-	Quantity man = x * y;
-	std::cout << "Answer: " << ans << std::endl;
-#else
 	constexpr Quantity earth_mass   = 5.972e24 * kg;
 	constexpr Quantity earth_radius = 6371.0 * km;
 
@@ -119,7 +78,10 @@ int main()
 	std::cout << 15 * Chinese::li << std::endl;
 	std::cout << 72.8 * kilo * J / mol << std::endl;
 	std::cout << 10.0 * kilo * g << std::endl;
-	std::cout << 10.0 * milli * g << std::endl;
+	std::cout << 10.0 * milli * g << std::endl << std::endl;
+
+	std::cout << 750 * std::sqrt(Pressure::mmHg^2) << std::endl;
+	std::cout << 750 * std::sqrt(Pressure::torr^2) << std::endl;
 
 	//std::string tempstr;
 	Quantity unit;
@@ -128,5 +90,4 @@ int main()
 		//from_string(tempstr, unit);
 		std::cout << unit << std::endl;
 	}
-#endif
 }
