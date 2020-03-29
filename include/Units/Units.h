@@ -919,9 +919,6 @@ namespace Units
 	/** @brief CFM, cubic feet per minute */
 	constexpr Unit CFM = (ft^3) / min;
 
-	inline constexpr double cround(const double& val) { return sprout::round(val * 1.0e16) / 1.0e16; }
-	inline constexpr float cround(const float& val) { return sprout::round(val * 1.0e7f) / 1.0e7f; }
-
 	constexpr Quantity convert(const Quantity& start, const Unit& result)
 	{
 		if(start.getUnit().base_units() != result.base_units()) throw std::logic_error("Units are not convertible!");

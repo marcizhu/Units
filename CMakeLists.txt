@@ -16,17 +16,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
-option(BUILD_TESTS "Build unit tests" OFF)
-option(BUILD_EXAMPLES "Build example files" OFF)
+option(UNITS_BUILD_TESTS "Build unit tests" OFF)
+option(UNITS_BUILD_EXAMPLES "Build example files" OFF)
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
-if(BUILD_TESTS)
+if(UNITS_BUILD_TESTS)
 	enable_testing()
+	add_subdirectory(deps/Catch2)
 	add_subdirectory(tests)
 endif()
 
-if(BUILD_EXAMPLES)
+if(UNITS_BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
 

@@ -15,11 +15,13 @@ namespace Units
 		double magnitude;
 		Unit unit;
 
+		static constexpr double cround(const double& val) { return sprout::round(val * 1.0e16) / 1.0e16; }
+
 	public:
 		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
 		constexpr Quantity(double mag, Unit u = Unit()) : magnitude(mag), unit(u) {}
 
-		constexpr double getMagnitude() const { return magnitude; }
+		constexpr double getMagnitude() const { return cround(magnitude); }
 		constexpr Unit getUnit() const { return unit; }
 
 		// quan * quan
@@ -44,18 +46,9 @@ namespace Units
 		constexpr bool operator<=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <= other.magnitude; }
 
 		/** @brief Inequality comparison operator */
-		constexpr bool operator!=(const Quantity& other) const
-		{
-			return unit        != other.unit
-				|| magnitude   != other.magnitude;
-		}
-
+		constexpr bool operator!=(const Quantity& other) const { return unit != other.unit || cround(magnitude) != cround(other.magnitude); }
 		/** @brief Equality comparison operator */
-		constexpr bool operator==(const Quantity& other) const
-		{
-			return unit        == other.unit
-				&& magnitude   == other.magnitude;
-		}
+		constexpr bool operator==(const Quantity& other) const { return unit == other.unit && cround(magnitude) == cround(other.magnitude); }
 
 		constexpr void root(int power) { magnitude = sprout::pow(magnitude, 1.0 / (double)power); unit.root(power); }
 		constexpr void pow (int power) { magnitude = sprout::pow(magnitude,       (double)power); unit.pow (power); }

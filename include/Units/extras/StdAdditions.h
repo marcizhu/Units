@@ -14,7 +14,17 @@ namespace std
 	{
 		size_t operator()(const Units::Unit& x) const noexcept
 		{
-			return hash<uint32_t>()(x.base_units()) ^ hash<float>()(Units::cround(x.unit_multiplier()));
+			return hash<uint32_t>()(x.base_units())
+				^ hash<float>()(x.unit_multiplier());
+		}
+	};
+
+	template<>
+	struct not_equal_to<Units::Unit>
+	{
+		size_t operator()(const Units::Unit& a, const Units::Unit& b) const noexcept
+		{
+			return !(a == b);
 		}
 	};
 
@@ -34,7 +44,7 @@ namespace std
 		size_t operator()(const Units::Quantity& x) const noexcept
 		{
 			return hash<Units::Unit>()(x.getUnit())
-				^ hash<double>()(Units::cround(x.getMagnitude()));
+				^ hash<double>()(x.getMagnitude());
 		}
 	};
 
@@ -51,7 +61,7 @@ namespace std
 
 	inline Units::Quantity sqrt(Units::Quantity x) noexcept { x.root(2); return x; }
 	inline Units::Quantity cbrt(Units::Quantity x) noexcept { x.root(3); return x; }
-	inline Units::Quantity pow (const Units::Quantity& x, int8_t exp) noexcept { return x^exp; }
+	inline Units::Quantity pow (const Units::Quantity& x, int exp) noexcept { return x^exp; }
 
 	inline Units::Quantity pow  (const Units::Quantity& x, const Units::Quantity& y) noexcept { return pow  (x,        (int8_t)y.getMagnitude()); }
 	inline Units::Quantity fmod (const Units::Quantity& x, const Units::Quantity& y) noexcept { return fmod (x.getMagnitude(), y.getMagnitude()); }
@@ -103,8 +113,8 @@ namespace std
 		static constexpr float_denorm_style has_denorm = numeric_limits<double>::has_denorm;
 		static constexpr float_round_style round_style = numeric_limits<double>::round_style;
 
-		static constexpr bool traps           = numeric_limits<double>::traps           || numeric_limits<float>::traps;
-		static constexpr bool tinyness_before = numeric_limits<double>::tinyness_before || numeric_limits<float>::traps;
+		static constexpr bool traps           = numeric_limits<double>::traps;
+		static constexpr bool tinyness_before = numeric_limits<double>::tinyness_before;
 
 		static constexpr int digits         = numeric_limits<double>::digits;
 		static constexpr int digits10       = numeric_limits<double>::digits10;

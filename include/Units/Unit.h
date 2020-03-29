@@ -130,7 +130,7 @@ namespace Units
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&dim; }
 
-		constexpr float unit_multiplier() const { return multiplier; }
+		constexpr float unit_multiplier() const { return cround(multiplier); }
 
 		constexpr int meter   () const { return dim.meter;    }
 		constexpr int kg      () const { return dim.kilogram; }
