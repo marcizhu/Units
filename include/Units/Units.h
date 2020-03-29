@@ -251,20 +251,20 @@ namespace Units
 	{
 		constexpr Unit grain = Unit(64.79891 * micro, kg);
 
-		constexpr Unit point = Unit(0.127 / 360.0, m);
-		constexpr Unit pica  = Unit(0.127 / 30.0, m);
-		constexpr Unit inch  = Unit(0.0254, m);
-		constexpr Unit foot  = Unit(0.3048, m);
-
+		constexpr Unit inch   = Unit(0.0254, m);
+		constexpr Unit foot   = Unit(0.3048, m);
 		constexpr Unit yard   = Unit(0.9144, m);
 		constexpr Unit mile   = Unit(1609.344, m);
 		constexpr Unit league = Unit(3.0, mile);
-		constexpr Unit hand   = Unit(4.0, inch);
 
 		constexpr Unit cord       = Unit(128.0, foot^3);
 		constexpr Unit board_foot = Unit(144.0, inch^3);
 		constexpr Unit mil        = Unit(milli, inch);
 		constexpr Unit circ_mil   = Unit(Constants::pi / 4.0, mil^2);
+
+		constexpr Quantity point = (0.127 / 360.0) * m;
+		constexpr Quantity pica  = (0.127 / 30.0) * m;
+		constexpr Quantity hand  = 4.0 * inch;
 	}
 
 	constexpr Unit in   = i::inch;
@@ -925,6 +925,25 @@ namespace Units
 	constexpr Quantity convert(const Quantity& start, const Unit& result)
 	{
 		if(start.getUnit().base_units() != result.base_units()) throw std::logic_error("Units are not convertible!");
+
+		if(start.getUnit().base_units() == K.base_units())
+		{
+			Quantity temp;
+
+			/**/ if(start.getUnit() == Temperature::degC ) temp = ((start.getMagnitude() -  0.0) * 1.0 / 1.0 + 273.15) * K;
+			else if(start.getUnit() == Temperature::degF ) temp = ((start.getMagnitude() - 32.0) * 5.0 / 9.0 + 273.15) * K;
+			else if(start.getUnit() == Temperature::degR ) temp = ((start.getMagnitude() -  0.0) * 5.0 / 9.0 + 273.15) * K;
+			else if(start.getUnit() == Temperature::degRe) temp = ((start.getMagnitude() -  0.0) * 1.0 / 0.8 + 273.15) * K;
+			else if(start.getUnit() == kelvin            ) temp = start;
+
+			/**/ if(result == kelvin            ) return temp;
+			else if(result == Temperature::degF ) return ((temp.getMagnitude() - 273.15) * 9.0 / 5.0 + 32.0) * result;
+			else if(result == Temperature::degR ) return ((temp.getMagnitude() - 273.15) * 9.0 / 5.0 +  0.0) * result;
+			else if(result == Temperature::degRe) return ((temp.getMagnitude() - 273.15) * 0.8 / 1.0 +  0.0) * result;
+			else if(result == Temperature::degC ) return ((temp.getMagnitude() - 273.15) * 1.0 / 1.0 +  0.0) * result;
+
+			return Unit::error();
+		}
 
 		return start.getMagnitude() * ((double)start.getUnit().unit_multiplier() / (double)result.unit_multiplier()) * result;
 	}

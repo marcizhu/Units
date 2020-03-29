@@ -83,6 +83,8 @@ int main()
 	std::cout << 750 * std::sqrt(Pressure::mmHg^2) << std::endl;
 	std::cout << 750 * std::sqrt(Pressure::torr^2) << std::endl;
 
+	std::cout << convert(10 * Temperature::degC, Temperature::degF) << std::endl;
+
 	//std::string tempstr;
 	Quantity unit;
 	while(std::cin >> unit)

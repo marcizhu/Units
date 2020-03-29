@@ -155,14 +155,11 @@ namespace Units
 
 			// International
 			{ i::grain, "gr" },
-			{ i::point, "???" },
-			{ i::pica, "???" },
 			{ i::inch, "in" },
 			{ i::foot, "ft" },
 			{ i::yard, "yd" },
 			{ i::mile, "mi" },
 			{ i::league, "lea" },
-			{ i::hand, "???" },
 			{ i::cord, "cd-ft" },
 			{ i::board_foot, "BDFT" },
 			{ i::mil, "mil" },
