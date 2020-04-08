@@ -921,7 +921,7 @@ namespace Units
 
 	constexpr Quantity convert(const Quantity& start, const Unit& result)
 	{
-		if(start.getUnit().base_units() != result.base_units()) throw std::logic_error("Units are not convertible!");
+		if(start.getUnit().base_units() != result.base_units()) return Unit::error();
 
 		if(start.getUnit().base_units() == K.base_units())
 		{

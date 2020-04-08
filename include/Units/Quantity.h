@@ -16,7 +16,6 @@ namespace Units
 		Unit unit;
 
 		static constexpr double cround(const double& val) { return gcem::round(val * 1.0e16) / 1.0e16; }
-		constexpr void check_unit(const Unit& other) const { if(*this != other) throw std::logic_error("Invalid comparison"); }
 
 	public:
 		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
@@ -44,12 +43,12 @@ namespace Units
 		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
 		constexpr Quantity& operator/=(const Quantity& rhs) { *this = *this / rhs; return *this; }
 
-		constexpr bool operator> (const Quantity& other) const { check_unit(other.unit); return magnitude >  other.magnitude; }
-		constexpr bool operator< (const Quantity& other) const { check_unit(other.unit); return magnitude <  other.magnitude; }
-		constexpr bool operator>=(const Quantity& other) const { check_unit(other.unit); return magnitude >= other.magnitude; }
-		constexpr bool operator<=(const Quantity& other) const { check_unit(other.unit); return magnitude <= other.magnitude; }
-		constexpr bool operator!=(const Quantity& other) const { return unit != other.unit || cround(magnitude) != cround(other.magnitude); }
+		constexpr bool operator> (const Quantity& other) const { return unit == other.unit && cround(magnitude) >  cround(other.magnitude); }
+		constexpr bool operator< (const Quantity& other) const { return unit == other.unit && cround(magnitude) <  cround(other.magnitude); }
+		constexpr bool operator>=(const Quantity& other) const { return unit == other.unit && cround(magnitude) >= cround(other.magnitude); }
+		constexpr bool operator<=(const Quantity& other) const { return unit == other.unit && cround(magnitude) <= cround(other.magnitude); }
 		constexpr bool operator==(const Quantity& other) const { return unit == other.unit && cround(magnitude) == cround(other.magnitude); }
+		constexpr bool operator!=(const Quantity& other) const { return unit != other.unit || cround(magnitude) != cround(other.magnitude); }
 
 		constexpr void root(int power) { magnitude = gcem::pow(magnitude, 1.0 / static_cast<double>(power)); unit.root(power); }
 		constexpr void pow (int power) { magnitude = gcem::pow(magnitude,       static_cast<double>(power)); unit.pow (power); }
