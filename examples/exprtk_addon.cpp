@@ -2,10 +2,11 @@
 
 #include "Units/Units.h"
 #include "Units/IO.h"
+#include "Units/extras/StdAdditions.h"
 
 namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.getMagnitude()); } }}
 
-#include "exprtk/exprtk.hpp"
+#include "../src/exprtk/exprtk.hpp"
 #include "Units/extras/ExprTkCompat.h"
 
 int main()
@@ -17,8 +18,8 @@ int main()
 	typedef exprtk::parser<Quantity>             parser_t;
 	typedef exprtk::parser_error::type            error_t;
 
-	Quantity x = 15.0 * W;
-	Quantity y = 3 * s;
+	Quantity x;
+	Quantity y;
 
 	symbol_table_t symbol_table;
 	symbol_table.add_variable("x", x);
@@ -29,18 +30,20 @@ int main()
 	expression.register_symbol_table(symbol_table);
 
 	std::string expression_str;
+	std::cout << "Enter value of variable \"x\": "; std::cin >> x;
+	std::cout << "Enter value of variable \"y\": "; std::cin >> y;
 	std::cout << "Enter expression to be evaluated: ";
-	std::cin >> expression_str;
+	std::getline(std::cin, expression_str);
 
 	parser_t parser;
 	if(!parser.compile(expression_str, expression))
 	{
-		std::cout << parser.error() << ". Expression: " << "x / y" << std::endl;
+		std::cout << parser.error() << ". Expression: " << expression_str << std::endl;
 
-		for (std::size_t i = 0; i < parser.error_count(); ++i)
+		for(std::size_t i = 0; i < parser.error_count(); ++i)
 		{
 			error_t err = parser.get_error(i);
-			std::cout << exprtk::parser_error::to_str(err.mode) << ": " << err.diagnostic << ". Expression: " << "x / y" << std::endl;
+			std::cout << exprtk::parser_error::to_str(err.mode) << ": " << err.diagnostic << ". Expression: " << expression_str << std::endl;
 		}
 	}
 
