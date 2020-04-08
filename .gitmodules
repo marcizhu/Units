@@ -3,4 +3,4 @@
 	url = https://github.com/catchorg/Catch2.git
 [submodule "deps/gcem"]
 	path = deps/gcem
-	url = https://github.com/kthohr/gcem.git
+	url = https://github.com/marcizhu/gcem.git
