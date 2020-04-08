@@ -31,10 +31,13 @@ if(UNITS_BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
 
+add_subdirectory(deps/gcem)
+
 add_library(units STATIC src/Input.cpp src/Output.cpp)
 target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/sprout)
+target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
+#target_link_libraries(units PUBLIC gcem)
 
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings

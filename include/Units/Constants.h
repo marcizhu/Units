@@ -43,7 +43,7 @@ namespace Units
 			/** @brief Coulomb's constant */
 			constexpr Quantity ke    = 8.9875517887e9 * N * (m^2) * (C^-2);
 			/** @brief Fine-structure constant */
-			constexpr Quantity alpha = (e^2) / (2 * eps0 * h * c);
+			constexpr Quantity alpha = 1.0 / 137.03599971096;
 			/** @brief Hyperfine structure transition frequency of the caesium-133 atom */
 			constexpr Quantity fCs   = 9192631770.0 * Hz;
 			/** @brief Boltzman constant (2019 redefinition) */

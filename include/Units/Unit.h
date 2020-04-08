@@ -3,7 +3,7 @@
 #include <functional> // for std::hash
 #include <stdexcept>
 
-#include "sprout/cmath.hpp"
+#include "gcem.hpp"
 
 namespace Units
 {
@@ -66,7 +66,7 @@ namespace Units
 			}
 		} dim;
 
-		static constexpr float cround(const float& val) { return sprout::round(val * 1.0e7f) / 1.0e7f; }
+		static constexpr float cround(const float& val) { return gcem::round(val * 1.0e7f) / 1.0e7f; }
 
 		constexpr void check_unit(const Unit& other) const { if(*this != other) throw std::logic_error("Incompatible units!"); }
 
@@ -148,7 +148,7 @@ namespace Units
 		constexpr Unit operator^(int exp) const
 		{
 			Unit ret(*this);
-			ret.multiplier    = sprout::pow(ret.multiplier, (float)exp);
+			ret.multiplier    = gcem::pow(ret.multiplier, (float)exp);
 			ret.dim.meter    *= exp;
 			ret.dim.kilogram *= exp;
 			ret.dim.second   *= (ret.isRootHz() ? (exp / 2) : exp);
@@ -232,7 +232,7 @@ namespace Units
 				return;
 			}
 
-			multiplier    = sprout::pow(multiplier, 1.0f / (float)power);
+			multiplier    = gcem::pow(multiplier, 1.0f / (float)power);
 			dim.meter    /= power;
 			dim.kilogram /= power;
 			dim.second   /= power;
