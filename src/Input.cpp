@@ -37,6 +37,8 @@ namespace Units
 
 	std::unordered_map<std::string, Unit> units
 	{
+		{ "%", percent },
+
 		{ ""   , none },
 		{ "m"  , m    },
 		{ "kg" , kg   },

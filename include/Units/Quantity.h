@@ -16,6 +16,7 @@ namespace Units
 		Unit unit;
 
 		static constexpr double cround(const double& val) { return sprout::round(val * 1.0e16) / 1.0e16; }
+		constexpr void check_unit(const Unit& other) const { if(*this != other) throw std::logic_error("Invalid comparison"); }
 
 	public:
 		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
@@ -23,6 +24,12 @@ namespace Units
 
 		constexpr double getMagnitude() const { return cround(magnitude); }
 		constexpr Unit getUnit() const { return unit; }
+
+		explicit operator double() const { return cround(magnitude); }
+		explicit operator Unit() const { return unit; }
+
+		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
+		constexpr Quantity operator-() const { return Quantity(-magnitude, unit); }
 
 		// quan * quan
 		constexpr Quantity operator^(int exp) const { return Quantity(sprout::pow(magnitude, (double)exp), unit ^ exp); }
@@ -37,30 +44,22 @@ namespace Units
 		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
 		constexpr Quantity& operator/=(const Quantity& rhs) { *this = *this / rhs; return *this; }
 
-		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
-		constexpr Quantity operator-() const { return Quantity(-magnitude, unit); }
-
-		constexpr bool operator> (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude >  other.magnitude; }
-		constexpr bool operator< (const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <  other.magnitude; }
-		constexpr bool operator>=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude >= other.magnitude; }
-		constexpr bool operator<=(const Quantity& other) const { if(unit != other.unit) throw std::logic_error("Invalid comparison"); return magnitude <= other.magnitude; }
-
-		/** @brief Inequality comparison operator */
+		constexpr bool operator> (const Quantity& other) const { check_unit(other.unit); return magnitude >  other.magnitude; }
+		constexpr bool operator< (const Quantity& other) const { check_unit(other.unit); return magnitude <  other.magnitude; }
+		constexpr bool operator>=(const Quantity& other) const { check_unit(other.unit); return magnitude >= other.magnitude; }
+		constexpr bool operator<=(const Quantity& other) const { check_unit(other.unit); return magnitude <= other.magnitude; }
 		constexpr bool operator!=(const Quantity& other) const { return unit != other.unit || cround(magnitude) != cround(other.magnitude); }
-		/** @brief Equality comparison operator */
 		constexpr bool operator==(const Quantity& other) const { return unit == other.unit && cround(magnitude) == cround(other.magnitude); }
 
-		constexpr void root(int power) { magnitude = sprout::pow(magnitude, 1.0 / (double)power); unit.root(power); }
-		constexpr void pow (int power) { magnitude = sprout::pow(magnitude,       (double)power); unit.pow (power); }
+		constexpr void root(int power) { magnitude = sprout::pow(magnitude, 1.0 / static_cast<double>(power)); unit.root(power); }
+		constexpr void pow (int power) { magnitude = sprout::pow(magnitude,       static_cast<double>(power)); unit.pow (power); }
 	};
 
-	// real * quan
 	constexpr Quantity operator+(double lhs, const Quantity& rhs) { return Quantity(lhs) + rhs; }
 	constexpr Quantity operator-(double lhs, const Quantity& rhs) { return Quantity(lhs) - rhs; }
 	constexpr Quantity operator*(double lhs, const Quantity& rhs) { return Quantity(lhs) * rhs; }
 	constexpr Quantity operator/(double lhs, const Quantity& rhs) { return Quantity(lhs) / rhs; }
 
-	// unit * real
 	constexpr Quantity operator*(const Unit& lhs, double rhs) { return Quantity(lhs) * Quantity(rhs); }
 	constexpr Quantity operator/(const Unit& lhs, double rhs) { return Quantity(lhs) / Quantity(rhs); }
 

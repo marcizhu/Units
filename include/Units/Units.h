@@ -45,9 +45,9 @@ namespace Units
 	}
 
 	constexpr Unit one;
-	constexpr Quantity percent = 0.01 * one;
-	constexpr Unit     error   = Unit::error();
-	constexpr Unit     none    = one;
+	constexpr Unit percent = Unit(0.01, one);
+	constexpr Unit error   = Unit::error();
+	constexpr Unit none    = one;
 
 	// The base SI units
 	constexpr Unit meter   (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
