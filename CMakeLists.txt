@@ -65,6 +65,3 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 		target_link_libraries(units PUBLIC --coverage)
 	endif()
 endif()
-
-add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE units)
