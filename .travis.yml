@@ -1,5 +1,6 @@
 language: cpp
 os: linux
+dist: bionic
 
 jobs:
   include:
@@ -18,6 +19,7 @@ jobs:
       env: COVERAGE=OFF
 
     - os: linux
+      dist: bionic
       addons:
         apt:
           packages: lcov
