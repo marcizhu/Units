@@ -72,5 +72,3 @@ namespace Units
 	template<typename T> constexpr bool operator>=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) >= rhs; }
 	template<typename T> constexpr bool operator<=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
 }
-
-static_assert(sizeof(Units::Quantity) == 16, "Invalid size of Quantity");

@@ -249,5 +249,3 @@ namespace Units
 		constexpr int unit_count() const { return dim.unit_count(); }
 	};
 }
-
-static_assert(sizeof(Units::Unit) == 8, "Invalid size of Unit");
