@@ -1,3 +1,5 @@
+#include <cctype>
+
 #include "Units/Units.h"
 #include "Units/IO.h"
 #include "Units/extras/StdAdditions.h"

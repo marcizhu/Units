@@ -11,18 +11,21 @@ namespace Units
 	{
 	private:
 		float multiplier;
+
+		#pragma pack(push)
+		#pragma pack(4)
 		struct Dimensions
 		{
-			signed int meter : 4;
-			signed int kilogram : 3;
-			signed int second : 4;
-			signed int ampere : 3;
-			signed int kelvin : 4;
-			signed int mole : 2;
-			signed int radians : 3;
-			signed int candela : 2;
-			signed int currency : 2;
-			signed int count : 2;
+			signed char meter : 4;
+			signed char kilogram : 3;
+			signed char second : 4;
+			signed char ampere : 3;
+			signed char kelvin : 4;
+			signed char mole : 2;
+			signed char radians : 3;
+			signed char candela : 2;
+			signed char currency : 2;
+			signed char count : 2;
 			bool e_flag : 1;
 			bool i_flag : 1;
 			bool eq_flag : 1;
@@ -65,6 +68,7 @@ namespace Units
 					mole + radians + candela + currency + count;
 			}
 		} dim;
+		#pragma pack(pop)
 
 		static constexpr float cround(const float& val) { return gcem::round(val * 1.0e7f) / 1.0e7f; }
 
