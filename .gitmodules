@@ -1,3 +1,6 @@
 [submodule "deps/Catch2"]
 	path = deps/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "deps/gcem"]
+	path = deps/gcem
+	url = https://github.com/kthohr/gcem.git
