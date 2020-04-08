@@ -4,6 +4,3 @@
 [submodule "deps/gcem"]
 	path = deps/gcem
 	url = https://github.com/marcizhu/gcem.git
-[submodule "gcem"]
-	path = gcem
-	url = https://github.com/marcizhu/gcem.git
