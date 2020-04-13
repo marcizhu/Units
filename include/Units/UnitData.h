@@ -69,11 +69,13 @@ namespace Units
 
 		static constexpr UnitData eq(uint8_t num)
 		{
-			UnitData ret(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			UnitData ret;
 			if(num > 0b0001'1111) return UnitData::error();
 
 			ret.count_   = (num & 0b0000'0011) >> 0;
 			ret.radians_ = (num & 0b0001'1100) >> 2;
+			ret.eq_flag  = true;
+
 			return ret;
 		}
 
