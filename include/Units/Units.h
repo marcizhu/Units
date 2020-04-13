@@ -783,7 +783,7 @@ namespace Units
 		/** @brief Diopter */
 		constexpr Unit diopter       = m^-1;
 		/** @brief Prism diopter */
-		constexpr Unit prism_diopter = Unit(20);
+		constexpr Unit prism_diopter = Unit::eq(20);
 		/** @brief Mesh size, aka number of holes per inch */
 		constexpr Unit mesh          = in^-1;
 		/** @brief Charrière, French catheter scale */
@@ -798,40 +798,40 @@ namespace Units
 	namespace Log
 	{
 		/** @brief Neper */
-		constexpr Unit neper  = Unit(0);
+		constexpr Unit neper  = Unit::eq(0);
 		/** @brief Neper. Power unit */
-		constexpr Unit neperP = Unit(1);
+		constexpr Unit neperP = Unit::eq(1);
 
 		/** @brief Bel */
-		constexpr Unit bel  = Unit(2);
+		constexpr Unit bel  = Unit::eq(2);
 		/** @brief Bel. A-weighted */
-		constexpr Unit belA = Unit(3);
+		constexpr Unit belA = Unit::eq(3);
 		/** @brief Bel. Assume power always */
-		constexpr Unit belP = Unit(4);
+		constexpr Unit belP = Unit::eq(4);
 
 		/** @brief Decibel */
-		constexpr Unit dB  = Unit(5);
+		constexpr Unit dB  = Unit::eq(5);
 		/** @brief Decibel. A-weighted */
-		constexpr Unit dBA = Unit(6);
+		constexpr Unit dBA = Unit::eq(6);
 		/** @brief Decibel. Ratio relative to carrier wave */
-		constexpr Unit dBc = Unit(7);
+		constexpr Unit dBc = Unit::eq(7);
 		/** @brief Decibel. Assume power always */
-		constexpr Unit dBP = Unit(8);
+		constexpr Unit dBP = Unit::eq(8);
 
 		/** @brief Natural logarithm */
 		constexpr Unit log         = neper;
 		/** @brief Base 2 logarithm */
-		constexpr Unit log2        = Unit(10);
+		constexpr Unit log2        = Unit::eq(10);
 		/** @brief Base 10 logarithm */
-		constexpr Unit log10       = Unit(11);
+		constexpr Unit log10       = Unit::eq(11);
 		/** @brief Negative base 10 logarithm */
-		constexpr Unit neglog10    = Unit(12);
+		constexpr Unit neglog10    = Unit::eq(12);
 		/** @brief Negative base 100 logarithm */
-		constexpr Unit neglog100   = Unit(13);
+		constexpr Unit neglog100   = Unit::eq(13);
 		/** @brief Negative base 1000 logarithm */
-		constexpr Unit neglog1000  = Unit(14);
+		constexpr Unit neglog1000  = Unit::eq(14);
 		/** @brief Negative base 50000 logarithm */
-		constexpr Unit neglog50000 = Unit(15);
+		constexpr Unit neglog50000 = Unit::eq(15);
 
 		/** @brief Short form for Bels */
 		constexpr Unit B = bel;

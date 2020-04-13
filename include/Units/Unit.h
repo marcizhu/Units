@@ -19,11 +19,12 @@ namespace Units
 
 	public:
 		constexpr explicit Unit()                               : multiplier(1.0), data() {}
-		constexpr explicit Unit(uint8_t num)                    : multiplier(1.0), data() { data = UnitData::eq(num); }
 		constexpr          Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), data(other.data) {}
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&data; }
 		constexpr float unit_multiplier() const { return cround(multiplier); }
+
+		static constexpr Unit eq(uint8_t num) { return Unit(1.0f, UnitData::eq(num)); }
 
 		static constexpr Unit error() { return Unit(1.0f, UnitData::error()); }
 		static constexpr Unit iflag() { return Unit(1.0f, UnitData::iflag()); }
