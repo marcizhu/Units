@@ -67,7 +67,7 @@ namespace Units
 		constexpr UnitData()
 			: meter_(0), kilogram_(0), second_(0), ampere_(0), kelvin_(0), mole_(0), radians_(0), candela_(0), currency_(0), count_(0), e_flag(0), i_flag(0), eq_flag(0) {}
 
-		constexpr static UnitData eq(uint8_t num)
+		static constexpr UnitData eq(uint8_t num)
 		{
 			UnitData ret(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 			if(num > 0b0001'1111) return UnitData::error();
