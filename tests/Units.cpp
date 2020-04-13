@@ -54,28 +54,28 @@ TEST_CASE("Basic operations", "[unit][op]")
 		CHECK(kg / kg == Unit());
 	}
 
-	SECTION("Addition of different unit throws an exception")
+	SECTION("Addition of different unit returns error unit")
 	{
-		CHECK_THROWS(m  + J );
-		CHECK_THROWS(J  + V );
-		CHECK_THROWS(V  + N );
-		CHECK_THROWS(N  + A );
-		CHECK_THROWS(A  + C );
-		CHECK_THROWS(C  + W );
-		CHECK_THROWS(W  + kg);
-		CHECK_THROWS(kg + m );
+		CHECK(m  + J  == error);
+		CHECK(J  + V  == error);
+		CHECK(V  + N  == error);
+		CHECK(N  + A  == error);
+		CHECK(A  + C  == error);
+		CHECK(C  + W  == error);
+		CHECK(W  + kg == error);
+		CHECK(kg + m  == error);
 	}
 
-	SECTION("Subtraction of different unit throws an exception")
+	SECTION("Subtraction of different unit returns error unit")
 	{
-		CHECK_THROWS(m  - J );
-		CHECK_THROWS(J  - V );
-		CHECK_THROWS(V  - N );
-		CHECK_THROWS(N  - A );
-		CHECK_THROWS(A  - C );
-		CHECK_THROWS(C  - W );
-		CHECK_THROWS(W  - kg);
-		CHECK_THROWS(kg - m );
+		CHECK(m  - J  == error);
+		CHECK(J  - V  == error);
+		CHECK(V  - N  == error);
+		CHECK(N  - A  == error);
+		CHECK(A  - C  == error);
+		CHECK(C  - W  == error);
+		CHECK(W  - kg == error);
+		CHECK(kg - m  == error);
 	}
 
 	SECTION("Multiplication of different unit doesn't throw an exception")

@@ -1,4 +1,5 @@
 #include <cctype>
+#include <unordered_map>
 
 #include "Units/Units.h"
 #include "Units/IO.h"
@@ -39,7 +40,11 @@ namespace Units
 
 	std::unordered_map<std::string, Unit> units
 	{
-		{ "%", percent },
+		// Special
+		{ "%"    , percent },
+		{ "error", error   },
+		{ "iflag", iflag   },
+
 
 		{ ""   , none },
 		{ "m"  , m    },
@@ -94,7 +99,9 @@ namespace Units
 		{ "dB10nV"    , Log::dB10nV },
 		{ "dBW"       , Log::dBW    },
 		{ "dBk"       , Log::dBk    },
-		{ "dBm"       , Log::dBm    }
+		{ "dBm"       , Log::dBm    },
+
+		{ "h"         , Time::hour  }
 	};
 
 	bool isLetter(Buffer* buff)
@@ -176,7 +183,7 @@ namespace Units
 		StringBuffer temp1(unitName);
 		Quantity unit = parseUnit(&temp1);
 
-		if(unit.getUnit().eflag())
+		if(unit == Unit::error())
 		{
 			StringBuffer temp2(unitName);
 			return parsePrefix(&temp2) * parseUnit(&temp2);

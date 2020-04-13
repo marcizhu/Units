@@ -50,16 +50,16 @@ namespace Units
 	constexpr Unit none    = one;
 
 	// The base SI units
-	constexpr Unit meter   (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-	constexpr Unit kilogram(0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-	constexpr Unit second  (0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
-	constexpr Unit ampere  (0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
-	constexpr Unit kelvin  (0, 0, 0, 0, 1, 0, 0, 0, 0, 0);
-	constexpr Unit mole    (0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-	constexpr Unit radian  (0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-	constexpr Unit candela (0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
-	constexpr Unit currency(0, 0, 0, 0, 0, 0, 0, 0, 1, 0);
-	constexpr Unit count   (0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	constexpr Unit meter    = Unit::meter();
+	constexpr Unit kilogram = Unit::kilogram();
+	constexpr Unit second   = Unit::second();
+	constexpr Unit ampere   = Unit::ampere();
+	constexpr Unit kelvin   = Unit::kelvin();
+	constexpr Unit mole     = Unit::mole();
+	constexpr Unit radian   = Unit::radian();
+	constexpr Unit candela  = Unit::candela();
+	constexpr Unit currency = Unit::currency();
+	constexpr Unit count    = Unit::count();
 
 	constexpr Unit m   = meter;
 	constexpr Unit kg  = kilogram;
@@ -71,7 +71,7 @@ namespace Units
 	constexpr Unit Cd  = candela;
 
 	/** @brief i flag, imaginary flag */
-	constexpr Unit iflag   (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	constexpr Unit iflag = Unit::iflag();
 
 	// Derived SI units
 	constexpr Unit steradian      = radian * radian;

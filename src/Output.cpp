@@ -1,6 +1,5 @@
 #include <cmath>
 #include <array>
-#include <ostream>
 #include <string>
 #include <unordered_map>
 
@@ -327,7 +326,7 @@ namespace Units
 
 		static bool find_unit(Units::Unit un, std::string& ret)
 		{
-			if(un.eflag()) return false;
+			if(un == Unit::error()) return false;
 
 			auto it = unit_names.find(un);
 			return (it != unit_names.end() ? ret = it->second, true : false);
@@ -376,24 +375,6 @@ namespace Units
 			return to_string_precision(qty / pow10(3 * index * deg), precision) + ' ' + prefix[index + 8];
 		}
 
-		static std::string unit_raw(Units::Unit un)
-		{
-			if(un.eflag()) return "ERROR";
-
-			std::string ret;
-			if(un.meter()    != 0) ret += 'm'    + (un.meter()    != 1 ? generateExponent(un.meter()   ) + ' ' : " ");
-			if(un.kg()       != 0) ret += "kg"   + (un.kg()       != 1 ? generateExponent(un.kg()      ) + ' ' : " ");
-			if(un.second()   != 0) ret += 's'    + (un.second()   != 1 ? generateExponent(un.second()  ) + ' ' : " ");
-			if(un.ampere()   != 0) ret += 'A'    + (un.ampere()   != 1 ? generateExponent(un.ampere()  ) + ' ' : " ");
-			if(un.kelvin()   != 0) ret += 'K'    + (un.kelvin()   != 1 ? generateExponent(un.kelvin()  ) + ' ' : " ");
-			if(un.mole()     != 0) ret += "mol"  + (un.mole()     != 1 ? generateExponent(un.mole()    ) + ' ' : " ");
-			if(un.radian()   != 0) ret += "rad"  + (un.radian()   != 1 ? generateExponent(un.radian()  ) + ' ' : " ");
-			if(un.candela()  != 0) ret += "Cd"   + (un.candela()  != 1 ? generateExponent(un.candela() ) + ' ' : " ");
-			if(un.currency() != 0) ret += "$"    + (un.currency() != 1 ? generateExponent(un.currency()) + ' ' : " ");
-			if(un.count()    != 0) ret += "item" + (un.count()    != 1 ? generateExponent(un.count()   ) + ' ' : " ");
-			return ret;
-		}
-
 		static std::string magnitude_scientific(double qty)
 		{
 			if(!std::isfinite(qty)) return format_inf(qty);
@@ -406,13 +387,13 @@ namespace Units
 	std::string to_string_scientific(const Quantity& q)
 	{
 		using namespace details;
-		return magnitude_scientific(q.getMagnitude()) + ' ' + unit_raw(q.getUnit());
+		return magnitude_scientific(q.getMagnitude()) + ' ' + "WIP"; //unit_raw(q.getUnit());
 	}
 
 	std::string to_string(const Unit& un)
 	{
 		using namespace details;
-		if(un.eflag()) return "ERROR";
+		if(un == Unit::error()) return "ERROR";
 
 		std::string str;
 
@@ -442,7 +423,7 @@ namespace Units
 	std::string to_string(const Quantity& q)
 	{
 		using namespace details;
-		if(q.getUnit().eflag()) return "ERROR";
+		if(q.getUnit() == Unit::error()) return "ERROR";
 		if(q.getUnit() == Unit()) return magnitude_scientific(q.getMagnitude());
 
 		if(q.getUnit() == kg) return to_string(convert(q, gram__));

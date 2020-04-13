@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cmath>
 #include <cstdint>
-#include <stdexcept>
 
 #include "Unit.h"
 #include "gcem.hpp"
@@ -15,16 +13,16 @@ namespace Units
 		double magnitude;
 		Unit unit;
 
-		static constexpr double cround(const double& val) { return gcem::round(val * 1.0e16) / 1.0e16; }
+		static constexpr double cround(const double& val) { return gcem::round(val * 1.0e15) / 1.0e15; }
 
 	public:
 		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
 		constexpr Quantity(double mag, Unit u = Unit()) : magnitude(mag), unit(u) {}
 
-		constexpr double getMagnitude() const { return cround(magnitude); }
+		constexpr double getMagnitude() const { return magnitude; }
 		constexpr Unit getUnit() const { return unit; }
 
-		explicit operator double() const { return cround(magnitude); }
+		explicit operator double() const { return magnitude; }
 		explicit operator Unit() const { return unit; }
 
 		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
