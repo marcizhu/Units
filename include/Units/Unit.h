@@ -1,9 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
-#include "gcem.hpp"
 #include "UnitData.h"
+#include "gcem.hpp"
 
 namespace Units
 {
@@ -13,13 +14,17 @@ namespace Units
 		float multiplier;
 		UnitData data;
 
-		static constexpr float cround(const float& val) { return gcem::round(val * 1.0e7f) / 1.0e7f; }
+		static constexpr float max_precision = gcem::pow(10.0, std::numeric_limits<float>::digits10);
+		static constexpr float cround(float val) { return gcem::round(val * max_precision) / max_precision; }
+
+		static constexpr bool isError(const UnitData& data) { return data == UnitData::error(); }
+		static constexpr bool isSame(float a, float b) { return cround(a) == cround(b); }
 
 		constexpr Unit(float mult, const UnitData& dim) : multiplier(mult), data(dim) {}
 
 	public:
-		constexpr explicit Unit()                               : multiplier(1.0), data() {}
-		constexpr          Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), data(other.data) {}
+		constexpr Unit()                               : multiplier(1.0), data() {}
+		constexpr Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), data(other.data) {}
 
 		constexpr uint32_t base_units() const { return *(const uint32_t*)&data; }
 		constexpr float unit_multiplier() const { return cround(multiplier); }
@@ -40,7 +45,7 @@ namespace Units
 		static constexpr Unit currency() { return Unit(1.0f, UnitData::currency()); }
 		static constexpr Unit count   () { return Unit(1.0f, UnitData::count()); }
 
-		constexpr Unit operator^(int exp) const { return Unit(gcem::pow(multiplier, (float)exp), data^exp); }
+		constexpr Unit operator^(int exp) const { return Unit(gcem::pow(multiplier, static_cast<float>(exp)), data^exp); }
 
 		constexpr Unit operator+(const Unit& rhs) const { return (*this == rhs ? *this : Unit::error()); }
 		constexpr Unit operator-(const Unit& rhs) const { return (*this == rhs ? *this : Unit::error()); }
@@ -53,11 +58,11 @@ namespace Units
 		constexpr Unit& operator*=(Unit rhs) { *this = *this * rhs; return *this; }
 		constexpr Unit& operator/=(Unit rhs) { *this = *this / rhs; return *this; }
 
-		constexpr bool operator!=(Unit other) const { return (data != UnitData::error() || other.data != UnitData::error()) && (data != other.data || cround(multiplier) != cround(other.multiplier)); }
-		constexpr bool operator==(Unit other) const { return (data == UnitData::error() && other.data == UnitData::error()) || (data == other.data && cround(multiplier) == cround(other.multiplier)); }
+		constexpr bool operator!=(Unit other) const { return (!isError(data) || !isError(other.data)) && (data != other.data || !isSame(multiplier, other.multiplier)); }
+		constexpr bool operator==(Unit other) const { return ( isError(data) &&  isError(other.data)) || (data == other.data &&  isSame(multiplier, other.multiplier)); }
 
-		constexpr void pow (int power) { multiplier = gcem::pow(multiplier,        (float)power); data.pow (power); }
-		constexpr void root(int power) { multiplier = gcem::pow(multiplier, 1.0f / (float)power); data.root(power); }
+		constexpr void root(int power) { multiplier = gcem::pow(multiplier, 1.0f / static_cast<float>(power)); data.root(power); }
+		constexpr void pow (int power) { multiplier = gcem::pow(multiplier,        static_cast<float>(power)); data.pow (power); }
 
 		constexpr int degree() const { return data.degree(); }
 		constexpr int unit_count() const { return data.unit_count(); }

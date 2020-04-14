@@ -60,8 +60,8 @@ namespace Units
 				&& eq_flag           == 0;
 		}
 
-		constexpr UnitData(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool e_flag, bool iflag, bool eqflag)
-			: meter_(_1), kilogram_(_2), second_(_3), ampere_(_4), kelvin_(_5), mole_(_6), radians_(_7), candela_(_8), currency_(_9), count_(_10), e_flag(e_flag), i_flag(iflag), eq_flag(eqflag) {}
+		constexpr UnitData(int8_t _1, int8_t _2, int8_t _3, int8_t _4, int8_t _5, int8_t _6, int8_t _7, int8_t _8, int8_t _9, int8_t _10, bool eflag, bool iflag, bool eqflag)
+			: meter_(_1), kilogram_(_2), second_(_3), ampere_(_4), kelvin_(_5), mole_(_6), radians_(_7), candela_(_8), currency_(_9), count_(_10), e_flag(eflag), i_flag(iflag), eq_flag(eqflag) {}
 
 	public:
 		constexpr UnitData()
@@ -69,13 +69,12 @@ namespace Units
 
 		static constexpr UnitData eq(uint8_t num)
 		{
-			UnitData ret;
 			if(num > 0b0001'1111) return UnitData::error();
 
+			UnitData ret;
 			ret.count_   = (num & 0b0000'0011) >> 0;
 			ret.radians_ = (num & 0b0001'1100) >> 2;
 			ret.eq_flag  = true;
-
 			return ret;
 		}
 
@@ -89,9 +88,8 @@ namespace Units
 		static constexpr UnitData candela () { return UnitData(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0); }
 		static constexpr UnitData currency() { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0); }
 		static constexpr UnitData count   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0); }
-
-		static constexpr UnitData error () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0); }
-		static constexpr UnitData iflag () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0); }
+		static constexpr UnitData error   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0); }
+		static constexpr UnitData iflag   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0); }
 
 		constexpr bool operator!=(const UnitData& other) const { return !(*this == other); }
 		constexpr bool operator==(const UnitData& other) const
@@ -200,19 +198,15 @@ namespace Units
 				return;
 			}
 
-			meter_        /= power;
-			kilogram_     /= power;
-			second_       /= power;
-			ampere_       /= power;
-			kelvin_       /= power;
-			radians_      /= power;
-			i_flag         = 0;
-			eq_flag        = 0;
+			meter_    /= power;
+			kilogram_ /= power;
+			second_   /= power;
+			ampere_   /= power;
+			kelvin_   /= power;
+			radians_  /= power;
+			i_flag     = 0;
+			eq_flag    = 0;
 		}
-
-		constexpr UnitData& operator^=(int exp) { *this = *this ^ exp; return *this; }
-//		constexpr UnitData& operator*=(UnitData rhs) { *this = *this * rhs; return *this; }
-//		constexpr UnitData& operator/=(UnitData rhs) { *this = *this / rhs; return *this; }
 	};
 	#pragma pack(pop)
 }
