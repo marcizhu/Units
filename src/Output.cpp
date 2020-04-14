@@ -57,9 +57,6 @@ namespace Units
 
 		static std::unordered_map<Unit, const char*> unit_names =
 		{
-			// Special
-			{ percent, "%" },
-
 			// Base SI units
 			{ none, ""    },
 			{ m,    "m"   },
@@ -314,9 +311,14 @@ namespace Units
 			{ Computation::FLOPS, "FLOPS" },
 			{ Computation::MIPS , "MIPS" },
 
+			// Concentrations
+			{ percent  , "%"      },
+			{ per_mille, "\u2030" },
+			{ bp       , "\u2031" },
+			{ ppm      , "ppm"    },
+			{ ppb      , "ppb"    },
+
 			// Misc
-			{ ppm, "ppm" },
-			{ ppb, "ppb" },
 			{ rpm, "rpm" },
 
 			{ J / mol, "J/mol" },

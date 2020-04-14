@@ -45,7 +45,6 @@ namespace Units
 		{ "error", error   },
 		{ "iflag", iflag   },
 
-
 		{ ""   , none },
 		{ "m"  , m    },
 		{ "kg" , kg   },
@@ -174,7 +173,8 @@ namespace Units
 		while(isLetter(buff)
 			|| isNumber(buff)
 			|| buff->current() == '$'
-			|| buff->current() == '^')
+			|| buff->current() == '^'
+			|| buff->current() == '%')
 		{
 			unitName += buff->current();
 			buff->advance();
@@ -198,7 +198,9 @@ namespace Units
 		std::string unitName;
 
 		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
-		while(isLetter(buff) || buff->current() == '$')
+		while(isLetter(buff)
+			|| buff->current() == '$'
+			|| buff->current() == '%')
 		{
 			unitName += buff->current();
 			buff->advance();
@@ -289,7 +291,7 @@ namespace Units
 			unit = parseExpression(&buff).getUnit();
 			return true;
 		}
-		catch(std::runtime_error& e)
+		catch(std::runtime_error&)
 		{
 			unit = error;
 			return false;
@@ -304,7 +306,7 @@ namespace Units
 			quant = parseExpression(&buff);
 			return true;
 		}
-		catch(std::runtime_error& e)
+		catch(std::runtime_error&)
 		{
 			quant = error;
 			return false;
@@ -319,7 +321,7 @@ namespace Units
 			unit = parseExpression(&buff).getUnit();
 			return true;
 		}
-		catch(std::runtime_error& e)
+		catch(std::runtime_error&)
 		{
 			unit = error;
 			return false;
@@ -334,7 +336,7 @@ namespace Units
 			quant = parseExpression(&buff);
 			return true;
 		}
-		catch(std::runtime_error& e)
+		catch(std::runtime_error&)
 		{
 			quant = error;
 			return false;

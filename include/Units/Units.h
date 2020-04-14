@@ -45,7 +45,6 @@ namespace Units
 	}
 
 	constexpr Unit one;
-	constexpr Unit percent = Unit(0.01, one);
 	constexpr Unit error   = Unit::error();
 	constexpr Unit none    = one;
 
@@ -909,10 +908,16 @@ namespace Units
 		constexpr Unit MIPS  = Unit(1.0e6, count / s);
 	}
 
+	/** @brief percent, 1 in one hundred */
+	constexpr Unit percent   = Unit(1e-2, count);
+	/** @brief per mille, 1 in one thousand */
+	constexpr Unit per_mille = Unit(1e-3, count);
+	/** @brief Basis points, 1 in ten thousand */
+	constexpr Unit bp        = Unit(1e-4, count);
 	/** @brief ppm, parts per million */
-	constexpr Unit ppm = Unit(1e-6, count);
+	constexpr Unit ppm       = Unit(1e-6, count);
 	/** @brief ppb, parts per billion */
-	constexpr Unit ppb = Unit(1e-9, count);
+	constexpr Unit ppb       = Unit(1e-9, count);
 
 	/** @brief RPM, revolutions per minute */
 	constexpr Unit rpm = Unit(2.0 * Constants::pi / 60.0, rad / s);
