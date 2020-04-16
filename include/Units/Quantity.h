@@ -36,11 +36,11 @@ namespace Units
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit); }
 		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit); }
 
-		constexpr Quantity& operator^=(int exp)             { *this = *this ^ exp; return *this; }
-		constexpr Quantity& operator+=(const Quantity& rhs) { *this = *this + rhs; return *this; }
-		constexpr Quantity& operator-=(const Quantity& rhs) { *this = *this - rhs; return *this; }
-		constexpr Quantity& operator*=(const Quantity& rhs) { *this = *this * rhs; return *this; }
-		constexpr Quantity& operator/=(const Quantity& rhs) { *this = *this / rhs; return *this; }
+		constexpr Quantity& operator^=(int exp)             { return *this = *this ^ exp; }
+		constexpr Quantity& operator+=(const Quantity& rhs) { return *this = *this + rhs; }
+		constexpr Quantity& operator-=(const Quantity& rhs) { return *this = *this - rhs; }
+		constexpr Quantity& operator*=(const Quantity& rhs) { return *this = *this * rhs; }
+		constexpr Quantity& operator/=(const Quantity& rhs) { return *this = *this / rhs; }
 
 		constexpr bool operator> (const Quantity& other) const { return unit == other.unit && cround(magnitude) >  cround(other.magnitude); }
 		constexpr bool operator< (const Quantity& other) const { return unit == other.unit && cround(magnitude) <  cround(other.magnitude); }
@@ -68,9 +68,13 @@ namespace Units
 	template<typename T, IsDoubleConvertible<T>> constexpr bool operator< (const Quantity& lhs, const T& rhs) { return lhs <  Quantity(rhs); }
 	template<typename T, IsDoubleConvertible<T>> constexpr bool operator>=(const Quantity& lhs, const T& rhs) { return lhs >= Quantity(rhs); }
 	template<typename T, IsDoubleConvertible<T>> constexpr bool operator<=(const Quantity& lhs, const T& rhs) { return lhs <= Quantity(rhs); }
+	template<typename T, IsDoubleConvertible<T>> constexpr bool operator==(const Quantity& lhs, const T& rhs) { return lhs == Quantity(rhs); }
+	template<typename T, IsDoubleConvertible<T>> constexpr bool operator!=(const Quantity& lhs, const T& rhs) { return lhs != Quantity(rhs); }
 
 	template<typename T> constexpr bool operator> (const T& lhs, const Quantity& rhs) { return Quantity(lhs) >  rhs; }
 	template<typename T> constexpr bool operator< (const T& lhs, const Quantity& rhs) { return Quantity(lhs) <  rhs; }
 	template<typename T> constexpr bool operator>=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) >= rhs; }
 	template<typename T> constexpr bool operator<=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) <= rhs; }
+	template<typename T> constexpr bool operator==(const T& lhs, const Quantity& rhs) { return Quantity(lhs) == rhs; }
+	template<typename T> constexpr bool operator!=(const T& lhs, const Quantity& rhs) { return Quantity(lhs) != rhs; }
 }

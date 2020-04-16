@@ -7,7 +7,7 @@
 namespace Units
 {
 	#pragma pack(push)
-	#pragma pack(4)
+	#pragma pack(1)
 	class UnitData
 	{
 	private:
@@ -90,6 +90,26 @@ namespace Units
 		static constexpr UnitData count   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0); }
 		static constexpr UnitData error   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0); }
 		static constexpr UnitData iflag   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0); }
+
+		using BaseUnitType = uint32_t;
+
+		constexpr BaseUnitType base_unit() const
+		{
+			return static_cast<BaseUnitType>(
+				((meter_    & 0x0F) << 28) |
+				((kilogram_ & 0x07) << 25) |
+				((second_   & 0x0F) << 21) |
+				((ampere_   & 0x07) << 18) |
+				((kelvin_   & 0x0F) << 14) |
+				((mole_     & 0x03) << 12) |
+				((radians_  & 0x07) <<  9) |
+				((candela_  & 0x03) <<  7) |
+				((currency_ & 0x03) <<  5) |
+				((count_    & 0x03) <<  3) |
+				(( e_flag   & 0x01) <<  2) |
+				(( i_flag   & 0x01) <<  1) |
+				((eq_flag   & 0x01) <<  0));
+		}
 
 		constexpr bool operator!=(const UnitData& other) const { return !(*this == other); }
 		constexpr bool operator==(const UnitData& other) const
