@@ -6,6 +6,11 @@
 
 namespace Units
 {
+#if defined(__GNUC__)
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+
 	#pragma pack(push)
 	#pragma pack(1)
 	class UnitData
@@ -160,7 +165,7 @@ namespace Units
 			ret.candela_  *= exp;
 			ret.currency_ *= exp;
 			ret.count_    *= exp;
-			ret.i_flag    *= ((exp % 2 == 0) ? 0u : 1u);
+			ret.i_flag    &= ((exp % 2 == 0) ? 0u : 1u);
 			return ret;
 		}
 
@@ -230,3 +235,7 @@ namespace Units
 	};
 	#pragma pack(pop)
 }
+
+#if defined(__GNUC__)
+	#pragma GCC diagnostic pop
+#endif

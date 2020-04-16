@@ -14,7 +14,7 @@ namespace Units
 		char curr_char;
 
 	public:
-		StreamBuffer(std::istream& is) : is(is), curr_char(0) { curr_char = (char)is.get(); }
+		StreamBuffer(std::istream& stream) : is(stream), curr_char(0) { curr_char = (char)is.get(); }
 		~StreamBuffer() = default;
 
 		char current() override { return curr_char; }
