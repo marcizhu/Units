@@ -6,20 +6,20 @@
 
 using namespace Units;
 
-Quantity work(const Quantity& F, const Quantity& dx)
+Quantity work(const Quantity& force, const Quantity& dx)
 {
-	return F * dx; // Defines the relation: work = force * distance.
+	return force * dx; // Defines the relation: work = force * distance.
 }
 
 int main()
 {
-	Quantity force  = 2.0 * N;     // Define a quantity of force.
-	Quantity dx     = 3.0 * m;     // and a distance,
-	Quantity energy = work(force, dx); // and calculate the work done.
+	Quantity force  = 2.0 * N;         // Define a quantity of force
+	Quantity dx     = 3.0 * m;         // and a distance
+	Quantity energy = work(force, dx); // and calculate the work done
 
 	std::cout << "F  = " << force  << std::endl
-			  << "dx = " << dx     << std::endl
-			  << "E  = " << energy << std::endl;
+	          << "dx = " << dx     << std::endl
+	          << "E  = " << energy << std::endl;
 }
 
 /* Generated output:
