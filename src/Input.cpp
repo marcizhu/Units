@@ -5,7 +5,6 @@
 #include "Units/IO.h"
 #include "Units/extras/StdAdditions.h"
 
-#include "Buffer.h"
 #include "StringBuffer.h"
 #include "StreamBuffer.h"
 
@@ -28,15 +27,15 @@ namespace Units
 			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm^2), 33 Hz, 33 s^-1, 45 m / (10 s), 2 N*s
 	*/
 
-	Quantity parseExpression(Buffer* buff);
-	Quantity parseTerm(Buffer* buff);
-	Quantity parseFactor(Buffer* buff);
-	Quantity parseUnit(Buffer* buff);
+	template<typename Buffer> Quantity parseExpression(Buffer& buff);
+	template<typename Buffer> Quantity parseTerm(Buffer& buff);
+	template<typename Buffer> Quantity parseFactor(Buffer& buff);
+	template<typename Buffer> Quantity parseUnit(Buffer& buff);
 
-	double parsePrefix(Buffer* buff);
-	double parseValue(Buffer* buff);
-	int parsePower(Buffer* buff);
-	int parseInt(Buffer* buff);
+	template<typename Buffer> double parsePrefix(Buffer& buff);
+	template<typename Buffer> double parseValue(Buffer& buff);
+	template<typename Buffer> int parsePower(Buffer& buff);
+	template<typename Buffer> int parseInt(Buffer& buff);
 
 	std::unordered_map<std::string, Unit> units
 	{
@@ -103,52 +102,57 @@ namespace Units
 		{ "h"         , Time::hour  }
 	};
 
-	bool isLetter(Buffer* buff)
+	template<typename Buffer>
+	bool isLetter(Buffer& buff)
 	{
-		return (buff->current() >= 'a' && buff->current() <= 'z')
-			|| (buff->current() >= 'A' && buff->current() <= 'Z');
+		return (buff.current() >= 'a' && buff.current() <= 'z')
+			|| (buff.current() >= 'A' && buff.current() <= 'Z');
 	}
 
-	bool isNumber(Buffer* buff)
+	template<typename Buffer>
+	bool isNumber(Buffer& buff)
 	{
-		return (buff->current() >= '0' && buff->current() <= '9');
+		return (buff.current() >= '0' && buff.current() <= '9');
 	}
 
-	bool isWhitespace(Buffer* buff)
+	template<typename Buffer>
+	bool isWhitespace(Buffer& buff)
 	{
-		return std::isspace(buff->current());
+		return std::isspace(buff.current());
 	}
 
-	Quantity parseExpression(Buffer* buff)
+	template<typename Buffer>
+	Quantity parseExpression(Buffer& buff)
 	{
-		if(isWhitespace(buff)) buff->advance(true);
+		if(isWhitespace(buff)) buff.advance(true);
 
 		double quant  = parseValue(buff);
 		Quantity term = parseTerm (buff);
 		return quant == 0.0 ? term : quant * term;
 	}
 
-	Quantity parseTerm(Buffer* buff)
+	template<typename Buffer>
+	Quantity parseTerm(Buffer& buff)
 	{
-		if(isWhitespace(buff)) buff->advance(true);
+		if(isWhitespace(buff)) buff.advance(true);
 		Quantity factor = parseFactor(buff);
 
-		while( buff->current() == ' '
-			|| buff->current() == '*'
-			|| buff->current() == '.'
-			|| buff->current() == '/')
+		while( buff.current() == ' '
+			|| buff.current() == '*'
+			|| buff.current() == '.'
+			|| buff.current() == '/')
 		{
-			switch(buff->current())
+			switch(buff.current())
 			{
 				case ' ':
 				case '*':
 				case '.':
-					if(buff->advance(true) != '(' && !isLetter(buff)) continue;
+					if(buff.advance(true) != '(' && !isLetter(buff)) continue;
 					factor *= parseFactor(buff);
 					break;
 
 				case '/':
-					if(buff->advance(true) != '(' && !isLetter(buff)) continue;
+					if(buff.advance(true) != '(' && !isLetter(buff)) continue;
 					factor /= parseFactor(buff);
 					break;
 			}
@@ -157,12 +161,13 @@ namespace Units
 		return factor;
 	}
 
-	Quantity parseFactor(Buffer* buff)
+	template<typename Buffer>
+	Quantity parseFactor(Buffer& buff)
 	{
-		if(buff->accept('('))
+		if(buff.accept('('))
 		{
 			Quantity expr = parseExpression(buff);
-			buff->expect(')');
+			buff.expect(')');
 
 			return expr.getMagnitude() == 0.0 ? 1.0 * expr.getUnit() : expr;
 		}
@@ -172,38 +177,39 @@ namespace Units
 		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
 		while(isLetter(buff)
 			|| isNumber(buff)
-			|| buff->current() == '$'
-			|| buff->current() == '^'
-			|| buff->current() == '%')
+			|| buff.current() == '$'
+			|| buff.current() == '^'
+			|| buff.current() == '%')
 		{
-			unitName += buff->current();
-			buff->advance();
+			unitName += buff.current();
+			buff.advance();
 		}
 
 		StringBuffer temp1(unitName);
-		Quantity unit = parseUnit(&temp1);
+		Quantity unit = parseUnit(temp1);
 
 		if(unit == Unit::error())
 		{
 			StringBuffer temp2(unitName);
-			return parsePrefix(&temp2) * parseUnit(&temp2);
+			return parsePrefix(temp2) * parseUnit(temp2);
 		}
 
 		return unit;
 	}
 
-	Quantity parseUnit(Buffer* buff)
+	template<typename Buffer>
+	Quantity parseUnit(Buffer& buff)
 	{
 		Quantity ret = error;
 		std::string unitName;
 
 		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
 		while(isLetter(buff)
-			|| buff->current() == '$'
-			|| buff->current() == '%')
+			|| buff.current() == '$'
+			|| buff.current() == '%')
 		{
-			unitName += buff->current();
-			buff->advance();
+			unitName += buff.current();
+			buff.advance();
 		}
 
 		// Exception: kg is the only SI unit with prefix
@@ -212,72 +218,75 @@ namespace Units
 		auto it = units.find(unitName);
 		if(it != units.end() && !unitName.empty()) ret = 1.0 * it->second;
 
-		if(ret != error && buff->accept('^'))
+		if(ret != error && buff.accept('^'))
 			ret ^= parseInt(buff);
 
 		return ret;
 	}
 
-	double parsePrefix(Buffer* buff)
+	template<typename Buffer>
+	double parsePrefix(Buffer& buff)
 	{
-		switch(buff->current())
+		switch(buff.current())
 		{
-			case 'Y': buff->advance(); return yotta;
-			case 'Z': buff->advance(); return zetta;
-			case 'E': buff->advance(); return exa;
-			case 'P': buff->advance(); return peta;
-			case 'T': buff->advance(); return tera;
-			case 'G': buff->advance(); return giga;
-			case 'M': buff->advance(); return mega;
-			case 'k': buff->advance(); return kilo;
-			case 'h': buff->advance(); return hecto;
-			case 'c': buff->advance(); return centi;
-			case 'm': buff->advance(); return milli;
-			case 'u': buff->advance(); return micro;
-			case 'n': buff->advance(); return nano;
-			case 'p': buff->advance(); return pico;
-			case 'f': buff->advance(); return femto;
-			case 'a': buff->advance(); return atto;
-			case 'z': buff->advance(); return zepto;
-			case 'y': buff->advance(); return yocto;
+			case 'Y': buff.advance(); return yotta;
+			case 'Z': buff.advance(); return zetta;
+			case 'E': buff.advance(); return exa;
+			case 'P': buff.advance(); return peta;
+			case 'T': buff.advance(); return tera;
+			case 'G': buff.advance(); return giga;
+			case 'M': buff.advance(); return mega;
+			case 'k': buff.advance(); return kilo;
+			case 'h': buff.advance(); return hecto;
+			case 'c': buff.advance(); return centi;
+			case 'm': buff.advance(); return milli;
+			case 'u': buff.advance(); return micro;
+			case 'n': buff.advance(); return nano;
+			case 'p': buff.advance(); return pico;
+			case 'f': buff.advance(); return femto;
+			case 'a': buff.advance(); return atto;
+			case 'z': buff.advance(); return zepto;
+			case 'y': buff.advance(); return yocto;
 		}
 
-		/**/ if(buff->accept('\xC2') && buff->accept('\xB5')) return micro;
-		else if(buff->accept('d')) return buff->accept('a') ? deca : deci;
+		/**/ if(buff.accept('\xC2') && buff.accept('\xB5')) return micro;
+		else if(buff.accept('d')) return buff.accept('a') ? deca : deci;
 
 		return 1.0;
 	}
 
-	double parseValue(Buffer* buff)
+	template<typename Buffer>
+	double parseValue(Buffer& buff)
 	{
 		std::string str;
 
 		while(isNumber(buff)
-			|| buff->current() == '-'
-			|| buff->current() == '+'
-			|| buff->current() == 'e'
-			|| buff->current() == 'E'
-			|| buff->current() == '.')
+			|| buff.current() == '-'
+			|| buff.current() == '+'
+			|| buff.current() == 'e'
+			|| buff.current() == 'E'
+			|| buff.current() == '.')
 		{
-			str += buff->current();
-			buff->advance();
+			str += buff.current();
+			buff.advance();
 		}
 
 		return std::atof(str.c_str());
 	}
 
-	int parseInt(Buffer* buff)
+	template<typename Buffer>
+	int parseInt(Buffer& buff)
 	{
 		int total = 0;
 		bool neg  = false;
 
-		/**/ if(buff->accept('+')) neg = false;
-		else if(buff->accept('-')) neg = true;
+		/**/ if(buff.accept('+')) neg = false;
+		else if(buff.accept('-')) neg = true;
 
 		while(isNumber(buff))
 		{
-			total = 10 * total + (buff->current() - '0');
-			buff->advance();
+			total = 10 * total + (buff.current() - '0');
+			buff.advance();
 		}
 
 		return neg ? -total : total;
@@ -288,7 +297,7 @@ namespace Units
 		try
 		{
 			StringBuffer buff(str);
-			unit = parseExpression(&buff).getUnit();
+			unit = parseExpression(buff).getUnit();
 			return true;
 		}
 		catch(std::runtime_error&)
@@ -303,7 +312,7 @@ namespace Units
 		try
 		{
 			StringBuffer buff(str);
-			quant = parseExpression(&buff);
+			quant = parseExpression(buff);
 			return true;
 		}
 		catch(std::runtime_error&)
@@ -318,7 +327,7 @@ namespace Units
 		try
 		{
 			StreamBuffer buff(is);
-			unit = parseExpression(&buff).getUnit();
+			unit = parseExpression(buff).getUnit();
 			return true;
 		}
 		catch(std::runtime_error&)
@@ -333,7 +342,7 @@ namespace Units
 		try
 		{
 			StreamBuffer buff(is);
-			quant = parseExpression(&buff);
+			quant = parseExpression(buff);
 			return true;
 		}
 		catch(std::runtime_error&)

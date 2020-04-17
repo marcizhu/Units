@@ -19,9 +19,9 @@ namespace Units
 
 		static constexpr Quantity convert(const Quantity& start, const Unit& result)
 		{
-			if(start.getUnit().base_units() != result.base_units()) return Quantity(std::numeric_limits<double>::quiet_NaN(), Unit::error());
+			if(start.unit.base_units() != result.base_units()) return Quantity(std::numeric_limits<double>::quiet_NaN(), Unit::error());
 
-			return Quantity(start.getMagnitude() * ((double)start.getUnit().unit_multiplier() / (double)result.unit_multiplier()), result);
+			return Quantity(start.magnitude * ((double)start.unit.unit_multiplier() / (double)result.unit_multiplier()), result);
 		}
 
 	public:
