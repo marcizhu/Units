@@ -25,11 +25,10 @@ always welcome!
 
 ## Background
 While working on another project of mine, I needed a library to be able to represent units of different kinds and be able to
-use them in numerical calculations. The main objective of this library is to convert most used units to a standardized set
-(the SI system) and to provide a single, lightweight type (instead of a bunch of different data types) that can represent
-any unit from a wide range of disciplines such as, but not limited to, physics, chemistry, engineering, medicine, optics, 
-computing, statistics, etc. This "single-type" philosophy helps using this library inside virtual functions where a type has 
-to be specified at compile time.
+use them in numerical calculations. The main objective of this library is to to provide a single, lightweight type (instead
+of a bunch of different data types) that can represent any unit from a wide range of disciplines such as, but not limited to,
+physics, chemistry, engineering, medicine, optics, computing, statistics, etc. This "single-type" philosophy helps using this
+library inside virtual functions where a type has to be specified at compile time.
 
 As mentioned earlier, the main type provided by this library (`Units::Unit`) was desired to be lightweight (ideally under 8
 bytes) so that it could be passed by value easily without any kind of overhead. This type can represent a wide range of units
@@ -38,37 +37,41 @@ and convert between units at runtime. This library does **NOT** provide compile-
 with units and it is intended to be used in applications where many (if not all) of the units to be used are unknown at
 compile time.
 
-This library is an engineering library, created to represent as many units as possible in a simple data type. No templates.
-No polymorphism. No `virtual` calls. That's it. Simple and fast. It supports mathematical operations on units and quantities,
-and all of them are `constexpr` to allow running some (or all) operations at compile-time if possible.
+This library is an engineering library, created to represent as many units as possible in a simple data type. No multiple 
+types. No polymorphism. No `virtual` calls. That's it. Simple and fast. It supports mathematical operations on units and
+quantities, and all of them are `constexpr` to allow running some (or all) operations at compile-time if possible.
 
 ## Install
 The provided `CMakeLists.txt` file exports a `Units::Units` library, so if your build system is based on CMake, you can use
 that. If not, copy the `include/Units` folder to your `include`/`vendor` folder and you're ready to go!
 
 ## Usage
-The main type provided by this library is `Units::Unit`, which is defined inside `Units/Unit.h`. This type allows to hold
-different units (for example, `m`, `m^3`, `m/s`, `W`, `J`...) but it does not allow to hold any magnitude associated with it.
+The main type provided by this library is `Units::Unit`. To use this type, just `#include Units/Unit.h`. This type allows
+to hold different units (for example, `m`, `m^3`, `m/s`, `W`, `J`, `mph`, `inch`...) but it does not allow to hold any
+magnitude associated with it.
 For this reason, the type `Units::Quantity` is provided. It holds a unit plus a double, which will store the magnitude of the
-measurement, allowing to represent, for example, `11.3 m`, `0.01 J`, `25.0 m/s` and so on.
+measurement, allowing to represent, for example, `11.3 m`, `0.01 J`, `25.0 m/s` and so on. To use this type, include
+`Units/Quantity.h` in the required files.
+
+The most common units are defined inside `Units/Units.h`. For most applications, you just need to include that file and all common units will be accessible to you through the `Units` namespace. Take a look at that file to see all the already defined units.
 
 The main goal of the library is to provide a transparent API for quantities. Thus, a `Units::Quantity` can be
 treated as if it was a `double`. The library provides addons to the `std` namespace to allow using `std::sin`, `std::abs`,
-`std::pow`, `std::sqrt` and other functions. Quantities can also be compared (`>`, `<`, `>=`, `<=`, `==`, `!=`), assigned
-to an arbitrary value/unit combination, read from `std::cin`/`std::string` and written to `std::cout`/`std::string`.
+`std::pow`, `std::sqrt` and other functions. Both quantities and units can be compared (`>`, `<`, `>=`, `<=`, `==`, `!=`),
+assigned to an arbitrary value/unit combination, read from `std::cin`/`std::string` and written to `std::cout`/`std::string`
+without any problem.
 
-The size of a `Units::Unit` is exactly 4 bytes, while the size of a `Units::Quantity` is 16 bytes (8 bytes for the double, 4
-bytes for the unit, and 4 bytes due to alignment requirements). The last 4 bytes of a quantity can be used to store any
-arbitrary 32-bit unsigned number, allowing to store some user data.
+The size of a `Units::Unit` is exactly 8 bytes, while the size of a `Units::Quantity` is 16 bytes (8 bytes for the double and
+8 bytes for the unit).
 
 The following minimalistic example shows the use of `constexpr` quantities and how to use some of the provided physics
 constants and units:
 ```cpp
 #include <iostream> // for std::cout
 
-#include "Units/Constants.h"
-#include "Units/Units.h"
-#include "Units/IO.h"
+#include "Units/Constants.h" // provides most common math/physics constants
+#include "Units/Units.h" // provides Units, Quantities and all defined units (like meter, second, inches...)
+#include "Units/IO.h" // provides operator>> and operator<< for input & output
 
 int main()
 {
@@ -91,7 +94,7 @@ int main()
 For more examples, please take a look at the [examples/](https://github.com/marcizhu/Units/tree/master/examples) folder.
 
 ## Limitations
-- Any unit is represented using the seven SI units + currency + count + radians. Any unit not representable using a combination of the units stated earlier is not representable using this library.
+- Any unit is represented using a multiplier (a `float`) and the seven SI base units + currency + count + radians. Any unit not representable using a combination of the units stated earlier is not representable using this library.
 - Due to the small size of the `Units::Unit` type, the powers that can be represented by units are limited:
     - meters: [-8, +7]
     - kilogram: [-4, +3]
@@ -107,9 +110,9 @@ For more examples, please take a look at the [examples/](https://github.com/marc
     Exceeding this range for the exponents of their respective unit is undefined behavior. So, for example, `m^10` or `kg^-5`
     is UB. Please, be careful when the exponent of a unit is near the specified limit or when executing long formulas.
     
-- The library uses a `double` to store real values, which should suffice in most cases but may lead to loss of precission on really long calculations.
+- The library uses a `double` to store real values (except for the multiplier of a unit), which should suffice in most cases but may lead to loss of precission on really long calculations.
 - Currency is supported to allow basic financial calculations (like representing `$/Wh` or anything similar to that). This library is not recommended for economic or financial calculations.
-- Fractional units are not supported. An exception to this is √Hz, which can be represented and is used for measuring amplitude spectral density (`V/√Hz`) and other similar units. √Hz can be obtained using `std::sqrt(Hz)`.
+- Fractional units are not supported. An exception to this is √Hz, which can be represented and is used for measuring amplitude spectral density (`V/√Hz`) and other similar units. √Hz can be obtained using `std::sqrt(Hz)` (include `Units/extras/StdAdditions.h` to be able to call `std::` math functions with quantities).
 
 ## Benchmarks
 Comming soon
