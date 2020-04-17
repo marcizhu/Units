@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(UnitsTest main.cpp Units.cpp Input.cpp)
+add_executable(UnitsTest main.cpp Units.cpp Input.cpp Errors.cpp)
 target_link_libraries(UnitsTest PRIVATE Catch2::Catch2 units)
 add_test(NAME UnitsTest
 	COMMAND ${CMAKE_BINARY_DIR}/tests/UnitsTest)

@@ -54,7 +54,7 @@ namespace Units
 		constexpr bool operator>=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) >= cround(other.magnitude) : cround(magnitude) >= cround(convert(other, unit).magnitude)); }
 		constexpr bool operator<=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) <= cround(other.magnitude) : cround(magnitude) <= cround(convert(other, unit).magnitude)); }
 		constexpr bool operator==(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) == cround(other.magnitude) : cround(magnitude) == cround(convert(other, unit).magnitude)); }
-		constexpr bool operator!=(const Quantity& other) const { return (unit != other.unit ? cround(magnitude) != cround(other.magnitude) : cround(magnitude) != cround(convert(other, unit).magnitude)); }
+		constexpr bool operator!=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) != cround(other.magnitude) : cround(magnitude) != cround(convert(other, unit).magnitude)); }
 
 		constexpr void root(int power) { magnitude = gcem::pow(magnitude, 1.0 / static_cast<double>(power)); unit.root(power); }
 		constexpr void pow (int power) { magnitude = gcem::pow(magnitude,       static_cast<double>(power)); unit.pow (power); }
