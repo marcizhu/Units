@@ -11,6 +11,14 @@ This library was designed to be intuitive, easy to use, portable and lightweight
 and functions, type names, namespaces and others are subject to change in the near future. Any kind of input/feedback is
 always welcome!
 
+### Features
+- Small, lightweight, fast cross-platform library.
+- The library is written in C++14 `constexpr` format, and is C++14/17/20 compatible.
+- Optional compatibility with [exprtk](https://github.com/ArashPartow/exprtk) library.
+- Optional add-ons to the `std::` namespace to use standard math functions on units and quantities.
+- Designed to be intuitive, easy to use, and transparent to the user.
+- Released under a permissive, non-GPL license.
+
 ## Table of contents
 - [Background](#background)
 - [Install](#install)
