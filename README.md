@@ -133,6 +133,8 @@ This library was created and is currently maintained by [marcizhu](https://githu
 If you find any issue with the library, you can either [open an issue](https://github.com/marcizhu/Units/issues) or e-mail me at marcizhu@gmail.com.
 
 ## Credits
+This library uses [kthohr/gcem](https://www.kthohr.com/gcem.html) library for `constexpr` math, and [catchorg/cartch2](https://github.com/catchorg/Catch2) for unit testing. Thanks to both autors for their amazing work on their respective projects.
+
 The main idea and the list of unit conversions came from [LLNL/units](https://github.com/LLNL/units), although both libraries
 have some major differences.
 
