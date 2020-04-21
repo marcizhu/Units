@@ -179,6 +179,7 @@ namespace Units
 			|| isNumber(buff)
 			|| buff.current() == '$'
 			|| buff.current() == '^'
+			|| buff.current() == '-'
 			|| buff.current() == '%')
 		{
 			unitName += buff.current();
