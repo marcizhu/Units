@@ -14,21 +14,33 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(UnitsTest main.cpp Units.cpp Input.cpp Errors.cpp)
-target_link_libraries(UnitsTest PRIVATE Catch2::Catch2 units)
-add_test(NAME UnitsTest
-	COMMAND ${CMAKE_BINARY_DIR}/tests/UnitsTest)
+add_executable(Units.test Units.cpp)
+add_executable(Input.test Input.cpp)
+add_executable(Errors.test Errors.cpp)
+add_executable(Comp.test Comparisons.cpp)
+
+target_link_libraries(Units.test PRIVATE Catch2::Catch2 Units::Units)
+target_link_libraries(Input.test PRIVATE Catch2::Catch2 Units::Units)
+target_link_libraries(Errors.test PRIVATE Catch2::Catch2 Units::Units)
+target_link_libraries(Comp.test PRIVATE Catch2::Catch2 Units::Units)
+
+add_test(NAME Units.test  COMMAND ${CMAKE_BINARY_DIR}/tests/Units.test)
+add_test(NAME Input.test  COMMAND ${CMAKE_BINARY_DIR}/tests/Input.test)
+add_test(NAME Errors.test COMMAND ${CMAKE_BINARY_DIR}/tests/Errors.test)
+add_test(NAME Comp.test   COMMAND ${CMAKE_BINARY_DIR}/tests/Comp.test)
 
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-	target_compile_options(UnitsTest PUBLIC
-		-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wcast-align
-		-Wunused -Woverloaded-virtual -Wconversion -pedantic
-		-Wsign-conversion -Wdouble-promotion -Wformat=2)
+	target_compile_options(Units.test  PUBLIC -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wcast-align -Wunused -Woverloaded-virtual -Wconversion -pedantic -Wsign-conversion -Wdouble-promotion -Wformat=2)
+	target_compile_options(Input.test  PUBLIC -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wcast-align -Wunused -Woverloaded-virtual -Wconversion -pedantic -Wsign-conversion -Wdouble-promotion -Wformat=2)
+	target_compile_options(Errors.test PUBLIC -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wcast-align -Wunused -Woverloaded-virtual -Wconversion -pedantic -Wsign-conversion -Wdouble-promotion -Wformat=2)
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	target_compile_options(UnitsTest PUBLIC /W3 )
+	target_compile_options(Units.test  PUBLIC /W3)
+	target_compile_options(Input.test  PUBLIC /W3)
+	target_compile_options(Errors.test PUBLIC /W3)
+
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 	add_compile_definitions(_USE_MATH_DEFINES)
 endif()

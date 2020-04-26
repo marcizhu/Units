@@ -1,9 +1,11 @@
 #include <array>
 #include <limits>
 
-#include "catch2/catch.hpp"
 #include "Units/Units.h"
 #include "Units/IO.h"
+
+#define CATCH_CONFIG_MAIN
+#include "catch2/catch.hpp"
 
 TEST_CASE("Unit errors", "[unit][error]")
 {
@@ -47,7 +49,7 @@ TEST_CASE("Unit errors", "[unit][error]")
 	SECTION("unit <= error is false") { for(Unit un : test_units) CHECK((un <= error) == false); }
 }
 
-TEST_CASE("Quantity errors", "[quantity][error]")
+TEST_CASE("Quantity errors", "[quant][error]")
 {
 	using namespace Units;
 
@@ -84,7 +86,7 @@ TEST_CASE("Quantity errors", "[quantity][error]")
 	SECTION("quantity <= error is false") { for(Quantity qn : test_units) CHECK((qn <= error) == false); }
 }
 
-TEST_CASE("Quantity errors: error and NaN quantity", "[quantity][error]")
+TEST_CASE("Quantity errors: error and NaN quantity", "[quant][error]")
 {
 	using namespace Units;
 
@@ -123,7 +125,7 @@ TEST_CASE("Quantity errors: error and NaN quantity", "[quantity][error]")
 	SECTION("NaN quantity <= error is false") { for(Quantity qn : test_units) CHECK((qn <= error) == false); }
 }
 
-TEST_CASE("Quantity errors: custom error and NaN quantity", "[quantity][error]")
+TEST_CASE("Quantity errors: custom error and NaN quantity", "[quant][error]")
 {
 	using namespace Units;
 
@@ -164,7 +166,7 @@ TEST_CASE("Quantity errors: custom error and NaN quantity", "[quantity][error]")
 	SECTION("NaN quantity <= my_error is false") { for(Quantity qn : test_units) CHECK((qn <= my_error) == false); }
 }
 
-TEST_CASE("Quantity comparisons: invalid comparisons", "[quantity][error][edge]")
+TEST_CASE("Quantity comparisons: invalid comparisons", "[quant][error][inv]")
 {
 	using namespace Units;
 

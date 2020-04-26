@@ -37,13 +37,13 @@ namespace Units
 		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
 		constexpr Quantity operator-() const { return Quantity(-magnitude, unit); }
 
-		constexpr Quantity operator^(int exp) const { return Quantity(gcem::pow(magnitude, static_cast<double>(exp)), unit ^ exp); }
+		constexpr Quantity operator^(const int       exp) const { return Quantity(gcem::pow(magnitude, static_cast<double>(exp)), unit ^ exp); }
 		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit); }
 		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit); }
 		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit); }
 		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit); }
 
-		constexpr Quantity& operator^=(int exp)             { return *this = *this ^ exp; }
+		constexpr Quantity& operator^=(const int       exp) { return *this = *this ^ exp; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { return *this = *this + rhs; }
 		constexpr Quantity& operator-=(const Quantity& rhs) { return *this = *this - rhs; }
 		constexpr Quantity& operator*=(const Quantity& rhs) { return *this = *this * rhs; }

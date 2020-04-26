@@ -140,13 +140,15 @@ namespace Units
 		while( buff.current() == ' '
 			|| buff.current() == '*'
 			|| buff.current() == '.'
-			|| buff.current() == '/')
+			|| buff.current() == '/'
+			|| buff.current() == '(')
 		{
 			switch(buff.current())
 			{
 				case ' ':
 				case '*':
 				case '.':
+				case '(':
 					if(buff.advance(true) != '(' && !isLetter(buff)) continue;
 					factor *= parseFactor(buff);
 					break;

@@ -39,6 +39,8 @@ target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
 #target_link_libraries(units PUBLIC gcem)
 
+add_library(Units::Units ALIAS units)
+
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------

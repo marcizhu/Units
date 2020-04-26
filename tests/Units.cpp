@@ -1,6 +1,8 @@
-#include "catch2/catch.hpp"
 #include "Units/Units.h"
 #include "Units/extras/StdAdditions.h"
+
+#define CATCH_CONFIG_MAIN
+#include "catch2/catch.hpp"
 
 using namespace Units;
 

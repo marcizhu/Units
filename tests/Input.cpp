@@ -1,6 +1,8 @@
-#include "catch2/catch.hpp"
 #include "Units/Units.h"
 #include "Units/IO.h"
+
+#define CATCH_CONFIG_MAIN
+#include "catch2/catch.hpp"
 
 TEST_CASE("Unit input parsing", "[unit][input]")
 {
