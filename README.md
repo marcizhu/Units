@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/github/license/marcizhu/units)](https://github.com/marcizhu/Units/blob/master/LICENSE)
 [![Stability: Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
 ![Repo size](https://img.shields.io/github/repo-size/marcizhu/Units)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarcizhu%2FUnits.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarcizhu%2FUnits?ref=badge_shield)
 
 A small, lightweight, fully `constexpr` C++14 library that allows to work with units and measurements at runtime, possibly
 from user input or generated from real devices.
@@ -159,3 +160,6 @@ respond and/or fix it as soon as possible :D
 Copyright (c) 2019-2020 Marc Izquierdo  
 This library is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). See
 [LICENSE](https://github.com/marcizhu/Units/blob/master/LICENSE) for more details.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarcizhu%2FUnits.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarcizhu%2FUnits?ref=badge_large)
