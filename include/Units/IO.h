@@ -42,7 +42,7 @@ namespace Units
 	 *
 	 * @returns `true` on success, `false` on failure.
 	 */
-	bool from_string(const std::string& str, Unit& unit);
+	Unit to_unit(const std::string& str);
 
 	/**
 	 * @brief Convert a string to a quantity
@@ -54,7 +54,7 @@ namespace Units
 	 *
 	 * @returns `true` on success, `false` on failure.
 	 */
-	bool from_string(const std::string& str, Quantity& quant);
+	Quantity to_quantity(const std::string& str);
 
 	/**
 	 * @brief Convert a string to a quantity
@@ -66,7 +66,7 @@ namespace Units
 	 *
 	 * @returns `true` on success, `false` on failure.
 	 */
-	bool from_buffer(std::istream& is, Unit& unit);
+	Unit to_unit(std::istream& is);
 
 	/**
 	 * @brief Convert a string to a quantity
@@ -78,11 +78,11 @@ namespace Units
 	 *
 	 * @returns `true` on success, `false` on failure.
 	 */
-	bool from_buffer(std::istream& is, Quantity& quant);
+	Quantity to_quantity(std::istream& is);
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Units::Quantity& q) { return os << Units::to_string(q); }
 inline std::ostream& operator<<(std::ostream& os, const Units::Unit& u)     { return os << Units::to_string(u); }
 
-inline std::istream& operator>>(std::istream& is, Units::Quantity& q) { from_buffer(is, q); return is; }
-inline std::istream& operator>>(std::istream& is, Units::Unit& u)     { from_buffer(is, u); return is; }
+inline std::istream& operator>>(std::istream& is, Units::Quantity& q) { q = Units::to_quantity(is); return is; }
+inline std::istream& operator>>(std::istream& is, Units::Unit& u)     { u = Units::to_unit    (is); return is; }

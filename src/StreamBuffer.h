@@ -15,7 +15,7 @@ namespace Units
 		StreamBuffer(std::istream& stream) : is(stream), curr_char(0) { curr_char = (char)is.get(); }
 		~StreamBuffer() = default;
 
-		constexpr static const char EOF_MARK = (char)0xFF;
+		static constexpr const char EOF_MARK = (char)0xFF;
 
 		/** @brief Returns current character. */
 		char current() { return curr_char; }

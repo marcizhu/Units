@@ -11,8 +11,8 @@ namespace Units
 	class Unit
 	{
 	private:
-		float multiplier;
-		UnitData data;
+		float m_Multiplier;
+		UnitData m_Data;
 
 		static constexpr float max_precision = gcem::pow(10.0f, std::numeric_limits<float>::digits10);
 		static constexpr float cround(float val) { return gcem::round(val * max_precision) / max_precision; }
@@ -20,17 +20,17 @@ namespace Units
 		static constexpr bool isError(const UnitData& data) { return data == UnitData::error(); }
 		static constexpr bool isSame(float a, float b) { return cround(a) == cround(b); }
 
-		constexpr Unit(float mult, const UnitData& dim) : multiplier(mult), data(dim) {}
+		constexpr Unit(float mult, const UnitData& dim) : m_Multiplier(mult), m_Data(dim) {}
 
 	public:
-		constexpr Unit()                               : multiplier(1.0), data() {}
-		constexpr Unit(double mult, const Unit& other) : multiplier((float)mult * other.multiplier), data(other.data) {}
+		constexpr Unit()                               : m_Multiplier(1.0f), m_Data() {}
+		constexpr Unit(double mult, const Unit& other) : m_Multiplier((float)mult * other.m_Multiplier), m_Data(other.m_Data) {}
 
-		constexpr UnitData::BaseUnitType base_units() const { return data.base_unit(); }
-		constexpr float unit_multiplier() const { return cround(multiplier); }
+		constexpr UnitData::BaseUnitType base_units() const { return m_Data.base_unit(); }
+		constexpr float multiplier() const { return cround(m_Multiplier); }
 
-		constexpr int degree() const { return data.degree(); }
-		constexpr int unit_count() const { return data.unit_count(); }
+		constexpr int degree() const { return m_Data.degree(); }
+		constexpr int unit_count() const { return m_Data.unit_count(); }
 
 		static constexpr Unit eq(uint8_t num) { return Unit(1.0f, UnitData::eq(num)); }
 
@@ -48,11 +48,11 @@ namespace Units
 		static constexpr Unit currency() { return Unit(1.0f, UnitData::currency()); }
 		static constexpr Unit count   () { return Unit(1.0f, UnitData::count()); }
 
-		constexpr Unit operator^(const int   exp) const { return Unit(gcem::pow(multiplier, static_cast<float>(exp)), data^exp); }
+		constexpr Unit operator^(const int   exp) const { return Unit(gcem::pow(m_Multiplier, static_cast<float>(exp)), m_Data^exp); }
 		constexpr Unit operator+(const Unit& rhs) const { return (*this == rhs ? *this : Unit::error()); }
 		constexpr Unit operator-(const Unit& rhs) const { return (*this == rhs ? *this : Unit::error()); }
-		constexpr Unit operator*(const Unit& rhs) const { return Unit(multiplier * rhs.multiplier, data * rhs.data); }
-		constexpr Unit operator/(const Unit& rhs) const { return Unit(multiplier / rhs.multiplier, data / rhs.data); }
+		constexpr Unit operator*(const Unit& rhs) const { return Unit(m_Multiplier * rhs.m_Multiplier, m_Data * rhs.m_Data); }
+		constexpr Unit operator/(const Unit& rhs) const { return Unit(m_Multiplier / rhs.m_Multiplier, m_Data / rhs.m_Data); }
 
 		constexpr Unit& operator^=(const int   exp) { return *this = *this ^ exp; }
 		constexpr Unit& operator+=(const Unit& rhs) { return *this = *this + rhs; }
@@ -60,10 +60,10 @@ namespace Units
 		constexpr Unit& operator*=(const Unit& rhs) { return *this = *this * rhs; }
 		constexpr Unit& operator/=(const Unit& rhs) { return *this = *this / rhs; }
 
-		constexpr bool operator==(Unit other) const { return ( isError(data) &&  isError(other.data)) || (data == other.data &&  isSame(multiplier, other.multiplier)); }
-		constexpr bool operator!=(Unit other) const { return (!isError(data) || !isError(other.data)) && (data != other.data || !isSame(multiplier, other.multiplier)); }
+		constexpr bool operator==(Unit other) const { return ( isError(m_Data) &&  isError(other.m_Data)) || (m_Data == other.m_Data &&  isSame(m_Multiplier, other.m_Multiplier)); }
+		constexpr bool operator!=(Unit other) const { return (!isError(m_Data) || !isError(other.m_Data)) && (m_Data != other.m_Data || !isSame(m_Multiplier, other.m_Multiplier)); }
 
-		constexpr void root(int power) { multiplier = gcem::pow(multiplier, 1.0f / static_cast<float>(power)); data.root(power); }
-		constexpr void pow (int power) { multiplier = gcem::pow(multiplier,        static_cast<float>(power)); data.pow (power); }
+		constexpr void root(int power) { m_Multiplier = gcem::pow(m_Multiplier, 1.0f / static_cast<float>(power)); m_Data.root(power); }
+		constexpr void pow (int power) { m_Multiplier = gcem::pow(m_Multiplier,        static_cast<float>(power)); m_Data.pow (power); }
 	};
 }

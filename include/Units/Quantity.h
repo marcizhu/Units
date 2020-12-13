@@ -11,37 +11,37 @@ namespace Units
 	class Quantity
 	{
 	private:
-		double magnitude;
-		Unit unit;
+		double m_Magnitude;
+		Unit m_Unit;
 
 		static constexpr double max_precision = gcem::pow(10.0, std::numeric_limits<double>::digits10);
 		static constexpr double cround(double val) { return gcem::round(val * max_precision) / max_precision; }
 
 		static constexpr Quantity convert(const Quantity& start, const Unit& result)
 		{
-			if(start.unit.base_units() != result.base_units()) return Quantity(std::numeric_limits<double>::quiet_NaN(), Unit::error());
+			if(start.m_Unit.base_units() != result.base_units()) return Quantity(std::numeric_limits<double>::quiet_NaN(), Unit::error());
 
-			return Quantity(start.magnitude * ((double)start.unit.unit_multiplier() / (double)result.unit_multiplier()), result);
+			return Quantity(start.m_Magnitude * ((double)start.m_Unit.multiplier() / (double)result.multiplier()), result);
 		}
 
 	public:
-		constexpr Quantity(Unit u = Unit())             : magnitude(1.0), unit(u) {}
-		constexpr Quantity(double mag, Unit u = Unit()) : magnitude(mag), unit(u) {}
+		constexpr Quantity(Unit u = Unit())             : m_Magnitude(1.0), m_Unit(u) {}
+		constexpr Quantity(double mag, Unit u = Unit()) : m_Magnitude(mag), m_Unit(u) {}
 
-		constexpr double getMagnitude() const { return magnitude; }
-		constexpr Unit getUnit() const { return unit; }
+		constexpr double magnitude() const { return m_Magnitude; }
+		constexpr Unit unit() const { return m_Unit; }
 
-		explicit operator double() const { return magnitude; }
-		explicit operator Unit() const { return unit; }
+		explicit operator double() const { return m_Magnitude; }
+		explicit operator Unit() const { return m_Unit; }
 
-		constexpr Quantity operator+() const { return Quantity(+magnitude, unit); }
-		constexpr Quantity operator-() const { return Quantity(-magnitude, unit); }
+		constexpr Quantity operator+() const { return Quantity(+m_Magnitude, m_Unit); }
+		constexpr Quantity operator-() const { return Quantity(-m_Magnitude, m_Unit); }
 
-		constexpr Quantity operator^(const int       exp) const { return Quantity(gcem::pow(magnitude, static_cast<double>(exp)), unit ^ exp); }
-		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(magnitude + rhs.magnitude, unit + rhs.unit); }
-		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(magnitude - rhs.magnitude, unit - rhs.unit); }
-		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(magnitude * rhs.magnitude, unit * rhs.unit); }
-		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(magnitude / rhs.magnitude, unit / rhs.unit); }
+		constexpr Quantity operator^(const int       exp) const { return Quantity(gcem::pow(m_Magnitude, static_cast<double>(exp)), m_Unit ^ exp); }
+		constexpr Quantity operator+(const Quantity& rhs) const { return Quantity(m_Magnitude + rhs.m_Magnitude, m_Unit + rhs.m_Unit); }
+		constexpr Quantity operator-(const Quantity& rhs) const { return Quantity(m_Magnitude - rhs.m_Magnitude, m_Unit - rhs.m_Unit); }
+		constexpr Quantity operator*(const Quantity& rhs) const { return Quantity(m_Magnitude * rhs.m_Magnitude, m_Unit * rhs.m_Unit); }
+		constexpr Quantity operator/(const Quantity& rhs) const { return Quantity(m_Magnitude / rhs.m_Magnitude, m_Unit / rhs.m_Unit); }
 
 		constexpr Quantity& operator^=(const int       exp) { return *this = *this ^ exp; }
 		constexpr Quantity& operator+=(const Quantity& rhs) { return *this = *this + rhs; }
@@ -49,15 +49,15 @@ namespace Units
 		constexpr Quantity& operator*=(const Quantity& rhs) { return *this = *this * rhs; }
 		constexpr Quantity& operator/=(const Quantity& rhs) { return *this = *this / rhs; }
 
-		constexpr bool operator> (const Quantity& other) const { return (unit == other.unit ? cround(magnitude) >  cround(other.magnitude) : cround(magnitude)  > cround(convert(other, unit).magnitude)); }
-		constexpr bool operator< (const Quantity& other) const { return (unit == other.unit ? cround(magnitude) <  cround(other.magnitude) : cround(magnitude)  < cround(convert(other, unit).magnitude)); }
-		constexpr bool operator>=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) >= cround(other.magnitude) : cround(magnitude) >= cround(convert(other, unit).magnitude)); }
-		constexpr bool operator<=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) <= cround(other.magnitude) : cround(magnitude) <= cround(convert(other, unit).magnitude)); }
-		constexpr bool operator==(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) == cround(other.magnitude) : cround(magnitude) == cround(convert(other, unit).magnitude)); }
-		constexpr bool operator!=(const Quantity& other) const { return (unit == other.unit ? cround(magnitude) != cround(other.magnitude) : cround(magnitude) != cround(convert(other, unit).magnitude)); }
+		constexpr bool operator> (const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) >  cround(other.m_Magnitude) : cround(m_Magnitude)  > cround(convert(other, m_Unit).m_Magnitude)); }
+		constexpr bool operator< (const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) <  cround(other.m_Magnitude) : cround(m_Magnitude)  < cround(convert(other, m_Unit).m_Magnitude)); }
+		constexpr bool operator>=(const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) >= cround(other.m_Magnitude) : cround(m_Magnitude) >= cround(convert(other, m_Unit).m_Magnitude)); }
+		constexpr bool operator<=(const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) <= cround(other.m_Magnitude) : cround(m_Magnitude) <= cround(convert(other, m_Unit).m_Magnitude)); }
+		constexpr bool operator==(const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) == cround(other.m_Magnitude) : cround(m_Magnitude) == cround(convert(other, m_Unit).m_Magnitude)); }
+		constexpr bool operator!=(const Quantity& other) const { return (m_Unit == other.m_Unit ? cround(m_Magnitude) != cround(other.m_Magnitude) : cround(m_Magnitude) != cround(convert(other, m_Unit).m_Magnitude)); }
 
-		constexpr void root(int power) { magnitude = gcem::pow(magnitude, 1.0 / static_cast<double>(power)); unit.root(power); }
-		constexpr void pow (int power) { magnitude = gcem::pow(magnitude,       static_cast<double>(power)); unit.pow (power); }
+		constexpr void root(int power) { m_Magnitude = gcem::pow(m_Magnitude, 1.0 / static_cast<double>(power)); m_Unit.root(power); }
+		constexpr void pow (int power) { m_Magnitude = gcem::pow(m_Magnitude,       static_cast<double>(power)); m_Unit.pow (power); }
 	};
 
 	constexpr Quantity operator+(double lhs, const Quantity& rhs) { return Quantity(lhs) + rhs; }

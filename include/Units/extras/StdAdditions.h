@@ -15,8 +15,7 @@ namespace std
 	{
 		size_t operator()(const Units::Unit& x) const noexcept
 		{
-			return hash<uint32_t>()(x.base_units())
-				^ hash<float>()(x.unit_multiplier());
+			return hash<uint32_t>()(x.base_units()) ^ hash<float>()(x.multiplier());
 		}
 	};
 
@@ -44,8 +43,7 @@ namespace std
 	{
 		size_t operator()(const Units::Quantity& x) const noexcept
 		{
-			return hash<Units::Unit>()(x.getUnit())
-				^ hash<double>()(x.getMagnitude());
+			return hash<Units::Unit>()(x.unit()) ^ hash<double>()(x.magnitude());
 		}
 	};
 
@@ -64,36 +62,36 @@ namespace std
 	inline Units::Quantity cbrt(Units::Quantity x) noexcept { x.root(3); return x; }
 	inline Units::Quantity pow (const Units::Quantity& x, int exp) noexcept { return x^exp; }
 
-	inline Units::Quantity pow  (const Units::Quantity& x, const Units::Quantity& y) noexcept { return pow  (x,        (int8_t)y.getMagnitude()); }
-	inline Units::Quantity fmod (const Units::Quantity& x, const Units::Quantity& y) noexcept { return fmod (x.getMagnitude(), y.getMagnitude()); }
-	inline Units::Quantity atan2(const Units::Quantity& x, const Units::Quantity& y) noexcept { return atan2(x.getMagnitude(), y.getMagnitude()); }
+	inline Units::Quantity pow  (const Units::Quantity& x, const Units::Quantity& y) noexcept { return pow  (x,     (int8_t)y.magnitude()); }
+	inline Units::Quantity fmod (const Units::Quantity& x, const Units::Quantity& y) noexcept { return fmod (x.magnitude(), y.magnitude()); }
+	inline Units::Quantity atan2(const Units::Quantity& x, const Units::Quantity& y) noexcept { return atan2(x.magnitude(), y.magnitude()); }
 
-	inline bool isinf   (const Units::Quantity& x) noexcept { return std::isinf   (x.getMagnitude()); }
-	inline bool isnan   (const Units::Quantity& x) noexcept { return std::isnan   (x.getMagnitude()); }
-	inline bool isnormal(const Units::Quantity& x) noexcept { return std::isnormal(x.getMagnitude()); }
-	inline bool isfinite(const Units::Quantity& x) noexcept { return std::isfinite(x.getMagnitude()); }
+	inline bool isinf   (const Units::Quantity& x) noexcept { return std::isinf   (x.magnitude()); }
+	inline bool isnan   (const Units::Quantity& x) noexcept { return std::isnan   (x.magnitude()); }
+	inline bool isnormal(const Units::Quantity& x) noexcept { return std::isnormal(x.magnitude()); }
+	inline bool isfinite(const Units::Quantity& x) noexcept { return std::isfinite(x.magnitude()); }
 
-	inline Units::Quantity abs  (const Units::Quantity& x) noexcept { return Units::Quantity(std::abs  (x.getMagnitude()), x.getUnit()); }
-	inline Units::Quantity fabs (const Units::Quantity& x) noexcept { return Units::Quantity(std::fabs (x.getMagnitude()), x.getUnit()); }
-	inline Units::Quantity ceil (const Units::Quantity& x) noexcept { return Units::Quantity(std::ceil (x.getMagnitude()), x.getUnit()); }
-	inline Units::Quantity floor(const Units::Quantity& x) noexcept { return Units::Quantity(std::floor(x.getMagnitude()), x.getUnit()); }
-	inline Units::Quantity round(const Units::Quantity& x) noexcept { return Units::Quantity(std::round(x.getMagnitude()), x.getUnit()); }
-	inline Units::Quantity trunc(const Units::Quantity& x) noexcept { return Units::Quantity(std::trunc(x.getMagnitude()), x.getUnit()); }
+	inline Units::Quantity abs  (const Units::Quantity& x) noexcept { return Units::Quantity(std::abs  (x.magnitude()), x.unit()); }
+	inline Units::Quantity fabs (const Units::Quantity& x) noexcept { return Units::Quantity(std::fabs (x.magnitude()), x.unit()); }
+	inline Units::Quantity ceil (const Units::Quantity& x) noexcept { return Units::Quantity(std::ceil (x.magnitude()), x.unit()); }
+	inline Units::Quantity floor(const Units::Quantity& x) noexcept { return Units::Quantity(std::floor(x.magnitude()), x.unit()); }
+	inline Units::Quantity round(const Units::Quantity& x) noexcept { return Units::Quantity(std::round(x.magnitude()), x.unit()); }
+	inline Units::Quantity trunc(const Units::Quantity& x) noexcept { return Units::Quantity(std::trunc(x.magnitude()), x.unit()); }
 
-	inline Units::Quantity exp  (const Units::Quantity& x) noexcept { return Units::Quantity(std::exp  (x.getMagnitude()), x.getUnit() / Units::Log::log ); }
-	inline Units::Quantity exp2 (const Units::Quantity& x) noexcept { return Units::Quantity(std::exp2 (x.getMagnitude()), x.getUnit() / Units::Log::log2); }
-	inline Units::Quantity sin  (const Units::Quantity& x) noexcept { return Units::Quantity(std::sin  (x.getMagnitude()), Units::none); }
-	inline Units::Quantity cos  (const Units::Quantity& x) noexcept { return Units::Quantity(std::cos  (x.getMagnitude()), Units::none); }
-	inline Units::Quantity tan  (const Units::Quantity& x) noexcept { return Units::Quantity(std::tan  (x.getMagnitude()), Units::none); }
-	inline Units::Quantity asin (const Units::Quantity& x) noexcept { return Units::Quantity(std::asin (x.getMagnitude()), Units::radian); }
-	inline Units::Quantity acos (const Units::Quantity& x) noexcept { return Units::Quantity(std::acos (x.getMagnitude()), Units::radian); }
-	inline Units::Quantity atan (const Units::Quantity& x) noexcept { return Units::Quantity(std::atan (x.getMagnitude()), Units::radian); }
-	inline Units::Quantity sinh (const Units::Quantity& x) noexcept { return Units::Quantity(std::sinh (x.getMagnitude())); }
-	inline Units::Quantity cosh (const Units::Quantity& x) noexcept { return Units::Quantity(std::cosh (x.getMagnitude())); }
-	inline Units::Quantity tanh (const Units::Quantity& x) noexcept { return Units::Quantity(std::tanh (x.getMagnitude())); }
-	inline Units::Quantity log  (const Units::Quantity& x) noexcept { return Units::Quantity(std::log  (x.getMagnitude()), x.getUnit() * Units::Log::log  ); }
-	inline Units::Quantity log2 (const Units::Quantity& x) noexcept { return Units::Quantity(std::log2 (x.getMagnitude()), x.getUnit() * Units::Log::log2 ); }
-	inline Units::Quantity log10(const Units::Quantity& x) noexcept { return Units::Quantity(std::log10(x.getMagnitude()), x.getUnit() * Units::Log::log10); }
+	inline Units::Quantity exp  (const Units::Quantity& x) noexcept { return Units::Quantity(std::exp  (x.magnitude()), x.unit() / Units::Log::log ); }
+	inline Units::Quantity exp2 (const Units::Quantity& x) noexcept { return Units::Quantity(std::exp2 (x.magnitude()), x.unit() / Units::Log::log2); }
+	inline Units::Quantity sin  (const Units::Quantity& x) noexcept { return Units::Quantity(std::sin  (x.magnitude()), Units::none); }
+	inline Units::Quantity cos  (const Units::Quantity& x) noexcept { return Units::Quantity(std::cos  (x.magnitude()), Units::none); }
+	inline Units::Quantity tan  (const Units::Quantity& x) noexcept { return Units::Quantity(std::tan  (x.magnitude()), Units::none); }
+	inline Units::Quantity asin (const Units::Quantity& x) noexcept { return Units::Quantity(std::asin (x.magnitude()), Units::radian); }
+	inline Units::Quantity acos (const Units::Quantity& x) noexcept { return Units::Quantity(std::acos (x.magnitude()), Units::radian); }
+	inline Units::Quantity atan (const Units::Quantity& x) noexcept { return Units::Quantity(std::atan (x.magnitude()), Units::radian); }
+	inline Units::Quantity sinh (const Units::Quantity& x) noexcept { return Units::Quantity(std::sinh (x.magnitude())); }
+	inline Units::Quantity cosh (const Units::Quantity& x) noexcept { return Units::Quantity(std::cosh (x.magnitude())); }
+	inline Units::Quantity tanh (const Units::Quantity& x) noexcept { return Units::Quantity(std::tanh (x.magnitude())); }
+	inline Units::Quantity log  (const Units::Quantity& x) noexcept { return Units::Quantity(std::log  (x.magnitude()), x.unit() * Units::Log::log  ); }
+	inline Units::Quantity log2 (const Units::Quantity& x) noexcept { return Units::Quantity(std::log2 (x.magnitude()), x.unit() * Units::Log::log2 ); }
+	inline Units::Quantity log10(const Units::Quantity& x) noexcept { return Units::Quantity(std::log10(x.magnitude()), x.unit() * Units::Log::log10); }
 
 	template<>
 	class numeric_limits<Units::Quantity>

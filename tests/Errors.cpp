@@ -59,10 +59,10 @@ TEST_CASE("Quantity errors", "[quant][error]")
 			10.3 * ppm, 4.2 * count, 69 * currency, 77 * cal, 10 * mile, 0.20 * L, 1 * (m^3)
 		};
 
-	SECTION("error + error == error") { CHECK((Quantity(error) + Quantity(error)).getUnit() == error); }
-	SECTION("error - error == error") { CHECK((Quantity(error) - Quantity(error)).getUnit() == error); }
-	SECTION("error * error == error") { CHECK((Quantity(error) * Quantity(error)).getUnit() == error); }
-	SECTION("error / error == error") { CHECK((Quantity(error) / Quantity(error)).getUnit() == error); }
+	SECTION("error + error == error") { CHECK((Quantity(error) + Quantity(error)).unit() == error); }
+	SECTION("error - error == error") { CHECK((Quantity(error) - Quantity(error)).unit() == error); }
+	SECTION("error * error == error") { CHECK((Quantity(error) * Quantity(error)).unit() == error); }
+	SECTION("error / error == error") { CHECK((Quantity(error) / Quantity(error)).unit() == error); }
 
 	SECTION("error == error is true" ) { CHECK((error == error) == true ); }
 	SECTION("error != error is false") { CHECK((error != error) == false); }

@@ -315,12 +315,6 @@ namespace Units
 		constexpr Unit mile    = Unit(8.0, furlong);
 		constexpr Unit league  = Unit(3.0, mile);
 
-		namespace Engineers
-		{
-			constexpr Unit chain = Unit(100.0, foot);
-			constexpr Unit link  = Unit(0.01, chain);
-		}
-
 		// Area
 		constexpr Unit acre      = Unit(43560.0, foot^2);
 		constexpr Unit homestead = Unit(160.0, acre);
@@ -346,6 +340,12 @@ namespace Units
 		constexpr Unit barrel   = Unit(42.0, gallon);
 		constexpr Unit hogshead = Unit(63.0, gallon);
 		constexpr Unit fifth    = Unit(0.2,  gallon);
+
+		namespace Engineers
+		{
+			constexpr Unit chain = Unit(100.0, foot);
+			constexpr Unit link  = Unit(0.01, chain);
+		}
 
 		/** @brief US customary dry measurements */
 		namespace Dry
@@ -406,7 +406,7 @@ namespace Units
 	}
 
 	/** @brief Imperial system units (British) */
-	namespace Imp
+	namespace Imperial
 	{
 		constexpr Unit inch = Unit(0.02539998, m);
 		constexpr Unit foot = Unit(12.0, inch);
@@ -455,14 +455,14 @@ namespace Units
 
 	namespace Apothecaries
 	{
-		constexpr Unit floz         = Imp::floz;
+		constexpr Unit floz         = Imperial::floz;
 		constexpr Unit minim        = Unit(59.1938802083333333333 * micro, L);
 		constexpr Unit scruple      = Unit(20.0, i::grain);
 		constexpr Unit drachm       = Unit(3.0, scruple);
 		constexpr Unit ounce        = Unit(8.0, drachm);
 		constexpr Unit pound        = Unit(12.0, ounce);
-		constexpr Unit pint         = Imp::pint;
-		constexpr Unit gallon       = Imp::gallon;
+		constexpr Unit pint         = Imperial::pint;
+		constexpr Unit gallon       = Imperial::gallon;
 		constexpr Unit metric_ounce = Unit(0.028, kg);
 	}
 
@@ -591,11 +591,15 @@ namespace Units
 	/** @brief Additional Area units */
 	namespace Area
 	{
+		/** @brief Are, 100 square meters */
 		constexpr Unit are     = Unit(100.0, m^2);
+		/** @brief Hectare, 10.000 square meters */
 		constexpr Unit hectare = Unit(100.0, are);
 		/** @brief Barn. 10^−28 m^2 (or 100 fm^2) */
 		constexpr Unit barn    = Unit(1e-28, m^2);
-		constexpr Unit arpent  = Unit(0.84628, acre);
+
+		/** @brief Arpent (Louisiana definition, see https://en.wikipedia.org/wiki/Arpent#Unit_of_area) */
+		constexpr Quantity arpent = 0.84628 * acre;
 	}
 
 	/** @brief Additional mass units */
@@ -753,9 +757,12 @@ namespace Units
 
 		/** @brief Ton of TNT (trinitrotoluene, or 2,4,6-trinitrotoluene) */
 		constexpr Unit ton_tnt = Unit(4.184 * giga, J);
+		/** @brief BOE, Barrel of Oil Equivalent */
 		constexpr Unit boe     = Unit(5.8e6, btu_59);
+		/** @brief FOEB, Fuel of Oil Equivalent Barrel */
 		constexpr Unit foeb    = Unit(6.05e6, btu_59);
-		constexpr Unit hartree = Unit(4.35974465054e-18, J);
+		/** @brief Hartree, an atomic unit of energy */
+		constexpr Unit hartree = Unit(4.3597441775e-18, J);
 		constexpr Unit tonhour = Unit(3516.8528421, Wh);
 	}
 
@@ -797,56 +804,44 @@ namespace Units
 	namespace Log
 	{
 		/** @brief Neper */
-		constexpr Unit neper  = Unit::eq(0);
-		/** @brief Neper. Power unit */
-		constexpr Unit neperP = Unit::eq(1);
+		constexpr Unit neper = Unit::eq(0);
 
 		/** @brief Bel */
-		constexpr Unit bel  = Unit::eq(2);
+		constexpr Unit bel  = Unit::eq(1);
 		/** @brief Bel. A-weighted */
-		constexpr Unit belA = Unit::eq(3);
-		/** @brief Bel. Assume power always */
-		constexpr Unit belP = Unit::eq(4);
+		constexpr Unit belA = Unit::eq(2);
 
 		/** @brief Decibel */
-		constexpr Unit dB  = Unit::eq(5);
+		constexpr Unit dB  = Unit::eq(3);
 		/** @brief Decibel. A-weighted */
-		constexpr Unit dBA = Unit::eq(6);
+		constexpr Unit dBA = Unit::eq(4);
 		/** @brief Decibel. Ratio relative to carrier wave */
-		constexpr Unit dBc = Unit::eq(7);
-		/** @brief Decibel. Assume power always */
-		constexpr Unit dBP = Unit::eq(8);
+		constexpr Unit dBc = Unit::eq(5);
 
 		/** @brief Natural logarithm */
 		constexpr Unit log         = neper;
 		/** @brief Base 2 logarithm */
-		constexpr Unit log2        = Unit::eq(10);
+		constexpr Unit log2        = Unit::eq(6);
 		/** @brief Base 10 logarithm */
-		constexpr Unit log10       = Unit::eq(11);
+		constexpr Unit log10       = Unit::eq(7);
 		/** @brief Negative base 10 logarithm */
-		constexpr Unit neglog10    = Unit::eq(12);
-		/** @brief Negative base 100 logarithm */
-		constexpr Unit neglog100   = Unit::eq(13);
-		/** @brief Negative base 1000 logarithm */
-		constexpr Unit neglog1000  = Unit::eq(14);
-		/** @brief Negative base 50000 logarithm */
-		constexpr Unit neglog50000 = Unit::eq(15);
+		constexpr Unit neglog10    = Unit::eq(8);
 
 		/** @brief Short form for Bels */
 		constexpr Unit B = bel;
 		/** @brief Short form for Bels, A-weighted */
 		constexpr Unit BA = belA;
-		/** @brief Short form for Bels. Assume always power */
-		constexpr Unit BP = belP;
 
 		/** @brief Sound pressure level for Bels */
 		constexpr Unit B_SPL  = Unit(2e-5, Pa * B);
 		/** @brief Sound pressure level for decibels */
-		constexpr Unit dBSPL  = Unit(2e-5, Pa * dB);
+		constexpr Unit dB_SPL = Unit(2e-5, Pa * dB);
 		/** @brief Voltage relative to 1 volt RMS, regardless of impedance */
 		constexpr Unit BV     = B * V;
 		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
 		constexpr Unit BmV    = Unit(1e-3, B * V);
+		/** @brief Voltage relative to 0.7746 volts RMS (1 mW across 600-ohm resistor) */
+		constexpr Unit Bu     = Unit(0.7746, B * V);
 		/** @brief Voltage relative to 1 microvolt RMS. */
 		constexpr Unit BuV    = Unit(1e-6, B * V);
 		/** @brief Voltage relative to 10 nanovolt RMS. */
@@ -859,6 +854,8 @@ namespace Units
 		constexpr Unit dBV    = dB * V;
 		/** @brief Voltage relative to 1 millivolt RMS across 75-ohm impedance */
 		constexpr Unit dBmV   = Unit(1e-3, dB * V);
+		/** @brief Voltage relative to 0.7746 volts RMS (1 mW across 600-ohm resistor) */
+		constexpr Unit dBu    = Unit(0.7746, dB * V);
 		/** @brief Voltage relative to 1 microvolt RMS. */
 		constexpr Unit dBuV   = Unit(1e-6, dB * V);
 		/** @brief Voltage relative to 10 nanovolt RMS. */
@@ -926,27 +923,27 @@ namespace Units
 
 	constexpr Quantity convert(const Quantity& start, const Unit& result)
 	{
-		if(start.getUnit().base_units() != result.base_units()) return Unit::error();
+		if(start.unit().base_units() != result.base_units()) return Unit::error();
 
-		if(start.getUnit().base_units() == K.base_units())
+		if(start.unit().base_units() == K.base_units())
 		{
 			Quantity temp;
 
-			/**/ if(start.getUnit() == Temperature::degC ) temp = ((start.getMagnitude() -  0.0) * 1.0 / 1.0 + 273.15) * K;
-			else if(start.getUnit() == Temperature::degF ) temp = ((start.getMagnitude() - 32.0) * 5.0 / 9.0 + 273.15) * K;
-			else if(start.getUnit() == Temperature::degR ) temp = ((start.getMagnitude() -  0.0) * 5.0 / 9.0 + 273.15) * K;
-			else if(start.getUnit() == Temperature::degRe) temp = ((start.getMagnitude() -  0.0) * 1.0 / 0.8 + 273.15) * K;
-			else if(start.getUnit() == kelvin            ) temp = start;
+			/**/ if(start.unit() == Temperature::degC ) temp = ((start.magnitude() -  0.0) * 1.0 / 1.0 + 273.15) * K;
+			else if(start.unit() == Temperature::degF ) temp = ((start.magnitude() - 32.0) * 5.0 / 9.0 + 273.15) * K;
+			else if(start.unit() == Temperature::degR ) temp = ((start.magnitude() -  0.0) * 5.0 / 9.0 + 273.15) * K;
+			else if(start.unit() == Temperature::degRe) temp = ((start.magnitude() -  0.0) * 1.0 / 0.8 + 273.15) * K;
+			else if(start.unit() == kelvin            ) temp = start;
 
 			/**/ if(result == kelvin            ) return temp;
-			else if(result == Temperature::degF ) return ((temp.getMagnitude() - 273.15) * 9.0 / 5.0 + 32.0) * result;
-			else if(result == Temperature::degR ) return ((temp.getMagnitude() - 273.15) * 9.0 / 5.0 +  0.0) * result;
-			else if(result == Temperature::degRe) return ((temp.getMagnitude() - 273.15) * 0.8 / 1.0 +  0.0) * result;
-			else if(result == Temperature::degC ) return ((temp.getMagnitude() - 273.15) * 1.0 / 1.0 +  0.0) * result;
+			else if(result == Temperature::degF ) return ((temp.magnitude() - 273.15) * 9.0 / 5.0 + 32.0) * result;
+			else if(result == Temperature::degR ) return ((temp.magnitude() - 273.15) * 9.0 / 5.0 +  0.0) * result;
+			else if(result == Temperature::degRe) return ((temp.magnitude() - 273.15) * 0.8 / 1.0 +  0.0) * result;
+			else if(result == Temperature::degC ) return ((temp.magnitude() - 273.15) * 1.0 / 1.0 +  0.0) * result;
 
 			return Unit::error();
 		}
 
-		return start.getMagnitude() * ((double)start.getUnit().unit_multiplier() / (double)result.unit_multiplier()) * result;
+		return start.magnitude() * ((double)start.unit().multiplier() / (double)result.multiplier()) * result;
 	}
 }

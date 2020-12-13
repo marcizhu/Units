@@ -14,9 +14,9 @@ int main()
 	Unit power1 = W; // Watt
 	Unit power2 = J / s; // Same as W
 
-	Unit input1, input2;
+	Unit input1;
 	std::cin >> input1; // Read unit from std::cin
-	from_string("Sv", input2); // Read unit from string. input2 == Units::Sv (Sievert)
+	Unit input2 = to_unit("Sv"); // Read unit from string. input2 == Units::Sv (Sievert)
 
 	std::cout << velocity << std::endl; // Will print "m/s"
 	std::cout << accel << std::endl; // Will print "m/s²"

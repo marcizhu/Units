@@ -21,9 +21,9 @@ int main()
 
 	std::string formatted = to_string(speed1); // formatted == "25.00 m/s"
 
-	Quantity input3, input4;
+	Quantity input3;
 	std::cin >> input3; // Read quantity from std::cin
-	from_string("100.3 kHz", input4); // Read quantity from string. Represents 100.3 kilohertz
+	Quantity input4 = to_quantity("100.3 kHz"); // Read quantity from string. Represents 100.3 kilohertz
 
 	// Comparison operators
 	if(speed3 > speed1)

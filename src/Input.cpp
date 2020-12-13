@@ -13,7 +13,7 @@ namespace Units
 	/*
 	Syntax (EBNF)
 
-             expression = [value] term ;
+             expression = value term ;
                    term = factor { ( " " | "." | "*" | "/" ) , factor } ;
                  factor = prefixed_unit , [power]
                         | "(" , expression , ")" ;
@@ -40,6 +40,7 @@ namespace Units
 	std::unordered_map<std::string, Unit> units
 	{
 		// Special
+		{ "none" , none },
 		{ "%"    , percent },
 		{ "error", error   },
 		{ "iflag", iflag   },
@@ -99,7 +100,9 @@ namespace Units
 		{ "dBk"       , Log::dBk    },
 		{ "dBm"       , Log::dBm    },
 
-		{ "h"         , Time::hour  }
+		{ "h"         , Time::hour  },
+		{ "Eh", Energy::hartree },
+		{ "mi", i::mile }
 	};
 
 	template<typename Buffer>
@@ -128,7 +131,7 @@ namespace Units
 
 		double quant  = parseValue(buff);
 		Quantity term = parseTerm (buff);
-		return quant == 0.0 ? term : quant * term;
+		return quant * term;
 	}
 
 	template<typename Buffer>
@@ -171,7 +174,7 @@ namespace Units
 			Quantity expr = parseExpression(buff);
 			buff.expect(')');
 
-			return expr.getMagnitude() == 0.0 ? 1.0 * expr.getUnit() : expr;
+			return expr.magnitude() == 0.0 ? 1.0 * expr.unit() : expr;
 		}
 
 		std::string unitName;
@@ -182,6 +185,7 @@ namespace Units
 			|| buff.current() == '$'
 			|| buff.current() == '^'
 			|| buff.current() == '-'
+			|| buff.current() == '+'
 			|| buff.current() == '%')
 		{
 			unitName += buff.current();
@@ -219,7 +223,7 @@ namespace Units
 		if(unitName == "g") return g;
 
 		auto it = units.find(unitName);
-		if(it != units.end() && !unitName.empty()) ret = 1.0 * it->second;
+		if(it != units.end()) ret = 1.0 * it->second;
 
 		if(ret != error && buff.accept('^'))
 			ret ^= parseInt(buff);
@@ -295,63 +299,55 @@ namespace Units
 		return neg ? -total : total;
 	}
 
-	bool from_string(const std::string& str, Unit& unit)
+	Unit to_unit(const std::string& str)
 	{
 		try
 		{
 			StringBuffer buff(str);
-			unit = parseExpression(buff).getUnit();
-			return true;
+			return parseTerm(buff).unit();
 		}
 		catch(std::runtime_error&)
 		{
-			unit = error;
-			return false;
+			return error;
 		}
 	}
 
-	bool from_string(const std::string& str, Quantity& quant)
+	Unit to_unit(std::istream& is)
+	{
+		try
+		{
+			StreamBuffer buff(is);
+			return parseTerm(buff).unit();
+		}
+		catch(std::runtime_error&)
+		{
+			return error;
+		}
+	}
+
+	Quantity to_quantity(const std::string& str)
 	{
 		try
 		{
 			StringBuffer buff(str);
-			quant = parseExpression(buff);
-			return true;
+			return parseExpression(buff);
 		}
 		catch(std::runtime_error&)
 		{
-			quant = error;
-			return false;
+			return error;
 		}
 	}
 
-	bool from_buffer(std::istream& is, Unit& unit)
+	Quantity to_quantity(std::istream& is)
 	{
 		try
 		{
 			StreamBuffer buff(is);
-			unit = parseExpression(buff).getUnit();
-			return true;
+			return parseExpression(buff);
 		}
 		catch(std::runtime_error&)
 		{
-			unit = error;
-			return false;
-		}
-	}
-
-	bool from_buffer(std::istream& is, Quantity& quant)
-	{
-		try
-		{
-			StreamBuffer buff(is);
-			quant = parseExpression(buff);
-			return true;
-		}
-		catch(std::runtime_error&)
-		{
-			quant = error;
-			return false;
+			return error;
 		}
 	}
 }

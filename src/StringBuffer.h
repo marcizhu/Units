@@ -15,7 +15,7 @@ namespace Units
 		StringBuffer(const std::string& string) : str(string), ptr(0) {}
 		~StringBuffer() = default;
 
-		constexpr static const char EOF_MARK = (char)0xFF;
+		static constexpr const char EOF_MARK = (char)0xFF;
 
 		/** @brief Returns current character. */
 		char current() { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }

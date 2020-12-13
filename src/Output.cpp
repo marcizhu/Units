@@ -322,8 +322,8 @@ namespace Units
 			{ rpm, "rpm" },
 
 			{ J / mol, "J/mol" },
-			{ J / (kg * K), "J/(kg·K)" },
-			{ W / (m * K), "W/(m·K)" },
+			{ J / (kg * K), u8"J/(kg\u2219K)" },
+			{ W / (m * K),  u8"W/(m\u2219K)"  },
 		};
 
 		static bool find_unit(Units::Unit un, std::string& ret)
@@ -369,12 +369,12 @@ namespace Units
 			constexpr const char* prefix[] = { "y", "z", "a", "f", "p", "n", u8"\u00B5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
 
 			const int i = magnitude(qty);
-			const int index = (i >= 0 ? i : (i - 2)) / (3 * deg);
+			const int index = (i >= 0 ? i : (i - 2)) / (3 * std::abs(deg));
 			const int precision = (i >= 0 ? (3 - i % 3) : ((std::abs(i + 1) % 3) + 1));
 
 			if(index + 8 > (int)(sizeof(prefix) / sizeof(prefix[0])) || index < -8) return std::to_string(qty);
 
-			return to_string_precision(qty / pow10(3 * index * deg), precision) + ' ' + prefix[index + 8];
+			return to_string_precision(qty / pow10(3 * index * std::abs(deg)), precision) + ' ' + prefix[index + 8];
 		}
 
 		static std::string magnitude_scientific(double qty)
@@ -382,14 +382,14 @@ namespace Units
 			if(!std::isfinite(qty)) return format_inf(qty);
 
 			const int i = magnitude(qty);
-			return to_string_precision(qty / pow10(i), 3) + "⋅10" + (i == 0 ? "⁰" : generateExponent(i));
+			return to_string_precision(qty / pow10(i), 3) + u8"\u221910" + (i == 0 ? "⁰" : generateExponent(i));
 		}
 	}
 
 	std::string to_string_scientific(const Quantity& q)
 	{
 		using namespace details;
-		return magnitude_scientific(q.getMagnitude()) + ' ' + "WIP"; //unit_raw(q.getUnit());
+		return magnitude_scientific(q.magnitude()) + ' ' + "WIP"; //unit_raw(q.getUnit());
 	}
 
 	std::string to_string(const Unit& un)
@@ -407,14 +407,14 @@ namespace Units
 		else if(find_unit(un^-1, str)) return str + "⁻¹";
 
 		for(auto& tu : testUnits) if(find_unit(un * tu.first, str)) return str + "/" + tu.second;
-		for(auto& tu : testUnits) if(find_unit(un / tu.first, str)) return str + "⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(un / tu.first, str)) return str + u8"\u2219" + tu.second;
 		for(auto& tu : testUnits) if(find_unit((un / tu.first)^-1, str)) return str + "⁻¹⋅" + tu.second;
 		for(auto& tu : testUnits) if(find_unit((un * tu.first)^-1, str)) return str + "⁻¹/" + tu.second;
 
 		for(auto& tu : testUnits) if(find_unit(std::sqrt(un * tu.first), str)) return str + "²/" + tu.second;
-		for(auto& tu : testUnits) if(find_unit(std::sqrt(un / tu.first), str)) return str + "²⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(std::sqrt(un / tu.first), str)) return str + u8"²\u2219" + tu.second;
 		for(auto& tu : testUnits) if(find_unit(std::cbrt(un * tu.first), str)) return str + "³/" + tu.second;
-		for(auto& tu : testUnits) if(find_unit(std::cbrt(un / tu.first), str)) return str + "³⋅" + tu.second;
+		for(auto& tu : testUnits) if(find_unit(std::cbrt(un / tu.first), str)) return str + u8"³\u2219" + tu.second;
 
 		// TODO: If unit was not found, perform conversion to SI units. For example, if km/min was not found, perform
 		// a conversion using thw raw unit (m/s) and a multiplier of 1, such that a valid unit is always displayed.
@@ -425,11 +425,12 @@ namespace Units
 	std::string to_string(const Quantity& q)
 	{
 		using namespace details;
-		if(q.getUnit() == Unit::error()) return "ERROR";
-		if(q.getUnit() == Unit()) return magnitude_scientific(q.getMagnitude());
+		if(q.unit() == Unit::error()) return "ERROR";
+		if(q.unit() == kg) return to_string(convert(q, gram__));
 
-		if(q.getUnit() == kg) return to_string(convert(q, gram__));
+		std::string ret = magnitude_prefix(q.magnitude(), q.unit().unit_count() == 1 ? q.unit().degree() : 1) + to_string(q.unit());
+		if(ret.back() == ' ') ret.pop_back();
 
-		return magnitude_prefix(q.getMagnitude(), q.getUnit().unit_count() == 1 ? q.getUnit().degree() : 1) + to_string(q.getUnit());
+		return ret;
 	}
 }
