@@ -11,10 +11,6 @@ endif()
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 option(UNITS_BUILD_TESTS "Build unit tests" OFF)
 option(UNITS_BUILD_EXAMPLES "Build example files" OFF)
@@ -37,7 +33,9 @@ add_library(units STATIC src/Input.cpp src/Output.cpp src/Buffer.cpp)
 target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
-#target_link_libraries(units PUBLIC gcem)
+
+set_target_properties(units PROPERTIES CXX_STANDARD 14)
+set_target_properties(units PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 add_library(Units::Units ALIAS units)
 

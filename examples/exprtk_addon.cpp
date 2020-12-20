@@ -5,9 +5,7 @@
 #include "Units/IO.h"
 #include "Units/extras/StdAdditions.h"
 
-namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.magnitude()); } }}
-
-#include "../src/exprtk/exprtk.hpp"
+#define EXPRTK_HEADER "../src/exprtk/exprtk.hpp"
 #include "Units/extras/ExprTkCompat.h"
 
 int main()

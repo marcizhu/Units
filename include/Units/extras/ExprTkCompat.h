@@ -4,12 +4,19 @@
  * This module adds compatibility with the library ExprTK by Arash Partow (http://www.partow.net/programming/exprtk/index.html)
  * Thus, with this file is possible to run arbitrary operations on quantities using mathematical expressions
  *
- * NOTE: This file should be included *after* exprtk.hpp. Also, add the following line prior to including this file:
- *
- * namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.getMagnitude()); } }}
+ * NOTE: This file should be included *after* exprtk.hpp.
  */
 
+#include <functional>
 #include "../Units.h"
+
+namespace exprtk { namespace details { inline bool is_true(Units::Quantity v) { return std::not_equal_to<double>()(0.0,v.magnitude()); } }}
+
+#ifdef EXPRTK_HEADER
+#	include EXPRTK_HEADER
+#else
+#	include "exprtk.hpp"
+#endif
 
 namespace exprtk { namespace details { namespace numeric { namespace details {
 
