@@ -1,12 +1,12 @@
 #include <cctype>
+#include <istream>
 #include <unordered_map>
 
 #include "Units/Units.h"
 #include "Units/IO.h"
 #include "Units/extras/StdAdditions.h"
 
-#include "StringBuffer.h"
-#include "StreamBuffer.h"
+#include "Buffer.h"
 
 namespace Units
 {
@@ -33,9 +33,6 @@ namespace Units
 	template<typename Buffer> Quantity parseUnit(Buffer& buff);
 
 	template<typename Buffer> double parsePrefix(Buffer& buff);
-	template<typename Buffer> double parseValue(Buffer& buff);
-	template<typename Buffer> int parsePower(Buffer& buff);
-	template<typename Buffer> int parseInt(Buffer& buff);
 
 	std::unordered_map<std::string, Unit> units
 	{
@@ -129,8 +126,8 @@ namespace Units
 	{
 		if(isWhitespace(buff)) buff.advance(true);
 
-		double quant  = parseValue(buff);
-		Quantity term = parseTerm (buff);
+		double quant = buff.parseDouble();
+		Quantity term = parseTerm(buff);
 		return quant * term;
 	}
 
@@ -172,33 +169,18 @@ namespace Units
 		if(buff.accept('('))
 		{
 			Quantity expr = parseExpression(buff);
-			buff.expect(')');
+			if(!buff.accept(')')) return error;
 
 			return expr.magnitude() == 0.0 ? 1.0 * expr.unit() : expr;
 		}
 
-		std::string unitName;
-
-		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
-		while(isLetter(buff)
-			|| isNumber(buff)
-			|| buff.current() == '$'
-			|| buff.current() == '^'
-			|| buff.current() == '-'
-			|| buff.current() == '+'
-			|| buff.current() == '%')
-		{
-			unitName += buff.current();
-			buff.advance();
-		}
-
-		StringBuffer temp1(unitName);
-		Quantity unit = parseUnit(temp1);
+		buff.push();
+		Quantity unit = parseUnit(buff);
 
 		if(unit == Unit::error())
 		{
-			StringBuffer temp2(unitName);
-			return parsePrefix(temp2) * parseUnit(temp2);
+			buff.pop();
+			return parsePrefix(buff) * parseUnit(buff);
 		}
 
 		return unit;
@@ -226,7 +208,7 @@ namespace Units
 		if(it != units.end()) ret = 1.0 * it->second;
 
 		if(ret != error && buff.accept('^'))
-			ret ^= parseInt(buff);
+			ret ^= buff.parseInt();
 
 		return ret;
 	}
@@ -262,92 +244,27 @@ namespace Units
 		return 1.0;
 	}
 
-	template<typename Buffer>
-	double parseValue(Buffer& buff)
-	{
-		std::string str;
-
-		while(isNumber(buff)
-			|| buff.current() == '-'
-			|| buff.current() == '+'
-			|| buff.current() == 'e'
-			|| buff.current() == 'E'
-			|| buff.current() == '.')
-		{
-			str += buff.current();
-			buff.advance();
-		}
-
-		return std::atof(str.c_str());
-	}
-
-	template<typename Buffer>
-	int parseInt(Buffer& buff)
-	{
-		int total = 0;
-		bool neg  = false;
-
-		/**/ if(buff.accept('+')) neg = false;
-		else if(buff.accept('-')) neg = true;
-
-		while(isNumber(buff))
-		{
-			total = 10 * total + (buff.current() - '0');
-			buff.advance();
-		}
-
-		return neg ? -total : total;
-	}
-
 	Unit to_unit(const std::string& str)
 	{
-		try
-		{
-			StringBuffer buff(str);
-			return parseTerm(buff).unit();
-		}
-		catch(std::runtime_error&)
-		{
-			return error;
-		}
+		Buffer buff(str);
+		return parseTerm(buff).unit();
 	}
 
 	Unit to_unit(std::istream& is)
 	{
-		try
-		{
-			StreamBuffer buff(is);
-			return parseTerm(buff).unit();
-		}
-		catch(std::runtime_error&)
-		{
-			return error;
-		}
+		Buffer buff(is);
+		return parseTerm(buff).unit();
 	}
 
 	Quantity to_quantity(const std::string& str)
 	{
-		try
-		{
-			StringBuffer buff(str);
-			return parseExpression(buff);
-		}
-		catch(std::runtime_error&)
-		{
-			return error;
-		}
+		Buffer buff(str);
+		return parseExpression(buff);
 	}
 
 	Quantity to_quantity(std::istream& is)
 	{
-		try
-		{
-			StreamBuffer buff(is);
-			return parseExpression(buff);
-		}
-		catch(std::runtime_error&)
-		{
-			return error;
-		}
+		Buffer buff(is);
+		return parseExpression(buff);
 	}
 }
