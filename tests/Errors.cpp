@@ -20,11 +20,11 @@ TEST_CASE("Unit errors", "[unit][error]")
 
 	SECTION("error + unit == error") { for(Unit un : test_units) CHECK(error + un == error); }
 	SECTION("error - unit == error") { for(Unit un : test_units) CHECK(error - un == error); }
+	SECTION("error * unit == error") { for(Unit un : test_units) CHECK(error * un == error); }
+	SECTION("error / unit == error") { for(Unit un : test_units) CHECK(error / un == error); }
 	SECTION("unit + error == error") { for(Unit un : test_units) CHECK(un + error == error); }
 	SECTION("unit - error == error") { for(Unit un : test_units) CHECK(un - error == error); }
-	SECTION("error * unit == error") { for(Unit un : test_units) CHECK(error * un == error); }
 	SECTION("unit * error == error") { for(Unit un : test_units) CHECK(un * error == error); }
-	SECTION("error / unit == error") { for(Unit un : test_units) CHECK(error / un == error); }
 	SECTION("unit / error == error") { for(Unit un : test_units) CHECK(un / error == error); }
 
 	SECTION("error == error is true" ) { CHECK((error == error) == true ); }
