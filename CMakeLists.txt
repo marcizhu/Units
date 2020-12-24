@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.1)
 project(Units VERSION 0.0.1 LANGUAGES CXX)
 
 #---------------------------------------------------------------------------------------
+# include CMake modules
+#---------------------------------------------------------------------------------------
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(AddCatchTest)   # Function add_catch_test()
+include(EnableCoverage) # Function target_enable_coverage()
+include(EnableWarnings) # Function target_enable_warnings()
+
+#---------------------------------------------------------------------------------------
 # set default build to debug
 #---------------------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE)
@@ -42,13 +51,9 @@ add_library(Units::Units ALIAS units)
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-	target_compile_options(units PUBLIC
-		-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wcast-align
-		-Wunused -Woverloaded-virtual -Wconversion -pedantic
-		-Wsign-conversion -Wdouble-promotion -Wformat=2)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	target_compile_options(units PUBLIC /W3 )
+target_enable_warnings(units)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 	add_compile_definitions(_USE_MATH_DEFINES)
 endif()
@@ -57,11 +62,5 @@ endif()
 # Enable (or disable) features based on the given options
 #---------------------------------------------------------------------------------------
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-	target_compile_options(units PUBLIC -O0 -g --coverage)
-
-	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-		target_link_options(units PUBLIC --coverage)
-	else()
-		target_link_libraries(units PUBLIC --coverage)
-	endif()
+	target_enable_coverage(units)
 endif()

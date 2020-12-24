@@ -4,7 +4,6 @@
 #include "Units/Units.h"
 #include "Units/IO.h"
 
-#define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
 TEST_CASE("Unit errors", "[unit][error]")
