@@ -65,12 +65,14 @@ endfunction()
 #    [NOCATCHLABEL]           # Do not add ``catch`` as a CTest label
 #    [SEED number|time]       # Adds a specific seed. Defaults to time.
 #    [WORKING_DIRECTORY dir]  # Directory from where to launch the test
+#    [COMMON_MAIN obj_tgt]    # Specifies an object target to be used as a common main for all tests
+#    [PRECOMMAND command]     # Specifies a command to be executed *before* the test is executed
+#    [CXX_STANDARD ver]       # Set C++ Standard version (98/03/11/14/17/20)
 #    [LIBRARIES lib1 lib2...] # Libraries the executable should link against. 
 #    [DEPENDS dep1 dep2 ...]  # Targets the executable depends on.
 #    [INCLUDES inc1 inc2...]  # Include directories the executable requires for compilation
 #    [LABELS lab1 lab2...]    # CTest labels to add to the test.
 #    [ARGUMENTS arg1 arg2...] # Extra arguments when running the test.
-#    [CXX_STANDARD ver]       # Set C++ Standard version (98/03/11/14/17/20)
 # )
 
 # Then adds a function to create a test

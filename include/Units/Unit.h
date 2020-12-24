@@ -20,11 +20,15 @@ namespace Units
 		static constexpr bool isError(const UnitData& data) { return data == UnitData::error(); }
 		static constexpr bool isSame(float a, float b) { return cround(a) == cround(b); }
 
-		constexpr Unit(float mult, const UnitData& dim) : m_Multiplier(mult), m_Data(dim) {}
+		constexpr Unit(float multiplier, const UnitData& dim)
+			: m_Multiplier(multiplier), m_Data(dim) {}
 
 	public:
-		constexpr Unit()                               : m_Multiplier(1.0f), m_Data() {}
-		constexpr Unit(double mult, const Unit& other) : m_Multiplier((float)mult * other.m_Multiplier), m_Data(other.m_Data) {}
+		constexpr Unit()
+			: m_Multiplier(1.0f), m_Data() {}
+
+		constexpr Unit(double multiplier, const Unit& other)
+			: m_Multiplier((float)multiplier * other.m_Multiplier), m_Data(other.m_Data) {}
 
 		constexpr UnitData::BaseUnitType base_units() const { return m_Data.base_unit(); }
 		constexpr float multiplier() const { return cround(m_Multiplier); }

@@ -53,14 +53,9 @@ add_library(Units::Units ALIAS units)
 #---------------------------------------------------------------------------------------
 target_enable_warnings(units)
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-	add_compile_definitions(_USE_MATH_DEFINES)
-endif()
-
 #---------------------------------------------------------------------------------------
 # Enable (or disable) features based on the given options
 #---------------------------------------------------------------------------------------
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if(CODE_COVERAGE)
 	target_enable_coverage(units)
 endif()
