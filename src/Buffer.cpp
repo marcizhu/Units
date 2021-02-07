@@ -23,7 +23,7 @@ namespace Units
 		str = to_utf16(temp);
 	}
 
-	std::string Buffer::to_utf8(const std::u16string &s)
+	std::string Buffer::to_utf8(const std::u16string& s)
 	{
 		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
 		return conv.to_bytes(s);

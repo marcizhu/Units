@@ -110,7 +110,8 @@ namespace Units
 	template<typename Buffer>
 	Quantity parseExpression(Buffer& buff)
 	{
-		if(std::isspace(buff.current())) buff.advance(true);
+		if(buff.current() != Buffer::EOF_MARK && std::isspace(buff.current()))
+			buff.advance(true);
 
 		double quant = buff.parseDouble();
 		Quantity term = parseTerm(buff);
@@ -120,7 +121,9 @@ namespace Units
 	template<typename Buffer>
 	Quantity parseTerm(Buffer& buff)
 	{
-		if(std::isspace(buff.current())) buff.advance(true);
+		if(buff.current() != Buffer::EOF_MARK && std::isspace(buff.current()))
+			buff.advance(true);
+
 		Quantity factor = parseFactor(buff);
 
 		while( buff.current() == ' '
