@@ -31,78 +31,76 @@ namespace Units
 	template<typename Buffer> Quantity parseTerm(Buffer& buff);
 	template<typename Buffer> Quantity parseFactor(Buffer& buff);
 	template<typename Buffer> Quantity parseUnit(Buffer& buff);
-
 	template<typename Buffer> double parsePrefix(Buffer& buff);
 
-	std::unordered_map<std::string, Unit> units
+	std::unordered_map<std::u16string, Unit> units
 	{
 		// Special
-		{ "none" , none },
-		{ "%"    , percent },
-		{ "error", error   },
-		{ "iflag", iflag   },
+		{ u"none" , none },
+		{ u"%"    , percent },
+		{ u"error", error   },
+		{ u"iflag", iflag   },
 
-		{ ""   , none },
-		{ "m"  , m    },
-		{ "kg" , kg   },
-		{ "s"  , s    },
-		{ "A"  , A    },
-		{ "K"  , K    },
-		{ "mol", mol  },
-		{ "rad", rad  },
-		{ "Cd" , Cd   },
+		{ u""   , none },
+		{ u"m"  , m    },
+		{ u"kg" , kg   },
+		{ u"s"  , s    },
+		{ u"A"  , A    },
+		{ u"K"  , K    },
+		{ u"mol", mol  },
+		{ u"rad", rad  },
+		{ u"Cd" , Cd   },
 
-		{ "sr"  , sr            },
-		{ "Hz"  , Hz            },
-		{ "N"   , N             },
-		{ "Pa"  , Pa            },
-		{ "J"   , J             },
-		{ "W"   , W             },
-		{ "C"   , C             },
-		{ "V"   , V             },
-		{ "F"   , F             },
-		{ "Ω"   , ohm           },
-		{ "S"   , S             },
-		{ "Wb"  , Wb            },
-		{ "T"   , T             },
-		{ "H"   , H             },
-		{ "lm"  , lm            },
-		{ "lx"  , lx            },
-		{ "Bq"  , Bq            },
-		{ "Gy"  , Gy            },
-		{ "Sv"  , Sv            },
-		{ "kat" , kat           },
-		{ "$"   , currency      },
-		{ "item", count         },
-		{ "√Hz" , std::sqrt(Hz) },
+		{ u"sr"  , sr            },
+		{ u"Hz"  , Hz            },
+		{ u"N"   , N             },
+		{ u"Pa"  , Pa            },
+		{ u"J"   , J             },
+		{ u"W"   , W             },
+		{ u"C"   , C             },
+		{ u"V"   , V             },
+		{ u"F"   , F             },
+		{ u"\u2126", ohm         },
+		{ u"S"   , S             },
+		{ u"Wb"  , Wb            },
+		{ u"T"   , T             },
+		{ u"H"   , H             },
+		{ u"lm"  , lm            },
+		{ u"lx"  , lx            },
+		{ u"Bq"  , Bq            },
+		{ u"Gy"  , Gy            },
+		{ u"Sv"  , Sv            },
+		{ u"kat" , kat           },
+		{ u"$"   , currency      },
+		{ u"item", count         },
+		{ u"\u221aHz", std::sqrt(Hz) },
 
-		{ "Np" , Log::neper },
-		{ "B"  , Log::B     },
-		{ "BA" , Log::BA    },
-		{ "dB" , Log::dB    },
-		{ "dBA", Log::dBA   },
-		{ "dBc", Log::dBc   },
+		{ u"Np" , Log::neper },
+		{ u"B"  , Log::B     },
+		{ u"BA" , Log::BA    },
+		{ u"dB" , Log::dB    },
+		{ u"dBA", Log::dBA   },
+		{ u"dBc", Log::dBc   },
 
-		{ "BV"        , Log::BV     },
-		{ "BmV"       , Log::BmV    },
-		{ u8"B\u00B5V", Log::BuV    },
-		{ "B10nV"     , Log::B10nV  },
-		{ "BW"        , Log::BW     },
-		{ "Bk"        , Log::Bk     },
-		{ "dBV"       , Log::dBV    },
-		{ "dBmV"      , Log::dBmV   },
-		{ "dBuV"      , Log::dBuV   },
-		{ "dB10nV"    , Log::dB10nV },
-		{ "dBW"       , Log::dBW    },
-		{ "dBk"       , Log::dBk    },
-		{ "dBm"       , Log::dBm    },
+		{ u"BV"       , Log::BV     },
+		{ u"BmV"      , Log::BmV    },
+		{ u"B\u00B5V", Log::BuV    },
+		{ u"B10nV"    , Log::B10nV  },
+		{ u"BW"       , Log::BW     },
+		{ u"Bk"       , Log::Bk     },
+		{ u"dBV"      , Log::dBV    },
+		{ u"dBmV"     , Log::dBmV   },
+		{ u"dBuV"     , Log::dBuV   },
+		{ u"dB10nV"   , Log::dB10nV },
+		{ u"dBW"      , Log::dBW    },
+		{ u"dBk"      , Log::dBk    },
+		{ u"dBm"      , Log::dBm    },
 
-		{ "h"         , Time::hour  },
-		{ "Eh", Energy::hartree },
-		{ "mi", i::mile }
+		{ u"h",  Time::hour  },
+		{ u"Eh", Energy::hartree },
+		{ u"mi", i::mile }
 	};
 
-	template<typename Buffer>
 	bool isLetter(Buffer& buff)
 	{
 		return (buff.current() >= 'a' && buff.current() <= 'z')
@@ -110,21 +108,9 @@ namespace Units
 	}
 
 	template<typename Buffer>
-	bool isNumber(Buffer& buff)
-	{
-		return (buff.current() >= '0' && buff.current() <= '9');
-	}
-
-	template<typename Buffer>
-	bool isWhitespace(Buffer& buff)
-	{
-		return std::isspace(buff.current());
-	}
-
-	template<typename Buffer>
 	Quantity parseExpression(Buffer& buff)
 	{
-		if(isWhitespace(buff)) buff.advance(true);
+		if(std::isspace(buff.current())) buff.advance(true);
 
 		double quant = buff.parseDouble();
 		Quantity term = parseTerm(buff);
@@ -134,7 +120,7 @@ namespace Units
 	template<typename Buffer>
 	Quantity parseTerm(Buffer& buff)
 	{
-		if(isWhitespace(buff)) buff.advance(true);
+		if(std::isspace(buff.current())) buff.advance(true);
 		Quantity factor = parseFactor(buff);
 
 		while( buff.current() == ' '
@@ -169,7 +155,7 @@ namespace Units
 		if(buff.accept('('))
 		{
 			Quantity expr = parseExpression(buff);
-			if(!buff.accept(')')) return error;
+			if(!buff.accept(')')) return Unit::error();
 
 			return expr.magnitude() == 0.0 ? 1.0 * expr.unit() : expr;
 		}
@@ -189,25 +175,26 @@ namespace Units
 	template<typename Buffer>
 	Quantity parseUnit(Buffer& buff)
 	{
-		Quantity ret = error;
-		std::string unitName;
+		Quantity ret = Unit::error();
+		std::u16string unitName;
 
-		// FIXME: Does NOT allow sqrt(Hz) && Ω to pass through
 		while(isLetter(buff)
 			|| buff.current() == '$'
-			|| buff.current() == '%')
+			|| buff.current() == '%'
+			|| buff.current() == u'\u221A'  // Square root symbol
+			|| buff.current() == u'\u2126') // Ohm symbol
 		{
 			unitName += buff.current();
 			buff.advance();
 		}
 
 		// Exception: kg is the only SI unit with prefix
-		if(unitName == "g") return g;
+		if(unitName == u"g") return g;
 
 		auto it = units.find(unitName);
 		if(it != units.end()) ret = 1.0 * it->second;
 
-		if(ret != error && buff.accept('^'))
+		if(ret != Unit::error() && buff.accept('^'))
 			ret ^= buff.parseInt();
 
 		return ret;
@@ -238,33 +225,33 @@ namespace Units
 			case 'y': buff.advance(); return yocto;
 		}
 
-		/**/ if(buff.accept('\xC2') && buff.accept('\xB5')) return micro;
+		/**/ if(buff.accept(u'\u00B5')) return micro;
 		else if(buff.accept('d')) return buff.accept('a') ? deca : deci;
 
 		return 1.0;
 	}
 
-	Unit to_unit(const std::string& str)
+	template<typename InputType>
+	Unit to_unit_template(InputType& str)
 	{
 		Buffer buff(str);
 		return parseTerm(buff).unit();
 	}
 
-	Unit to_unit(std::istream& is)
-	{
-		Buffer buff(is);
-		return parseTerm(buff).unit();
-	}
-
-	Quantity to_quantity(const std::string& str)
+	template<typename InputType>
+	Quantity to_quantity_template(InputType& str)
 	{
 		Buffer buff(str);
 		return parseExpression(buff);
 	}
 
-	Quantity to_quantity(std::istream& is)
-	{
-		Buffer buff(is);
-		return parseExpression(buff);
-	}
+	Unit to_unit(const std::string& str)    { return to_unit_template(str); }
+	Unit to_unit(const std::u16string& str) { return to_unit_template(str); }
+	Unit to_unit(const std::u32string& str) { return to_unit_template(str); }
+	Unit to_unit(std::istream& is)          { return to_unit_template(is); }
+
+	Quantity to_quantity(const std::string& str)    { return to_quantity_template(str); }
+	Quantity to_quantity(const std::u16string& str) { return to_quantity_template(str); }
+	Quantity to_quantity(const std::u32string& str) { return to_quantity_template(str); }
+	Quantity to_quantity(std::istream& is)          { return to_quantity_template(is); }
 }

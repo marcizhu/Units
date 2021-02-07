@@ -9,13 +9,23 @@ namespace Units
 	class Buffer
 	{
 	private:
-		std::string str;
+		std::u16string str;
 		size_t ptr;
 		size_t stack;
 
+		static std::u16string to_utf16(const std::string& str);
+		static std::u16string to_utf16(const std::u32string& str);
+		static std::string    to_utf8 (const std::u16string& str);
+
 	public:
-		/** @brief Constructor. Initializes a buffer from a string */
+		/** @brief Constructor. Initializes a buffer from a UTF-8 string */
 		Buffer(const std::string& string);
+
+		/** @brief Constructor. Initializes a buffer from a UTF-16 string */
+		Buffer(const std::u16string& string);
+
+		/** @brief Constructor. Initializes a buffer from a UTF-32 string */
+		Buffer(const std::u32string& string);
 
 		/** @brief Constructor. Initializes a buffer from an input stream */
 		Buffer(std::istream& is);
@@ -24,13 +34,13 @@ namespace Units
 		~Buffer() = default;
 
 		/** @brief Constant to represent end-of-file */
-		static constexpr const char EOF_MARK = (char)0xFF;
+		static constexpr const char16_t EOF_MARK = std::char_traits<char16_t>::eof();
 
 		/** @brief Returns current character. */
-		char current();
+		char16_t current();
 
 		/** @brief Returns next character. */
-		char ahead();
+		char16_t ahead();
 
 		/**
 		 * @brief Push the current pointer to the stack
@@ -66,7 +76,7 @@ namespace Units
 		 *
 		 * @returns the character at the current location (before advancing)
 		 */
-		char advance(bool skipws = false);
+		char16_t advance(bool skipws = false);
 
 		/** @brief Accepts an optional character.
 		 *
@@ -74,6 +84,6 @@ namespace Units
 		 * the buffer advances one character. Otherwise, @cpp false @ce is
 		 * returned and no advancement occurs.
 		 */
-		bool accept(char chr);
+		bool accept(char16_t chr);
 	};
 }

@@ -8,7 +8,7 @@
 namespace Units
 {
 	/**
-	 * @brief Converts a quantity to a string using scientific format
+	 * @brief Converts a quantity to a UTF-8 string using scientific format
 	 *
 	 * Converts the given quantity to scientific notation, for example:
 	 * 6.674⋅10⁻¹¹ m³ kg⁻¹ s⁻²
@@ -16,7 +16,7 @@ namespace Units
 	std::string to_string_scientific(const Quantity& q);
 
 	/**
-	 * @brief Convert a unit to a string
+	 * @brief Convert a unit to a UTF-8 string
 	 *
 	 * Converts a unit to a string.
 	 * If the unit cannot be recognized, returns it using base SI units
@@ -25,58 +25,74 @@ namespace Units
 	std::string to_string(const Unit& unit);
 
 	/**
-	 * @brief Convert a quantity to a string
+	 * @brief Convert a quantity to a UTF-8 string
 	 *
 	 * Converts a quantity to a string, formatting it in the most apropriate
-	 * way.
+	 * way
 	 */
 	std::string to_string(const Quantity& quant);
 
 	/**
-	 * @brief Convert a string to a unit
+	 * @brief Convert a UTF-8 string to a unit
 	 *
-	 * Converts the given string to a unit.
-	 *
-	 * @param str  The string to be converted
-	 * @param unit The unit where the result will be stored
-	 *
-	 * @returns `true` on success, `false` on failure.
+	 * Converts the given string to a unit. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
 	 */
 	Unit to_unit(const std::string& str);
 
 	/**
-	 * @brief Convert a string to a quantity
+	 * @brief Convert a UTF-16 string to a unit
 	 *
-	 * Converts the given string to a quantity.
-	 *
-	 * @param str   The string to be converted
-	 * @param quant The quantity where the result will be stored
-	 *
-	 * @returns `true` on success, `false` on failure.
+	 * Converts the given string to a unit. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
 	 */
-	Quantity to_quantity(const std::string& str);
+	Unit to_unit(const std::u16string& str);
 
 	/**
-	 * @brief Convert a string to a quantity
+	 * @brief Convert a UTF-32 string to a unit
 	 *
-	 * Converts the contents of the buffer to a quantity.
+	 * Converts the given string to a unit. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
+	 */
+	Unit to_unit(const std::u32string& str);
+
+	/**
+	 * @brief Convert buffer contents to a quantity
 	 *
-	 * @param is   The input stream
-	 * @param unit The unit where the result will be stored
-	 *
-	 * @returns `true` on success, `false` on failure.
+	 * Converts the given string to a quantity. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
 	 */
 	Unit to_unit(std::istream& is);
 
 	/**
-	 * @brief Convert a string to a quantity
+	 * @brief Convert a UTF-8 string to a quantity
 	 *
-	 * Converts the contents of the buffer to a quantity.
+	 * Converts the given string to a quantity. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
+	 */
+	Quantity to_quantity(const std::string& str);
+
+	/**
+	 * @brief Convert a UTF-16 string to a quantity
 	 *
-	 * @param is    The input stream
-	 * @param quant The quantity where the result will be stored
+	 * Converts the given string to a quantity. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
+	 */
+	Quantity to_quantity(const std::u16string& str);
+
+	/**
+	 * @brief Convert a UTF-32 string to a quantity
 	 *
-	 * @returns `true` on success, `false` on failure.
+	 * Converts the given string to a quantity. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
+	 */
+	Quantity to_quantity(const std::u32string& str);
+
+	/**
+	 * @brief Convert buffer contents to a quantity
+	 *
+	 * Converts the given string to a quantity. If the conversion is not successful
+	 * or the given string is invalid, @cpp Units::error @ce is returned
 	 */
 	Quantity to_quantity(std::istream& is);
 }

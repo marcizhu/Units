@@ -123,7 +123,7 @@ namespace Units
 
 		constexpr bool operator==(const UnitData& other) const
 		{
-			return base_unit() == other.base_unit() || (e_flag    == true && other.e_flag == true);
+			return base_unit() == other.base_unit() || (e_flag == true && other.e_flag == true);
 		}
 
 		constexpr int unit_count() const
