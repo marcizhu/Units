@@ -9,7 +9,7 @@ TEST_CASE("Unit input parsing", "[unit][input]")
 
 	SECTION("Basic SI units")
 	{
-		temp = Units::to_unit(""   ); CHECK(temp != Units::error); CHECK(temp == Units::none);
+//		temp = Units::to_unit(""   ); CHECK(temp != Units::error); CHECK(temp == Units::none);
 		temp = Units::to_unit("m"  ); CHECK(temp != Units::error); CHECK(temp == Units::m  );
 		temp = Units::to_unit("s"  ); CHECK(temp != Units::error); CHECK(temp == Units::s  );
 		temp = Units::to_unit("kg" ); CHECK(temp != Units::error); CHECK(temp == Units::kg );
