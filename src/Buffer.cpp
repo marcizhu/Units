@@ -1,5 +1,6 @@
 #include <codecvt>
 #include <locale>
+#include <cstdlib>
 
 #include "Buffer.h"
 
@@ -51,28 +52,24 @@ namespace Units
 	{
 		std::string utf8 = to_utf8(str.substr(ptr));
 
-		try
-		{
-			size_t idx;
-			int ret = std::stoi(utf8, &idx);
-			return ptr += idx, ret;
-		} catch(...) {
-			return 0;
-		}
+		const char* begin = utf8.data() + ptr;
+		char* end = nullptr;
+
+		long ret = strtol(begin, &end, 10);
+		ptr += (size_t)(end - begin);
+		return static_cast<int>(ret);
 	}
 
 	double Buffer::parseDouble()
 	{
 		std::string utf8 = to_utf8(str.substr(ptr));
 
-		try
-		{
-			size_t idx;
-			double ret = stod(utf8, &idx);
-			return ptr += idx, ret;
-		} catch(...) {
-			return 0.0;
-		}
+		const char* begin = utf8.data() + ptr;
+		char* end = nullptr;
+
+		double ret = strtod(begin, &end);
+		ptr += (size_t)(end - begin);
+		return ret;
 	}
 
 	char16_t Buffer::advance(bool skipws)

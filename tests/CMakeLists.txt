@@ -15,6 +15,12 @@ add_catch_test(Input.test       Input.cpp       LIBRARIES Units::Units CXX_STAND
 add_catch_test(Errors.test      Errors.cpp      LIBRARIES Units::Units CXX_STANDARD 14)
 add_catch_test(Comparisons.test Comparisons.cpp LIBRARIES Units::Units CXX_STANDARD 14)
 
+# Set test timeout to 10 seconds
+set_tests_properties(Units.test       PROPERTIES TIMEOUT 10)
+set_tests_properties(Input.test       PROPERTIES TIMEOUT 10)
+set_tests_properties(Errors.test      PROPERTIES TIMEOUT 10) 
+set_tests_properties(Comparisons.test PROPERTIES TIMEOUT 10)      
+
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------
