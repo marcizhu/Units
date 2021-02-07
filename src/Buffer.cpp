@@ -1,4 +1,6 @@
 #include <codecvt>
+#include <locale>
+
 #include "Buffer.h"
 
 namespace Units

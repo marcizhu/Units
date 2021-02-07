@@ -123,7 +123,20 @@ namespace Units
 
 		constexpr bool operator==(const UnitData& other) const
 		{
-			return base_unit() == other.base_unit() || (e_flag == true && other.e_flag == true);
+			return (m_Meter   == other.m_Meter
+				&& m_Kilogram == other.m_Kilogram
+				&& m_Second   == other.m_Second
+				&& m_Ampere   == other.m_Ampere
+				&& m_Kelvin   == other.m_Kelvin
+				&& m_Mole     == other.m_Mole
+				&& m_Radians  == other.m_Radians
+				&& m_Candela  == other.m_Candela
+				&& m_Currency == other.m_Currency
+				&& m_Count    == other.m_Count
+				&&  e_flag    == other.e_flag
+				&&  i_flag    == other.i_flag
+				&& eq_flag    == other.eq_flag)
+				|| (e_flag    == true && other.e_flag == true);
 		}
 
 		constexpr int unit_count() const
