@@ -42,8 +42,8 @@ namespace Units
 		return std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
 	}
 
-	char16_t Buffer::current() { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
-	char16_t Buffer::ahead  () { return (ptr + 1) < str.size() ? str[ptr + 1] : EOF_MARK; }
+	char16_t Buffer::current() const { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
+	char16_t Buffer::ahead  () const { return (ptr + 1) < str.size() ? str[ptr + 1] : EOF_MARK; }
 
 	void Buffer::push() { stack = ptr; }
 	void Buffer::pop () { ptr = stack; }

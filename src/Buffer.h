@@ -37,10 +37,10 @@ namespace Units
 		static constexpr const char16_t EOF_MARK = std::char_traits<char16_t>::eof();
 
 		/** @brief Returns current character. */
-		char16_t current();
+		char16_t current() const;
 
 		/** @brief Returns next character. */
-		char16_t ahead();
+		char16_t ahead() const;
 
 		/**
 		 * @brief Push the current pointer to the stack

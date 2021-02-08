@@ -1,4 +1,3 @@
-#include <cctype>
 #include <istream>
 #include <unordered_map>
 
@@ -101,17 +100,23 @@ namespace Units
 		{ u"mi", i::mile }
 	};
 
-	bool isLetter(Buffer& buff)
+	bool isLetter(const Buffer& buff)
 	{
 		return (buff.current() >= 'a' && buff.current() <= 'z')
 			|| (buff.current() >= 'A' && buff.current() <= 'Z');
 	}
 
+	bool isSpace(const Buffer& buff)
+	{
+		return buff.current() == ' '  || buff.current() == '\t'
+			|| buff.current() == '\n' || buff.current() <= '\v'
+			|| buff.current() == '\f' || buff.current() <= '\r';
+	}
+
 	template<typename Buffer>
 	Quantity parseExpression(Buffer& buff)
 	{
-		if(buff.current() != Buffer::EOF_MARK && std::isspace(buff.current()))
-			buff.advance(true);
+		if(isSpace(buff)) buff.advance(true);
 
 		double quant = buff.parseDouble();
 		Quantity term = parseTerm(buff);
@@ -121,8 +126,7 @@ namespace Units
 	template<typename Buffer>
 	Quantity parseTerm(Buffer& buff)
 	{
-		if(buff.current() != Buffer::EOF_MARK && std::isspace(buff.current()))
-			buff.advance(true);
+		if(isSpace(buff)) buff.advance(true);
 
 		Quantity factor = parseFactor(buff);
 
