@@ -25,21 +25,43 @@ namespace Units
 
 	std::string Buffer::to_utf8(const std::u16string& s)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
-		return conv.to_bytes(s);
+		try{
+			std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
+			return conv.to_bytes(s);
+		}
+		catch(...) {
+			return std::string();
+		}
 	}
 
 	std::u16string Buffer::to_utf16(const std::string& str)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
-		return conv.from_bytes(str);
+		try {
+			std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
+			return conv.from_bytes(str);
+		}
+		catch(...) {
+			return std::u16string();
+		}
 	}
 
 	std::u16string Buffer::to_utf16(const std::u32string& str)
 	{
-		std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
-		std::string bytes = conv.to_bytes(str);
-		return std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
+		try {
+			std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
+			std::string bytes = conv.to_bytes(str);
+			return std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
+		}
+		catch(...) {
+			return std::u16string();
+		}
+	}
+
+	bool Buffer::isSpace(char16_t ch)
+	{
+		return ch == ' '  || ch == '\t'
+			|| ch == '\n' || ch == '\v'
+			|| ch == '\f' || ch == '\r';
 	}
 
 	char16_t Buffer::current() const { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
@@ -52,7 +74,7 @@ namespace Units
 	{
 		std::string utf8 = to_utf8(str.substr(ptr));
 
-		const char* begin = utf8.data() + ptr;
+		const char* begin = utf8.c_str();
 		char* end = nullptr;
 
 		long ret = strtol(begin, &end, 10);
@@ -64,7 +86,7 @@ namespace Units
 	{
 		std::string utf8 = to_utf8(str.substr(ptr));
 
-		const char* begin = utf8.data() + ptr;
+		const char* begin = utf8.c_str();
 		char* end = nullptr;
 
 		double ret = strtod(begin, &end);
@@ -80,7 +102,7 @@ namespace Units
 
 		if(skipws)
 		{
-			while(std::isspace(current()))
+			while(isSpace(current()))
 				++ptr;
 		}
 

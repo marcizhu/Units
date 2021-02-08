@@ -109,8 +109,8 @@ namespace Units
 	bool isSpace(const Buffer& buff)
 	{
 		return buff.current() == ' '  || buff.current() == '\t'
-			|| buff.current() == '\n' || buff.current() <= '\v'
-			|| buff.current() == '\f' || buff.current() <= '\r';
+			|| buff.current() == '\n' || buff.current() == '\v'
+			|| buff.current() == '\f' || buff.current() == '\r';
 	}
 
 	template<typename Buffer>

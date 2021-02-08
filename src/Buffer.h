@@ -17,6 +17,8 @@ namespace Units
 		static std::u16string to_utf16(const std::u32string& str);
 		static std::string    to_utf8 (const std::u16string& str);
 
+		static bool isSpace(char16_t ch);
+
 	public:
 		/** @brief Constructor. Initializes a buffer from a UTF-8 string */
 		Buffer(const std::string& string);
