@@ -30,11 +30,13 @@ set_tests_properties(Comparisons.test PROPERTIES TIMEOUT 10)
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------
-target_enable_warnings(Units.test)
-target_enable_warnings(Input.test)
-target_enable_warnings(Errors.test)
-target_enable_warnings(Comparisons.test)
-target_enable_warnings(fuzz)
+if(UNITS_MASTER_PROJECT)
+	target_enable_warnings(Units.test)
+	target_enable_warnings(Input.test)
+	target_enable_warnings(Errors.test)
+	target_enable_warnings(Comparisons.test)
+	target_enable_warnings(fuzz)
+endif()
 
 #---------------------------------------------------------------------------------------
 # Enable (or disable) features based on the given options

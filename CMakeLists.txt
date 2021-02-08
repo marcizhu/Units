@@ -17,12 +17,25 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
+# ---------------------------------------------------------------------------------------
+# Set UNITS_MASTER_PROJECT to ON if we are building Units
+# ---------------------------------------------------------------------------------------
+# Check if Units is being used directly or via add_subdirectory, but allow overriding
+if(NOT DEFINED UNITS_MASTER_PROJECT)
+	if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+		set(UNITS_MASTER_PROJECT ON)
+		message(STATUS "Building Units as master project")
+	else()
+		set(UNITS_MASTER_PROJECT OFF)
+	endif()
+endif()
+
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
-option(UNITS_BUILD_TESTS "Build unit tests" OFF)
-option(UNITS_BUILD_EXAMPLES "Build example files" OFF)
+option(UNITS_BUILD_TESTS "Build unit tests" ${UNITS_MASTER_PROJECT})
+option(UNITS_BUILD_EXAMPLES "Build example files" ${UNITS_MASTER_PROJECT})
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
@@ -40,8 +53,13 @@ add_subdirectory(deps/gcem)
 
 add_library(units STATIC src/Input.cpp src/Output.cpp src/Buffer.cpp)
 target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
+
+if(UNITS_MASTER_PROJECT)
+	target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+else()
+	target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif()
 
 set_target_properties(units PROPERTIES CXX_STANDARD 14)
 set_target_properties(units PROPERTIES CXX_STANDARD_REQUIRED ON)
@@ -51,7 +69,9 @@ add_library(Units::Units ALIAS units)
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings
 #---------------------------------------------------------------------------------------
-target_enable_warnings(units)
+if(UNITS_MASTER_PROJECT)
+	target_enable_warnings(units)
+endif()
 
 #---------------------------------------------------------------------------------------
 # Enable (or disable) features based on the given options
