@@ -18,13 +18,14 @@ endfunction()
 #    <seed>                   # A number
 #    [NOCATCHLABEL]           # Do not add ``catch`` as a CTest label
 #    [WORKING_DIRECTORY dir]  # Directory from where to launch the test
+#    [TIMEOUT timeout]        # Set test timeout, in seconds
 #    [LABELS lab1 lab2...]    # CTest labels to add to the test.
 #    [ARGUMENTS arg1 arg2...] # Extra arguments when running the test.
 # )
 
 # A function to create a test, once a an executable exists
 function(add_catch_test_with_seed testname testexec seed)
-	cmake_parse_arguments(catch "NOCATCHLABEL" "WORKING_DIRECTORY" "LABELS;ARGUMENTS" ${ARGN})
+	cmake_parse_arguments(catch "NOCATCHLABEL" "WORKING_DIRECTORY;TIMEOUT" "LABELS;ARGUMENTS" ${ARGN})
 
 	unset(EXTRA_ARGS)
 	if(catch_WORKING_DIRECTORY)
@@ -49,6 +50,10 @@ function(add_catch_test_with_seed testname testexec seed)
 		add_test(NAME ${testname} COMMAND ${testexec} ${arguments} ${EXTRA_ARGS})
 	endif()
 
+	if(catch_TIMEOUT)
+		set_tests_properties(${testname} PROPERTIES TIMEOUT ${catch_TIMEOUT})
+	endif()
+
 	if(NOT catch_NOCATCHLABEL)
 		list(APPEND catch_LABELS catch)
 	endif()
@@ -68,6 +73,7 @@ endfunction()
 #    [COMMON_MAIN obj_tgt]    # Specifies an object target to be used as a common main for all tests
 #    [PRECOMMAND command]     # Specifies a command to be executed *before* the test is executed
 #    [CXX_STANDARD ver]       # Set C++ Standard version (98/03/11/14/17/20)
+#    [TIMEOUT timeout]        # Set the test timeout, in seconds
 #    [LIBRARIES lib1 lib2...] # Libraries the executable should link against. 
 #    [DEPENDS dep1 dep2 ...]  # Targets the executable depends on.
 #    [INCLUDES inc1 inc2...]  # Include directories the executable requires for compilation
@@ -79,7 +85,7 @@ endfunction()
 function(add_catch_test testname)
 	cmake_parse_arguments(catch
 		"NOMAIN;NOTEST;NOCATCHLABEL"
-		"SEED;WORKING_DIRECTORY;COMMON_MAIN;PRECOMMAND;CXX_STANDARD"
+		"SEED;WORKING_DIRECTORY;COMMON_MAIN;PRECOMMAND;CXX_STANDARD;TIMEOUT"
 		"LIBRARIES;DEPENDS;INCLUDES;LABELS;ARGUMENTS"
 		${ARGN}
 	)
@@ -142,7 +148,7 @@ function(add_catch_test testname)
 	if(NOT catch_NOTEST)
 		add_catch_test_with_seed(
 			${testname} "${testname}" "${catch_SEED}" ${catch_UNPARSED_ARGUMENTS}
-			${catch_NOCATCHLABEL} WORKING_DIRECTORY ${catch_WORKING_DIRECTORY}
+			${catch_NOCATCHLABEL} WORKING_DIRECTORY ${catch_WORKING_DIRECTORY} TIMEOUT ${catch_TIMEOUT}
 			LABELS ${catch_LABELS} ARGUMENTS ${catch_ARGUMENTS}
 		)
 	endif()

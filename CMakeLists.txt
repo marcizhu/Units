@@ -40,8 +40,15 @@ option(UNITS_BUILD_EXAMPLES "Build example files" ${UNITS_MASTER_PROJECT})
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 if(UNITS_BUILD_TESTS)
+	include(FetchContent)
+	FetchContent_Declare(
+	  Catch2
+	  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+	  GIT_TAG        v2.13.4)
+
+	FetchContent_MakeAvailable(Catch2)
+
 	enable_testing()
-	add_subdirectory(deps/Catch2)
 	add_subdirectory(tests)
 endif()
 
