@@ -6,14 +6,14 @@
 
 namespace Units
 {
-	Buffer::Buffer(const std::string& string)
-		: str(to_utf16(string)), ptr(0), stack(0) {}
+	Buffer::Buffer(const std::string& str)
+		: str(to_utf16(str)), ptr(0), stack(0) {}
 
-	Buffer::Buffer(const std::u16string& string)
-		: str(string), ptr(0), stack(0) {}
+	Buffer::Buffer(const std::u16string& str)
+		: str(str), ptr(0), stack(0) {}
 
-	Buffer::Buffer(const std::u32string& string)
-		: str(to_utf16(string)), ptr(0), stack(0) {}
+	Buffer::Buffer(const std::u32string& str)
+		: str(to_utf16(str)), ptr(0), stack(0) {}
 
 	Buffer::Buffer(std::istream& is)
 		: ptr(0), stack(0)
@@ -25,11 +25,10 @@ namespace Units
 
 	std::string Buffer::to_utf8(const std::u16string& s)
 	{
-		try{
+		try {
 			std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
 			return conv.to_bytes(s);
-		}
-		catch(...) {
+		} catch(...) {
 			return std::string();
 		}
 	}
@@ -39,8 +38,7 @@ namespace Units
 		try {
 			std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
 			return conv.from_bytes(str);
-		}
-		catch(...) {
+		} catch(...) {
 			return std::u16string();
 		}
 	}
@@ -51,8 +49,7 @@ namespace Units
 			std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
 			std::string bytes = conv.to_bytes(str);
 			return std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
-		}
-		catch(...) {
+		} catch(...) {
 			return std::u16string();
 		}
 	}
@@ -69,18 +66,6 @@ namespace Units
 
 	void Buffer::push() { stack = ptr; }
 	void Buffer::pop () { ptr = stack; }
-
-	int Buffer::parseInt()
-	{
-		std::string utf8 = to_utf8(str.substr(ptr));
-
-		const char* begin = utf8.c_str();
-		char* end = nullptr;
-
-		long ret = strtol(begin, &end, 10);
-		ptr += (size_t)(end - begin);
-		return static_cast<int>(ret);
-	}
 
 	double Buffer::parseDouble()
 	{

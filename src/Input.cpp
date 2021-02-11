@@ -26,11 +26,11 @@ namespace Units
 			1 m, 1 m^2, 1 m/s, 1 m/s^2, 1 (4 cm^2), 33 Hz, 33 s^-1, 45 m / (10 s), 2 N*s
 	*/
 
-	template<typename Buffer> Quantity parseExpression(Buffer& buff);
-	template<typename Buffer> Quantity parseTerm(Buffer& buff);
-	template<typename Buffer> Quantity parseFactor(Buffer& buff);
-	template<typename Buffer> Quantity parseUnit(Buffer& buff);
-	template<typename Buffer> double parsePrefix(Buffer& buff);
+	Quantity parseExpression(Buffer& buff);
+	Quantity parseTerm(Buffer& buff);
+	Quantity parseFactor(Buffer& buff);
+	Quantity parseUnit(Buffer& buff);
+	double parsePrefix(Buffer& buff);
 
 	std::unordered_map<std::u16string, Unit> units
 	{
@@ -83,12 +83,16 @@ namespace Units
 
 		{ u"BV"       , Log::BV     },
 		{ u"BmV"      , Log::BmV    },
-		{ u"B\u00B5V", Log::BuV    },
+		{ u"B\u00B5V" , Log::BuV    },
+		{ u"B\u03BCV" , Log::BuV    },
+		{ u"BuV"      , Log::BuV    },
 		{ u"B10nV"    , Log::B10nV  },
 		{ u"BW"       , Log::BW     },
 		{ u"Bk"       , Log::Bk     },
 		{ u"dBV"      , Log::dBV    },
 		{ u"dBmV"     , Log::dBmV   },
+		{ u"dB\u00B5V", Log::dBuV   },
+		{ u"dB\u03BCV", Log::dBuV   },
 		{ u"dBuV"     , Log::dBuV   },
 		{ u"dB10nV"   , Log::dB10nV },
 		{ u"dBW"      , Log::dBW    },
@@ -113,7 +117,48 @@ namespace Units
 			|| buff.current() == '\f' || buff.current() == '\r';
 	}
 
-	template<typename Buffer>
+	bool isSuperscript(const Buffer& buff)
+	{
+		return buff.current() == u'\u2070' // 0
+			|| buff.current() == u'\u00B9' // 1
+			|| (buff.current() >= u'\u00B2' && buff.current() <= u'\u00B3')  // 2 through 3
+			|| (buff.current() >= u'\u2074' && buff.current() <= u'\u2079'); // 4 through 9
+	}
+
+	int superscript2int(const Buffer& buff)
+	{
+		/**/ if(buff.current() == u'\u2070') return 0;
+		else if(buff.current() == u'\u00B9') return 1;
+		else if(buff.current() >= u'\u00B2' && buff.current() <= u'\u00B3') return buff.current() - u'\u00B0';
+		else if(buff.current() >= u'\u2074' && buff.current() <= u'\u2079') return buff.current() - u'\u2070';
+
+		return 0;
+	}
+
+	int parseInt(Buffer& buff)
+	{
+		// TODO: This accepts combinations of superscript and non-superscript numbers
+		if(isSpace(buff)) buff.advance(true);
+
+		int ret = 0;
+		bool neg = false;
+
+		/**/ if(buff.accept(u'-') || buff.accept(u'\u207B')) neg = true;
+		else if(buff.accept(u'+') || buff.accept(u'\u207A')) neg = false;
+
+		while((buff.current() >= u'0' && buff.current() <= u'9') || isSuperscript(buff))
+		{
+			if(isSuperscript(buff))
+				ret = 10 * ret + superscript2int(buff);
+			else
+				ret = 10 * ret + (buff.current() - '0');
+
+			buff.advance();
+		}
+
+		return neg ? -ret : ret;
+	}
+
 	Quantity parseExpression(Buffer& buff)
 	{
 		if(isSpace(buff)) buff.advance(true);
@@ -123,7 +168,6 @@ namespace Units
 		return quant * term;
 	}
 
-	template<typename Buffer>
 	Quantity parseTerm(Buffer& buff)
 	{
 		if(isSpace(buff)) buff.advance(true);
@@ -156,7 +200,6 @@ namespace Units
 		return factor;
 	}
 
-	template<typename Buffer>
 	Quantity parseFactor(Buffer& buff)
 	{
 		if(buff.accept('('))
@@ -179,7 +222,6 @@ namespace Units
 		return unit;
 	}
 
-	template<typename Buffer>
 	Quantity parseUnit(Buffer& buff)
 	{
 		Quantity ret = Unit::error();
@@ -189,7 +231,9 @@ namespace Units
 			|| buff.current() == '$'
 			|| buff.current() == '%'
 			|| buff.current() == u'\u221A'  // Square root symbol
-			|| buff.current() == u'\u2126') // Ohm symbol
+			|| buff.current() == u'\u2126'  // Ohm symbol
+			|| buff.current() == u'\u00B5'  // Micro symbol
+			|| buff.current() == u'\u03BC') // Greek mu symbol
 		{
 			unitName += buff.current();
 			buff.advance();
@@ -201,13 +245,18 @@ namespace Units
 		auto it = units.find(unitName);
 		if(it != units.end()) ret = 1.0 * it->second;
 
-		if(ret != Unit::error() && buff.accept('^'))
-			ret ^= buff.parseInt();
+		if(ret != Unit::error() &&
+			(buff.accept('^')
+				|| buff.current() == u'\u207A' // Superscript +
+				|| buff.current() == u'\u207B' // Superscript -
+				|| isSuperscript(buff))) // Superscript number
+		{
+			ret ^= parseInt(buff);
+		}
 
 		return ret;
 	}
 
-	template<typename Buffer>
 	double parsePrefix(Buffer& buff)
 	{
 		switch(buff.current())
@@ -232,8 +281,15 @@ namespace Units
 			case 'y': buff.advance(); return yocto;
 		}
 
-		/**/ if(buff.accept(u'\u00B5')) return micro;
-		else if(buff.accept('d')) return buff.accept('a') ? deca : deci;
+		if(buff.accept(u'\u00B5')
+			|| buff.accept(u'\u03BC')
+			|| buff.accept('u'))
+		{
+			return micro;
+		}
+
+		if(buff.accept(u'd'))
+			return buff.accept(u'a') ? deca : deci;
 
 		return 1.0;
 	}
