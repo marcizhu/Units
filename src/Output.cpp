@@ -475,7 +475,8 @@ namespace Units
 		if(q.unit() == Unit::error()) return "ERROR";
 		if(q.unit() == kg) return to_string(convert(q, gram__));
 
-		std::string ret = (q.unit().multiplier() == 1.0f
+		std::string ret = (q.unit().multiplier() == 1.0f || q.unit() == gram__ || q.unit() == Energy::Wh
+			|| q.unit() == Energy::eV || q.unit() == Pressure::bar || q.unit() == Pressure::torr || q.unit() == Power::VAR
 				? magnitude_prefix(q.magnitude(), q.unit().unit_count() == 1 ? q.unit().degree() : 1)
 				: magnitude_fixed(q.magnitude()))
 				+ to_string(q.unit());

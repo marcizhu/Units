@@ -65,6 +65,12 @@ namespace Units
 		 */
 		void pop();
 
+		/** @brief Parse int at current location */
+		int parseInt();
+
+		/** @brief Parse double at current location */
+		double parseDouble();
+
 		/**
 		 * @brief Advances to the next character, optionally skipping whitespaces
 		 *

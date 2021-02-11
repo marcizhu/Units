@@ -135,76 +135,30 @@ namespace Units
 		return 0;
 	}
 
-	int parseInt(Buffer& buff)
-	{
-		if(isSpace(buff)) buff.advance(true);
-
-		int ret = 0;
-		bool neg = false;
-
-		/**/ if(buff.accept(u'-')) neg = true;
-		else if(buff.accept(u'+')) neg = false;
-
-		while(buff.current() >= u'0' && buff.current() <= u'9')
-		{
-			ret = 10 * ret + (buff.current() - '0');
-			buff.advance();
-		}
-
-		return neg ? -ret : ret;
-	}
-
 	int parseExponent(Buffer& buff)
 	{
-		// TODO: This accepts combinations of superscript and non-superscript numbers
 		if(isSpace(buff)) buff.advance(true);
 
 		int ret = 0;
 		bool neg = false;
 
-		/**/ if(buff.accept(u'-') || buff.accept(u'\u207B')) neg = true;
-		else if(buff.accept(u'+') || buff.accept(u'\u207A')) neg = false;
+		/**/ if(buff.accept(u'\u207B')) neg = true;
+		else if(buff.accept(u'\u207A')) neg = false;
 
-		while((buff.current() >= u'0' && buff.current() <= u'9') || isSuperscript(buff))
+		while(isSuperscript(buff))
 		{
-			if(isSuperscript(buff))
-				ret = 10 * ret + superscript2int(buff);
-			else
-				ret = 10 * ret + (buff.current() - '0');
-
+			ret = 10 * ret + superscript2int(buff);
 			buff.advance();
 		}
 
 		return neg ? -ret : ret;
-	}
-
-	double parseDouble(Buffer& buff)
-	{
-		int integral = parseInt(buff);
-		int decimal = 0;
-		int exponent = 0;
-
-		if(buff.accept(u'.'))
-		{
-			if(buff.accept(u'-') || buff.accept(u'+'))
-				return std::numeric_limits<double>::quiet_NaN();
-
-			decimal = parseInt(buff);
-		}
-
-		if(buff.accept(u'e') || buff.accept(u'E'))
-			exponent = parseInt(buff);
-
-		return decimal
-			? (integral + ((double)decimal / (double)std::pow(10.0, std::floor(std::log10(decimal)) + 1))) * std::pow(10.0, exponent)
-			: (integral * std::pow(10.0, exponent));
 	}
 
 	Quantity parseExpression(Buffer& buff)
 	{
 		if(isSpace(buff)) buff.advance(true);
 
-		double quant = parseDouble(buff);
+		double quant = buff.parseDouble();
 		Quantity term = parseTerm(buff);
 		return quant * term;
 	}
@@ -286,13 +240,12 @@ namespace Units
 		auto it = units.find(unitName);
 		if(it != units.end()) ret = Quantity(1.0, it->second);
 
-		if(ret != Unit::error() &&
-			(buff.accept('^')
-				|| buff.current() == u'\u207A' // Superscript +
-				|| buff.current() == u'\u207B' // Superscript -
-				|| isSuperscript(buff))) // Superscript number
+		if(ret != Unit::error())
 		{
-			ret ^= parseExponent(buff);
+			if(buff.accept('^'))
+				ret ^= buff.parseInt();
+			else if(buff.current() == u'\u207A' || buff.current() == u'\u207B' || isSuperscript(buff))
+				ret ^= parseExponent(buff);
 		}
 
 		return ret;
