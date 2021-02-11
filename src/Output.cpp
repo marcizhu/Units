@@ -107,7 +107,7 @@ namespace Units
 			{ CGS::gal,          "Gal" },
 			{ CGS::poise,        "P"   },
 			{ CGS::stokes,       "St"  },
-			{ CGS::kayser,       "K"   },
+			{ CGS::kayser,       "K"   }, // cm^-1
 			{ CGS::oersted,      "Oe"  },
 			{ CGS::gauss,        "G"   },
 			{ CGS::debye,        "D"   },
@@ -422,6 +422,15 @@ namespace Units
 			const int i = magnitude(qty);
 			return to_string_precision(qty / pow10(i), 3) + u8"\u221910" + (i == 0 ? "⁰" : generateExponent(i));
 		}
+
+		static std::string magnitude_fixed(double qty)
+		{
+			if(!std::isfinite(qty)) return format_inf(qty);
+
+			const int mag = magnitude(qty);
+			const int i = 3 - (mag < 0 ? 0 : (mag > 2 ? 2 : mag));
+			return to_string_precision(qty, i) + ' ';
+		}
 	}
 
 	std::string to_string_scientific(const Quantity& q)
@@ -466,7 +475,11 @@ namespace Units
 		if(q.unit() == Unit::error()) return "ERROR";
 		if(q.unit() == kg) return to_string(convert(q, gram__));
 
-		std::string ret = magnitude_prefix(q.magnitude(), q.unit().unit_count() == 1 ? q.unit().degree() : 1) + to_string(q.unit());
+		std::string ret = (q.unit().multiplier() == 1.0f
+				? magnitude_prefix(q.magnitude(), q.unit().unit_count() == 1 ? q.unit().degree() : 1)
+				: magnitude_fixed(q.magnitude()))
+				+ to_string(q.unit());
+
 		if(ret.back() == ' ') ret.pop_back();
 
 		return ret;
