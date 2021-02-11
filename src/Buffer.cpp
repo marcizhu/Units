@@ -1,6 +1,5 @@
 #include <codecvt>
 #include <locale>
-#include <cstdlib>
 
 #include "Buffer.h"
 
@@ -61,23 +60,11 @@ namespace Units
 			|| ch == '\f' || ch == '\r';
 	}
 
-	char16_t Buffer::current() const { return  ptr      < str.size() ? str[ptr    ] : EOF_MARK; }
+	char16_t Buffer::current() const { return (ptr + 0) < str.size() ? str[ptr + 0] : EOF_MARK; }
 	char16_t Buffer::ahead  () const { return (ptr + 1) < str.size() ? str[ptr + 1] : EOF_MARK; }
 
 	void Buffer::push() { stack = ptr; }
 	void Buffer::pop () { ptr = stack; }
-
-	double Buffer::parseDouble()
-	{
-		std::string utf8 = to_utf8(str.substr(ptr));
-
-		const char* begin = utf8.c_str();
-		char* end = nullptr;
-
-		double ret = strtod(begin, &end);
-		ptr += (size_t)(end - begin);
-		return ret;
-	}
 
 	char16_t Buffer::advance(bool skipws)
 	{

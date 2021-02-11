@@ -137,6 +137,25 @@ namespace Units
 
 	int parseInt(Buffer& buff)
 	{
+		if(isSpace(buff)) buff.advance(true);
+
+		int ret = 0;
+		bool neg = false;
+
+		/**/ if(buff.accept(u'-')) neg = true;
+		else if(buff.accept(u'+')) neg = false;
+
+		while(buff.current() >= u'0' && buff.current() <= u'9')
+		{
+			ret = 10 * ret + (buff.current() - '0');
+			buff.advance();
+		}
+
+		return neg ? -ret : ret;
+	}
+
+	int parseExponent(Buffer& buff)
+	{
 		// TODO: This accepts combinations of superscript and non-superscript numbers
 		if(isSpace(buff)) buff.advance(true);
 
@@ -159,11 +178,33 @@ namespace Units
 		return neg ? -ret : ret;
 	}
 
+	double parseDouble(Buffer& buff)
+	{
+		int integral = parseInt(buff);
+		int decimal = 0;
+		int exponent = 0;
+
+		if(buff.accept(u'.'))
+		{
+			if(buff.accept(u'-') || buff.accept(u'+'))
+				return std::numeric_limits<double>::quiet_NaN();
+
+			decimal = parseInt(buff);
+		}
+
+		if(buff.accept(u'e') || buff.accept(u'E'))
+			exponent = parseInt(buff);
+
+		return decimal
+			? (integral + ((double)decimal / (double)std::pow(10.0, std::floor(std::log10(decimal)) + 1))) * std::pow(10.0, exponent)
+			: (integral * std::pow(10.0, exponent));
+	}
+
 	Quantity parseExpression(Buffer& buff)
 	{
 		if(isSpace(buff)) buff.advance(true);
 
-		double quant = buff.parseDouble();
+		double quant = parseDouble(buff);
 		Quantity term = parseTerm(buff);
 		return quant * term;
 	}
@@ -243,7 +284,7 @@ namespace Units
 		if(unitName == u"g") return g;
 
 		auto it = units.find(unitName);
-		if(it != units.end()) ret = 1.0 * it->second;
+		if(it != units.end()) ret = Quantity(1.0, it->second);
 
 		if(ret != Unit::error() &&
 			(buff.accept('^')
@@ -251,7 +292,7 @@ namespace Units
 				|| buff.current() == u'\u207B' // Superscript -
 				|| isSuperscript(buff))) // Superscript number
 		{
-			ret ^= parseInt(buff);
+			ret ^= parseExponent(buff);
 		}
 
 		return ret;
@@ -261,31 +302,30 @@ namespace Units
 	{
 		switch(buff.current())
 		{
-			case 'Y': buff.advance(); return yotta;
-			case 'Z': buff.advance(); return zetta;
-			case 'E': buff.advance(); return exa;
-			case 'P': buff.advance(); return peta;
-			case 'T': buff.advance(); return tera;
-			case 'G': buff.advance(); return giga;
-			case 'M': buff.advance(); return mega;
-			case 'k': buff.advance(); return kilo;
-			case 'h': buff.advance(); return hecto;
-			case 'c': buff.advance(); return centi;
-			case 'm': buff.advance(); return milli;
-			case 'u': buff.advance(); return micro;
-			case 'n': buff.advance(); return nano;
-			case 'p': buff.advance(); return pico;
-			case 'f': buff.advance(); return femto;
-			case 'a': buff.advance(); return atto;
-			case 'z': buff.advance(); return zepto;
-			case 'y': buff.advance(); return yocto;
-		}
+			case u'Y': buff.advance(); return yotta;
+			case u'Z': buff.advance(); return zetta;
+			case u'E': buff.advance(); return exa;
+			case u'P': buff.advance(); return peta;
+			case u'T': buff.advance(); return tera;
+			case u'G': buff.advance(); return giga;
+			case u'M': buff.advance(); return mega;
+			case u'k': buff.advance(); return kilo;
+			case u'h': buff.advance(); return hecto;
+			case u'c': buff.advance(); return centi;
+			case u'm': buff.advance(); return milli;
+			case u'n': buff.advance(); return nano;
+			case u'p': buff.advance(); return pico;
+			case u'f': buff.advance(); return femto;
+			case u'a': buff.advance(); return atto;
+			case u'z': buff.advance(); return zepto;
+			case u'y': buff.advance(); return yocto;
 
-		if(buff.accept(u'\u00B5')
-			|| buff.accept(u'\u03BC')
-			|| buff.accept('u'))
-		{
-			return micro;
+			// Special cases
+			case u'u':
+			case u'\u00B5':
+			case u'\u03BC':
+				buff.advance();
+				return micro;
 		}
 
 		if(buff.accept(u'd'))
