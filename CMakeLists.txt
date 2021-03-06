@@ -56,8 +56,6 @@ if(UNITS_BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
 
-add_subdirectory(deps/gcem)
-
 add_library(units STATIC
 	src/Buffer.cpp
 	src/Input.cpp
@@ -67,7 +65,6 @@ add_library(units STATIC
 	src/UnitData.cpp)
 
 target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
 
 if(UNITS_MASTER_PROJECT)
 	target_include_directories(units PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
