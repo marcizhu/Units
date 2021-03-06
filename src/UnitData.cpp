@@ -60,18 +60,20 @@ namespace Units
 
 	bool UnitData::operator==(const UnitData& other) const
 	{
-		return
-			(m_Data.e_flag  == true && other.m_Data.e_flag == true)
-			|| ((m_Data.meter    == other.m_Data.meter   )
-				&& (m_Data.kilogram == other.m_Data.kilogram)
-				&& (m_Data.candela  == other.m_Data.candela )
-				&& (m_Data.mole     == other.m_Data.mole    )
-				&& (m_Data.currency == other.m_Data.currency)
-				&& (m_Data.second   == other.m_Data.second  )
-				&& (m_Data.ampere   == other.m_Data.ampere  )
-				&& (m_Data.kelvin   == other.m_Data.kelvin  )
-				&& (m_Data.radians  == other.m_Data.radians )
-				&& (m_Data.count    == other.m_Data.count   ));
+		return (m_Data.meter    == other.m_Data.meter
+			&& (m_Data.kilogram == other.m_Data.kilogram)
+			&& (m_Data.second   == other.m_Data.second  )
+			&& (m_Data.ampere   == other.m_Data.ampere  )
+			&& (m_Data.kelvin   == other.m_Data.kelvin  )
+			&& (m_Data.mole     == other.m_Data.mole    )
+			&& (m_Data.radians  == other.m_Data.radians )
+			&& (m_Data.candela  == other.m_Data.candela )
+			&& (m_Data.currency == other.m_Data.currency)
+			&& (m_Data.count    == other.m_Data.count   )
+			&& (m_Data.e_flag   == other.m_Data.e_flag  )
+			&& (m_Data.i_flag   == other.m_Data.i_flag  )
+			&& (m_Data.eq_flag  == other.m_Data.eq_flag ))
+			|| (m_Data.e_flag == true && other.m_Data.e_flag == true);
 	}
 
 	bool UnitData::operator!=(const UnitData& other) const
