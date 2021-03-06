@@ -10,15 +10,15 @@ endif()
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
-add_catch_test(Units.test       Units.cpp       LIBRARIES Units::Units CXX_STANDARD 14 TIMEOUT 10)
-add_catch_test(Input.test       Input.cpp       LIBRARIES Units::Units CXX_STANDARD 14 TIMEOUT 10)
-add_catch_test(Errors.test      Errors.cpp      LIBRARIES Units::Units CXX_STANDARD 14 TIMEOUT 10)
-add_catch_test(Comparisons.test Comparisons.cpp LIBRARIES Units::Units CXX_STANDARD 14 TIMEOUT 10)
+add_catch_test(Units.test       Units.cpp       LIBRARIES Units::Units CXX_STANDARD 11 TIMEOUT 10)
+add_catch_test(Input.test       Input.cpp       LIBRARIES Units::Units CXX_STANDARD 11 TIMEOUT 10)
+add_catch_test(Errors.test      Errors.cpp      LIBRARIES Units::Units CXX_STANDARD 11 TIMEOUT 10)
+add_catch_test(Comparisons.test Comparisons.cpp LIBRARIES Units::Units CXX_STANDARD 11 TIMEOUT 10)
 
 add_executable(fuzz fuzz.cpp)
 target_link_libraries(fuzz PRIVATE Units::Units)
 
-set_target_properties(fuzz PROPERTIES CXX_STANDARD 14)
+set_target_properties(fuzz PROPERTIES CXX_STANDARD 11)
 set_target_properties(fuzz PROPERTIES CXX_STANDARD_REQUIRED ON)   
 
 #---------------------------------------------------------------------------------------

@@ -72,7 +72,7 @@ else()
 	target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 
-set_target_properties(units PROPERTIES CXX_STANDARD 14)
+set_target_properties(units PROPERTIES CXX_STANDARD 11)
 set_target_properties(units PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 add_library(Units::Units ALIAS units)

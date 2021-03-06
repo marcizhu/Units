@@ -9,6 +9,8 @@ namespace Units
 	#pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
+	#pragma pack(push)
+ 	#pragma pack(1)
 	class UnitData
 	{
 	private:
@@ -39,14 +41,15 @@ namespace Units
 			uint32_t m_Packed;
 		};
 
-		static_assert(sizeof(Data) == sizeof(uint32_t), "Size mismatch");
-
 		bool isRootHz() const;
 		bool isHz() const;
 		bool hasValidRoot(int power) const;
 
 		constexpr UnitData(int8_t m, int8_t kg, int8_t s, int8_t A, int8_t K, int8_t mol, int8_t rad, int8_t Cd, int8_t c, int8_t cnt, bool eflag, bool iflag, bool eqflag)
 			: m_Data(m, kg, s, A, K, mol, rad, Cd, c, cnt, eflag, iflag, eqflag) {}
+
+		constexpr UnitData(int8_t cnt, int8_t rad)
+			: m_Data(0, 0, 0, 0, 0, 0, rad, 0, 0, cnt, false, false, true) {}
 
 	public:
 		/** @brief Default constructor. Initializes an empty UnitData */
@@ -56,13 +59,9 @@ namespace Units
 		/** @brief Equation constructor. Initializes an equation UnitData. Used for dB, dBW, etc... */
 		static constexpr UnitData eq(uint8_t num)
 		{
-			if(num > 0b0001'1111) return UnitData::error();
-
-			UnitData ret;
-			ret.m_Data.count   = (num & 0b0000'0011) >> 0;
-			ret.m_Data.radians = (num & 0b0001'1100) >> 2;
-			ret.m_Data.eq_flag = true;
-			return ret;
+			return (num > 0x1F
+				? UnitData::error()
+				: UnitData((num & 0x03) >> 0, (num & 0x1C) >> 2));
 		}
 
 		/** @brief Returns the unit data that represents a meter */
@@ -131,6 +130,7 @@ namespace Units
 		/** @brief Root function. Performs the nth root on this unit */
 		void root(int n);
 	};
+	#pragma pack(pop)
 
 #if defined(__GNUC__)
 	#pragma GCC diagnostic pop
