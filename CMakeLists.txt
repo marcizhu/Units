@@ -58,7 +58,14 @@ endif()
 
 add_subdirectory(deps/gcem)
 
-add_library(units STATIC src/Input.cpp src/Output.cpp src/Buffer.cpp)
+add_library(units STATIC
+	src/Buffer.cpp
+	src/Input.cpp
+	src/Output.cpp
+	src/Quantity.cpp
+	src/Unit.cpp
+	src/UnitData.cpp)
+
 target_include_directories(units PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(units SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/gcem/include)
 

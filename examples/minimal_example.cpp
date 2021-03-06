@@ -8,10 +8,10 @@ using namespace Units;
 
 int main()
 {
-	constexpr Quantity earth_mass   = 5.972e24 * kg;
-	constexpr Quantity earth_radius = 6371.0   * km;
+	Quantity earth_mass   = 5.972e24 * kg;
+	Quantity earth_radius = 6371.0   * km;
 
-	constexpr Quantity gravity = Constants::Physics::G * earth_mass / (earth_radius^2);
+	Quantity gravity = Constants::Physics::G * earth_mass / (earth_radius^2);
 
 	std::cout << "Calculated earth gravity:  " << gravity << std::endl;
 	std::cout << "Theoretical earth gravity: " << Constants::Physics::g << std::endl;

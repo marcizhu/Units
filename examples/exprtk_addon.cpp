@@ -3,10 +3,10 @@
 
 #include "Units/Units.h"
 #include "Units/IO.h"
-#include "Units/extras/StdAdditions.h"
+#include "Units/addons/std.h"
 
 #define EXPRTK_HEADER "../src/exprtk/exprtk.hpp"
-#include "Units/extras/ExprTkCompat.h"
+#include "Units/addons/exprtk.h"
 
 int main()
 {

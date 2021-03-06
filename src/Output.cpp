@@ -5,7 +5,7 @@
 
 #include "Units/Units.h"
 #include "Units/IO.h"
-#include "Units/extras/StdAdditions.h"
+#include "Units/addons/std.h"
 
 namespace Units
 {
@@ -54,7 +54,7 @@ namespace Units
 		// TODO: Change pair with tuple, so that every tuple holds a unit, its name and a bool that tells if this unit is "SI-friendly"
 		// or not. If so, the apropriate SI prefix will be added (if nedded). If not, the number will be represented in scientific notation.
 
-		constexpr Unit gram__ = Unit(0.001, kg);
+		const Unit gram__ = Unit(0.001, kg);
 
 		static std::unordered_map<Unit, const char*> unit_names =
 		{

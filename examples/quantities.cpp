@@ -3,7 +3,7 @@
 #include "Units/Units.h" // provides commonly used units and conversions
 #include "Units/Quantity.h" // for Units::Unit
 #include "Units/IO.h" // provides operator<< for units & quantities
-#include "Units/extras/StdAdditions.h" // provides common std:: math functions
+#include "Units/addons/std.h" // provides common std:: math functions
 
 int main()
 {
