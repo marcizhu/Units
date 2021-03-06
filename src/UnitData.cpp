@@ -42,12 +42,36 @@ namespace Units
 
 	UnitData::BaseUnitType UnitData::base_unit() const
 	{
-		return m_Packed;
+		return static_cast<BaseUnitType>(
+			  ((m_Data.meter    & 0x0F) << 28)
+			| ((m_Data.kilogram & 0x07) << 25)
+			| ((m_Data.second   & 0x0F) << 21)
+			| ((m_Data.ampere   & 0x07) << 18)
+			| ((m_Data.kelvin   & 0x0F) << 14)
+			| ((m_Data.mole     & 0x03) << 12)
+			| ((m_Data.radians  & 0x07) <<  9)
+			| ((m_Data.candela  & 0x03) <<  7)
+			| ((m_Data.currency & 0x03) <<  5)
+			| ((m_Data.count    & 0x03) <<  3)
+			| ((m_Data.e_flag   & 0x01) <<  2)
+			| ((m_Data.i_flag   & 0x01) <<  1)
+			| ((m_Data.eq_flag  & 0x01) <<  0));
 	}
 
 	bool UnitData::operator==(const UnitData& other) const
 	{
-		return (m_Packed == other.m_Packed) || (m_Data.e_flag  == true && other.m_Data.e_flag == true);
+		return
+			(m_Data.e_flag  == true && other.m_Data.e_flag == true)
+			|| ((m_Data.meter    == other.m_Data.meter   )
+				&& (m_Data.kilogram == other.m_Data.kilogram)
+				&& (m_Data.candela  == other.m_Data.candela )
+				&& (m_Data.mole     == other.m_Data.mole    )
+				&& (m_Data.currency == other.m_Data.currency)
+				&& (m_Data.second   == other.m_Data.second  )
+				&& (m_Data.ampere   == other.m_Data.ampere  )
+				&& (m_Data.kelvin   == other.m_Data.kelvin  )
+				&& (m_Data.radians  == other.m_Data.radians )
+				&& (m_Data.count    == other.m_Data.count   ));
 	}
 
 	bool UnitData::operator!=(const UnitData& other) const

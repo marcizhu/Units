@@ -31,28 +31,7 @@ namespace Units
 			constexpr Data(int8_t m, int8_t kg, int8_t s, int8_t A, int8_t K, int8_t mol, int8_t rad, int8_t Cd, int8_t c, int8_t cnt, bool eflag, bool iflag, bool eqflag)
 				: meter(m), kilogram(kg), second(s), ampere(A), kelvin(K), mole(mol), radians(rad),
 				  candela(Cd), currency(c), count(cnt), e_flag(eflag), i_flag(iflag), eq_flag(eqflag) {}
-		};
-
-		template<int Size>
-		struct PackedType;
-
-		template<>
-		struct PackedType<4>
-		{
-			using type = uint32_t;
-		};
-
-		template<>
-		struct PackedType<8>
-		{
-			using type = uint64_t;
-		};
-
-		union
-		{
-			Data m_Data;
-			PackedType<sizeof(Data)>::type m_Packed;
-		};
+		} m_Data;
 
 		bool isRootHz() const;
 		bool isHz() const;
@@ -103,7 +82,7 @@ namespace Units
 		static constexpr UnitData iflag   () { return UnitData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0); }
 
 		/** @brief Alias for the base unit type */
-		using BaseUnitType = decltype(m_Packed);
+		using BaseUnitType = uint32_t;
 
 		/** @brief Get the unit data representation as integer type */
 		BaseUnitType base_unit() const;
