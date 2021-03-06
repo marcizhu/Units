@@ -9,8 +9,6 @@ namespace Units
 	#pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-	#pragma pack(push)
- 	#pragma pack(1)
 	class UnitData
 	{
 	private:
@@ -35,10 +33,25 @@ namespace Units
 				  candela(Cd), currency(c), count(cnt), e_flag(eflag), i_flag(iflag), eq_flag(eqflag) {}
 		};
 
+		template<int Size>
+		struct PackedType;
+
+		template<>
+		struct PackedType<4>
+		{
+			using type = uint32_t;
+		};
+
+		template<>
+		struct PackedType<8>
+		{
+			using type = uint64_t;
+		};
+
 		union
 		{
 			Data m_Data;
-			uint32_t m_Packed;
+			PackedType<sizeof(Data)>::type m_Packed;
 		};
 
 		bool isRootHz() const;
@@ -130,7 +143,6 @@ namespace Units
 		/** @brief Root function. Performs the nth root on this unit */
 		void root(int n);
 	};
-	#pragma pack(pop)
 
 #if defined(__GNUC__)
 	#pragma GCC diagnostic pop
