@@ -30,9 +30,9 @@ namespace std
 
 	inline string to_string(const Units::Unit& q) { return Units::to_string(q); }
 
-	inline constexpr Units::Unit sqrt(Units::Unit x) noexcept { x.root(2); return x; }
-	inline constexpr Units::Unit cbrt(Units::Unit x) noexcept { x.root(3); return x; }
-	inline constexpr Units::Unit pow (Units::Unit x, int8_t exp) noexcept { return x^exp; }
+	inline Units::Unit sqrt(Units::Unit x) noexcept { x.root(2); return x; }
+	inline Units::Unit cbrt(Units::Unit x) noexcept { x.root(3); return x; }
+	inline Units::Unit pow (Units::Unit x, int8_t exp) noexcept { return x^exp; }
 }
 
 // std namespace additions for quantities
