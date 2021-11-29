@@ -87,6 +87,6 @@ endif()
 #---------------------------------------------------------------------------------------
 # Enable (or disable) features based on the given options
 #---------------------------------------------------------------------------------------
-if(CODE_COVERAGE)
+if(UNITS_MASTER_PROJECT AND CODE_COVERAGE)
 	target_enable_coverage(units)
 endif()
